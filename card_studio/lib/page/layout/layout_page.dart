@@ -9,6 +9,8 @@ class LayoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    GlobalKey testKeyLeft = GlobalKey();
+    GlobalKey testKeyRight = GlobalKey();
     var textTheme = Theme.of(context).textTheme;
     var lrPreviewPadding = 8.0;
     var leftSide = Padding(
@@ -18,7 +20,27 @@ class LayoutPage extends StatelessWidget {
         children: [
           Flexible(
             child: PagePreview(Size(21, 29.7), Size(6.3, 8.8), Size(0.3, 0.3),
-                Size(0.7, 0.7), 0.5, 0.02, []),
+                Size(0.7, 0.7), 0.5, 0.02, [],
+                globalKey: testKeyLeft),
+          ),
+          SizedBox(height: 4),
+          Text(
+            "Front",
+            style: textTheme.labelSmall,
+          )
+        ],
+      ),
+    );
+
+    var rightSide = Padding(
+      padding: EdgeInsets.all(lrPreviewPadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+            child: PagePreview(Size(21, 29.7), Size(6.3, 8.8), Size(0.3, 0.3),
+                Size(0.7, 0.7), 0.5, 0.02, [],
+                globalKey: testKeyRight),
           ),
           SizedBox(height: 4),
           Text(
@@ -36,7 +58,7 @@ class LayoutPage extends StatelessWidget {
           child: leftSide,
         ),
         Flexible(
-          child: leftSide,
+          child: rightSide,
         ),
       ],
     );
@@ -72,7 +94,9 @@ class LayoutPage extends StatelessWidget {
                             ButtonSegment(value: 2, label: Text("Back")),
                           ],
                           selected: {0},
-                          onSelectionChanged: (p0) {},
+                          onSelectionChanged: (p0) {
+                            print("do something");
+                          },
                         ),
                       ],
                     ),

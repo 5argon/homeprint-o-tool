@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 /// Use for both output preview and actual image export. On preview it stretches
 /// to the parent object. On export we can control parent to have the same aspect
@@ -11,6 +15,7 @@ class PagePreview extends StatelessWidget {
   double whitePadding;
   double cutGuideLineWidth;
   List<CardGame> cards;
+  GlobalKey? globalKey;
 
   PagePreview(
       this.paperSize,
@@ -19,7 +24,22 @@ class PagePreview extends StatelessWidget {
       this.edgeCutGuideSize,
       this.whitePadding,
       this.cutGuideLineWidth,
-      this.cards) {}
+      this.cards,
+      {this.globalKey}) {}
+
+  // Future<Uint8List> _capturePng() async {
+  //       print('inside');
+  //       RenderObject? ro = globalKey!.currentContext!.findRenderObject();
+  //       ui.Image image = await ro.toImage(pixelRatio: 3.0);
+  //       ByteData byteData =
+  //           await image.toByteData(format: ui.ImageByteFormat.png);
+  //       var pngBytes = byteData.buffer.asUint8List();
+  //       var bs64 = base64Encode(pngBytes);
+  //       print(pngBytes);
+  //       print(bs64);
+  //       return pngBytes;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -97,17 +117,21 @@ class PagePreview extends StatelessWidget {
         ]));
     List<Widget> allCardRows = List.filled(verticalCards, cardRow);
 
-    return AspectRatio(
-        aspectRatio: paperSize.width / paperSize.height,
-        child: Placeholder(
-          child: Column(children: [
-            marginRow,
-            guideRow,
-            ...allCardRows,
-            guideRow,
-            marginRow
-          ]),
-        ));
+    var repaintBoundary = RepaintBoundary(
+      key: globalKey,
+      child: AspectRatio(
+          aspectRatio: paperSize.width / paperSize.height,
+          child: Placeholder(
+            child: Column(children: [
+              marginRow,
+              guideRow,
+              ...allCardRows,
+              guideRow,
+              marginRow
+            ]),
+          )),
+    );
+    return repaintBoundary;
   }
 }
 
