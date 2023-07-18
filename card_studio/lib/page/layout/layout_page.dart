@@ -82,7 +82,7 @@ class LayoutPage extends StatelessWidget {
             ),
           ),
         ),
-        OutputLayoutControl()
+        Flexible(child: OutputLayoutControl())
       ],
     );
   }
