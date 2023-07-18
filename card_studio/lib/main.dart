@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'page/layout/export_setting_page.dart';
+import 'page/layout/layout_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,48 +32,60 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      body: NavigationDrawer(selectedIndex: 3, children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Project",
-            style: textTheme.titleMedium,
-          ),
+      body: SafeArea(
+        child: Row(
+          children: [
+            SizedBox(
+              width: 200,
+              child: NavigationDrawer(selectedIndex: 3, children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Project",
+                    style: textTheme.titleMedium,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OutlinedButton(onPressed: () {}, child: Text("Load")),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OutlinedButton(onPressed: () {}, child: Text("Save")),
+                ),
+                NavigationDrawerDestination(
+                    icon: Icon(Icons.widgets_outlined),
+                    label: Text("Instance")),
+                NavigationDrawerDestination(
+                    icon: Icon(Icons.widgets_outlined), label: Text("Card")),
+                Divider(
+                  indent: 20,
+                  endIndent: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Export",
+                    style: textTheme.titleMedium,
+                  ),
+                ),
+                NavigationDrawerDestination(
+                    icon: Icon(Icons.widgets_outlined), label: Text("Include")),
+                NavigationDrawerDestination(
+                    icon: Icon(Icons.widgets_outlined), label: Text("Layout")),
+                NavigationDrawerDestination(
+                    icon: Icon(Icons.widgets_outlined), label: Text("Preview")),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child:
+                      OutlinedButton(onPressed: () {}, child: Text("Export")),
+                ),
+              ]),
+            ),
+            Expanded(child: LayoutPage()),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: OutlinedButton(onPressed: () {}, child: Text("Load")),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: OutlinedButton(onPressed: () {}, child: Text("Save")),
-        ),
-        NavigationDrawerDestination(
-            icon: Icon(Icons.widgets_outlined), label: Text("Instance")),
-        NavigationDrawerDestination(
-            icon: Icon(Icons.widgets_outlined), label: Text("Card")),
-        Divider(
-          indent: 20,
-          endIndent: 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Export",
-            style: textTheme.titleMedium,
-          ),
-        ),
-        NavigationDrawerDestination(
-            icon: Icon(Icons.widgets_outlined), label: Text("Include")),
-        NavigationDrawerDestination(
-            icon: Icon(Icons.widgets_outlined), label: Text("Layout")),
-        NavigationDrawerDestination(
-            icon: Icon(Icons.widgets_outlined), label: Text("Preview")),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: OutlinedButton(onPressed: () {}, child: Text("Export")),
-        )
-      ]),
+      ),
     );
   }
 }
