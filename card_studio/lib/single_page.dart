@@ -10,7 +10,7 @@ class SinglePage extends StatelessWidget {
   Size edgeCutGuideSize;
   double whitePadding;
   double cutGuideLineWidth;
-  List<Card> cards;
+  List<CardGame> cards;
 
   SinglePage(
       this.paperSize,
@@ -121,4 +121,4 @@ class Size {
   //       height = (cmHeight * ppi / 2.54).round();
 }
 
-class Card {}
+class CardGame {}
