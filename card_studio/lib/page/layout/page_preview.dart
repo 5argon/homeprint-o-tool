@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Use for both output preview and actual image export. On preview it stretches
 /// to the parent object. On export we can control parent to have the same aspect
 /// then make it as big as required.
-class SinglePage extends StatelessWidget {
+class PagePreview extends StatelessWidget {
   Size paperSize;
   Size cardSize;
   Size marginSize;
@@ -12,7 +12,7 @@ class SinglePage extends StatelessWidget {
   double cutGuideLineWidth;
   List<CardGame> cards;
 
-  SinglePage(
+  PagePreview(
       this.paperSize,
       this.cardSize,
       this.marginSize,
