@@ -31,6 +31,25 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var lrPreviewPadding = 8.0;
+    Widget aspectRatioBox =
+        AspectRatio(aspectRatio: 16 / 9, child: Container(color: Colors.green));
+    Widget render = Container(
+      height: 500,
+      color: Colors.red,
+      child: Row(children: [
+        Expanded(
+            child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Container(color: Colors.yellow, child: aspectRatioBox),
+        )),
+        Expanded(
+            child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Container(color: Colors.yellow, child: aspectRatioBox),
+        )),
+      ]),
+    );
     return Scaffold(
       body: Column(
         children: [
@@ -40,12 +59,49 @@ class MyHomePage extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                    child: Row(
-                  children: [
-                    Expanded(child: Placeholder()),
-                    Expanded(child: Placeholder()),
-                  ],
-                )),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Padding(
+                          padding: EdgeInsets.all(lrPreviewPadding),
+                          child: SinglePage(Size(21, 29.7), Size(6.3, 8.8),
+                              Size(0.3, 0.3), Size(0.7, 0.7), 0.5, 0.02, []),
+                        ),
+                      ),
+                      Flexible(
+                        child: Padding(
+                          padding: EdgeInsets.all(lrPreviewPadding),
+                          child: SinglePage(Size(21, 29.7), Size(6.3, 8.8),
+                              Size(0.3, 0.3), Size(0.7, 0.7), 0.5, 0.02, []),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Expanded(
+                //     child: Row(
+                //   children: [
+                //     Expanded(
+                //       child: Padding(
+                //         padding: EdgeInsets.all(lrPreviewPadding),
+                //         child: SinglePage(Size(21, 29.7), Size(6.3, 8.8),
+                //             Size(0.3, 0.3), Size(0.7, 0.7), 0.5, 0.02, []),
+                //       ),
+                //       //     child: Padding(
+                //       //   padding: EdgeInsets.all(lrPreviewPadding),
+                //       //   child: SinglePage(Size(21, 29.7), Size(6.3, 8.8),
+                //       //       Size(0.3, 0.3), Size(0.7, 0.7), 0.5, 0.02, []),
+                //       // )
+                //     ),
+                //     Expanded(
+                //         child: Padding(
+                //       padding: EdgeInsets.all(lrPreviewPadding),
+                //       child: SinglePage(Size(21, 29.7), Size(6.3, 8.8),
+                //           Size(0.3, 0.3), Size(0.7, 0.7), 0.5, 0.02, []),
+                //     )),
+                //   ],
+                // )),
                 Container(
                   height: 16,
                   child: Row(
