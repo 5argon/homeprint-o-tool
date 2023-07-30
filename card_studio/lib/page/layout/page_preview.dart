@@ -1,17 +1,13 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 /// Use for both output preview and actual image export. On preview it stretches
 /// to the parent object. On export we can control parent to have the same aspect
 /// then make it as big as required.
 class PagePreview extends StatelessWidget {
-  Size paperSize;
-  Size cardSize;
-  Size marginSize;
-  Size edgeCutGuideSize;
+  SizeWidthHeight paperSize;
+  SizeWidthHeight cardSize;
+  SizeWidthHeight marginSize;
+  SizeWidthHeight edgeCutGuideSize;
   double whitePadding;
   double cutGuideLineWidth;
   List<CardGame> cards;
@@ -117,29 +113,26 @@ class PagePreview extends StatelessWidget {
         ]));
     List<Widget> allCardRows = List.filled(verticalCards, cardRow);
 
-    var repaintBoundary = RepaintBoundary(
-      key: globalKey,
-      child: AspectRatio(
-          aspectRatio: paperSize.width / paperSize.height,
-          child: Placeholder(
-            child: Column(children: [
-              marginRow,
-              guideRow,
-              ...allCardRows,
-              guideRow,
-              marginRow
-            ]),
-          )),
-    );
+    var repaintBoundary = AspectRatio(
+        aspectRatio: paperSize.width / paperSize.height,
+        child: Placeholder(
+          child: Column(children: [
+            marginRow,
+            guideRow,
+            ...allCardRows,
+            guideRow,
+            marginRow
+          ]),
+        ));
     return repaintBoundary;
   }
 }
 
-class Size {
+class SizeWidthHeight {
   double width;
   double height;
 
-  Size(this.width, this.height);
+  SizeWidthHeight(this.width, this.height);
   // Size.fromPhysical(double cmWidth, double cmHeight, double ppi)
   //     : width = (cmWidth * ppi / 2.54).round(),
   //       height = (cmHeight * ppi / 2.54).round();
