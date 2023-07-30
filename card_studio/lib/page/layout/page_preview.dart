@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
 
+import 'layout_struct.dart';
+
 /// Use for both output preview and actual image export. On preview it stretches
 /// to the parent object. On export we can control parent to have the same aspect
 /// then make it as big as required.
+///
+/// This renders just 1 page and how many cards can fit depends on the layout struct.
+/// [cards] sequentially fill these slots from left to right, then top to bottom. If cards
+/// are over available slots, it throws an error.
 class PagePreview extends StatelessWidget {
-  SizeWidthHeight paperSize;
-  SizeWidthHeight cardSize;
-  SizeWidthHeight marginSize;
-  SizeWidthHeight edgeCutGuideSize;
-  double whitePadding;
-  double cutGuideLineWidth;
-  List<CardGame> cards;
-  GlobalKey? globalKey;
+  final LayoutData layoutData;
+  final SizePhysical cardSize;
+  final List<CardGame> cards;
 
   PagePreview(
-      this.paperSize,
-      this.cardSize,
-      this.marginSize,
-      this.edgeCutGuideSize,
-      this.whitePadding,
-      this.cutGuideLineWidth,
-      this.cards,
-      {this.globalKey}) {}
+    this.layoutData,
+    this.cardSize,
+    this.cards,
+  );
 
   // Future<Uint8List> _capturePng() async {
   //       print('inside');
@@ -39,31 +36,34 @@ class PagePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var cardSpaceHorizontal =
-        paperSize.width - (2 * (marginSize.width + edgeCutGuideSize.width));
-    var cardSpaceVertical =
-        paperSize.height - (2 * (marginSize.height + edgeCutGuideSize.height));
+    final ld = layoutData;
+    var cardSpaceHorizontal = ld.paperSize.width -
+        (2 * (ld.marginSize.width + ld.edgeCutGuideSize.width));
+    var cardSpaceVertical = ld.paperSize.height -
+        (2 * (ld.marginSize.height + ld.edgeCutGuideSize.height));
     int horizontalCards = cardSpaceHorizontal ~/ cardSize.width;
     int verticalCards = cardSpaceVertical ~/ cardSize.height;
 
     const flexMultiplier = 1000000;
     int marginFlex =
-        (marginSize.height / paperSize.height * flexMultiplier).round();
+        (ld.marginSize.height / ld.paperSize.height * flexMultiplier).round();
     int guideFlex =
-        (edgeCutGuideSize.height / paperSize.height * flexMultiplier).round();
+        (ld.edgeCutGuideSize.height / ld.paperSize.height * flexMultiplier)
+            .round();
     int cardFlex =
-        (cardSize.height / paperSize.height * flexMultiplier).round();
+        (cardSize.height / ld.paperSize.height * flexMultiplier).round();
 
     int guideCornerFlex =
-        (marginSize.width / paperSize.width * flexMultiplier).round();
+        (ld.marginSize.width / ld.paperSize.width * flexMultiplier).round();
     int guideCornerSecondFlex =
-        (edgeCutGuideSize.width / paperSize.width * flexMultiplier).round();
-    int guideCardFlex =
-        ((paperSize.width - ((marginSize.width + edgeCutGuideSize.width) * 2)) /
-                horizontalCards /
-                paperSize.width *
-                flexMultiplier)
+        (ld.edgeCutGuideSize.width / ld.paperSize.width * flexMultiplier)
             .round();
+    int guideCardFlex = ((ld.paperSize.width -
+                ((ld.marginSize.width + ld.edgeCutGuideSize.width) * 2)) /
+            horizontalCards /
+            ld.paperSize.width *
+            flexMultiplier)
+        .round();
 
     Widget verticalMargin = Expanded(
         flex: guideCornerFlex,
@@ -94,7 +94,8 @@ class PagePreview extends StatelessWidget {
         ]));
 
     int cutFlex =
-        (edgeCutGuideSize.width / paperSize.width * flexMultiplier).round();
+        (ld.edgeCutGuideSize.width / ld.paperSize.width * flexMultiplier)
+            .round();
     Widget cut = Expanded(
         flex: cutFlex, child: Placeholder(strokeWidth: 1, color: Colors.blue));
     Widget realCard = Expanded(
@@ -114,7 +115,7 @@ class PagePreview extends StatelessWidget {
     List<Widget> allCardRows = List.filled(verticalCards, cardRow);
 
     var repaintBoundary = AspectRatio(
-        aspectRatio: paperSize.width / paperSize.height,
+        aspectRatio: ld.paperSize.width / ld.paperSize.height,
         child: Placeholder(
           child: Column(children: [
             marginRow,
@@ -127,15 +128,3 @@ class PagePreview extends StatelessWidget {
     return repaintBoundary;
   }
 }
-
-class SizeWidthHeight {
-  double width;
-  double height;
-
-  SizeWidthHeight(this.width, this.height);
-  // Size.fromPhysical(double cmWidth, double cmHeight, double ppi)
-  //     : width = (cmWidth * ppi / 2.54).round(),
-  //       height = (cmHeight * ppi / 2.54).round();
-}
-
-class CardGame {}
