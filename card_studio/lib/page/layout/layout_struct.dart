@@ -52,17 +52,31 @@ enum LayoutStyle {
 }
 
 class SizePhysical {
-  late double _widthInch;
-  late double _heightInch;
+  late double _widthCm;
+  late double _heightCm;
 
-  double get widthInch => _widthInch;
-  double get heightInch => _heightInch;
+  double get widthCm => _widthCm;
+  double get heightCm => _heightCm;
+  double get widthInch => _widthCm / 2.54;
+  double get heightInch => _heightCm / 2.54;
 
   SizePhysical(double width, double height, PhysicalSizeType physicalSizeType) {
     if (physicalSizeType == PhysicalSizeType.centimeter) {
-      _widthInch = width / 2.54;
-      _heightInch = height / 2.54;
+      _widthCm = width;
+      _heightCm = height;
+    } else {
+      _widthCm = width * 2.54;
+      _heightCm = height * 2.54;
     }
+  }
+
+  SizePhysical.fromJson(Map<String, dynamic> json) {
+    _widthCm = json['width'];
+    _heightCm = json['height'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'width': _widthCm, 'height': _heightCm};
   }
 }
 
@@ -72,12 +86,15 @@ enum PhysicalSizeType {
 }
 
 class ValuePhysical {
-  late double _valueInch;
-  double get valueInch => _valueInch;
+  late double _valueCm;
+  double get valueCm => _valueCm;
+  double get valueInch => _valueCm / 2.54;
 
   ValuePhysical(double value, PhysicalSizeType physicalSizeType) {
     if (physicalSizeType == PhysicalSizeType.centimeter) {
-      _valueInch = value / 2.54;
+      _valueCm = value;
+    } else {
+      _valueCm = value * 2.54;
     }
   }
 }

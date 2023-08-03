@@ -1,4 +1,5 @@
 import 'package:card_studio/core/project_settings.dart';
+import 'package:card_studio/core/save_file.dart';
 
 import 'layout_struct.dart';
 import 'render.dart';
@@ -116,6 +117,13 @@ class LayoutPage extends StatelessWidget {
                                   sampleLayoutData, []);
                             },
                             child: Text("Print")),
+                        ElevatedButton(
+                            onPressed: () async {
+                              SaveFile.hack().saveToFile(
+                                  "/Users/5argon/Desktop/TabooPrintProject",
+                                  "test");
+                            },
+                            child: Text("Hack")),
                         SegmentedButton(
                           segments: [
                             ButtonSegment(value: 0, label: Text("Dual")),
