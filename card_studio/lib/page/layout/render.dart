@@ -23,8 +23,10 @@ Future renderRender(
     projectSettings.cardSize,
     [],
   );
-  final imageUint =
-      await createImageBytesFromWidget(context, toRender, 1000, 1000);
+  final pixelWidth = layoutData.paperSize.widthInch * layoutData.pixelPerInch;
+  final pixelHeight = layoutData.paperSize.heightInch * layoutData.pixelPerInch;
+  final imageUint = await createImageBytesFromWidget(
+      context, toRender, pixelWidth, pixelHeight);
   final directory = await openExportDirectoryPicker();
   if (directory != null) {
     await savePng(imageUint, directory, "export");
