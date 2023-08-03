@@ -37,31 +37,40 @@ class PagePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ld = layoutData;
-    var cardSpaceHorizontal = ld.paperSize.width -
-        (2 * (ld.marginSize.width + ld.edgeCutGuideSize.width));
-    var cardSpaceVertical = ld.paperSize.height -
-        (2 * (ld.marginSize.height + ld.edgeCutGuideSize.height));
-    int horizontalCards = cardSpaceHorizontal ~/ cardSize.width;
-    int verticalCards = cardSpaceVertical ~/ cardSize.height;
+    var cardSpaceHorizontal = ld.paperSize.widthInch -
+        (2 * (ld.marginSize.widthInch + ld.edgeCutGuideSize.widthInch));
+    var cardSpaceVertical = ld.paperSize.heightInch -
+        (2 * (ld.marginSize.heightInch + ld.edgeCutGuideSize.heightInch));
+    int horizontalCards = cardSpaceHorizontal ~/ cardSize.widthInch;
+    int verticalCards = cardSpaceVertical ~/ cardSize.heightInch;
+
+    assert(horizontalCards >= 1);
+    assert(verticalCards >= 1);
 
     const flexMultiplier = 1000000;
     int marginFlex =
-        (ld.marginSize.height / ld.paperSize.height * flexMultiplier).round();
-    int guideFlex =
-        (ld.edgeCutGuideSize.height / ld.paperSize.height * flexMultiplier)
+        (ld.marginSize.heightInch / ld.paperSize.heightInch * flexMultiplier)
             .round();
+    int guideFlex = (ld.edgeCutGuideSize.heightInch /
+            ld.paperSize.heightInch *
+            flexMultiplier)
+        .round();
     int cardFlex =
-        (cardSize.height / ld.paperSize.height * flexMultiplier).round();
+        (cardSize.heightInch / ld.paperSize.heightInch * flexMultiplier)
+            .round();
 
     int guideCornerFlex =
-        (ld.marginSize.width / ld.paperSize.width * flexMultiplier).round();
-    int guideCornerSecondFlex =
-        (ld.edgeCutGuideSize.width / ld.paperSize.width * flexMultiplier)
+        (ld.marginSize.widthInch / ld.paperSize.widthInch * flexMultiplier)
             .round();
-    int guideCardFlex = ((ld.paperSize.width -
-                ((ld.marginSize.width + ld.edgeCutGuideSize.width) * 2)) /
+    int guideCornerSecondFlex = (ld.edgeCutGuideSize.widthInch /
+            ld.paperSize.widthInch *
+            flexMultiplier)
+        .round();
+    int guideCardFlex = ((ld.paperSize.widthInch -
+                ((ld.marginSize.widthInch + ld.edgeCutGuideSize.widthInch) *
+                    2)) /
             horizontalCards /
-            ld.paperSize.width *
+            ld.paperSize.widthInch *
             flexMultiplier)
         .round();
 
@@ -93,9 +102,10 @@ class PagePreview extends StatelessWidget {
           verticalMargin
         ]));
 
-    int cutFlex =
-        (ld.edgeCutGuideSize.width / ld.paperSize.width * flexMultiplier)
-            .round();
+    int cutFlex = (ld.edgeCutGuideSize.widthInch /
+            ld.paperSize.widthInch *
+            flexMultiplier)
+        .round();
     Widget cut = Expanded(
         flex: cutFlex, child: Placeholder(strokeWidth: 1, color: Colors.blue));
     Widget realCard = Expanded(
@@ -115,7 +125,7 @@ class PagePreview extends StatelessWidget {
     List<Widget> allCardRows = List.filled(verticalCards, cardRow);
 
     var repaintBoundary = AspectRatio(
-        aspectRatio: ld.paperSize.width / ld.paperSize.height,
+        aspectRatio: ld.paperSize.widthInch / ld.paperSize.heightInch,
         child: Placeholder(
           child: Column(children: [
             marginRow,

@@ -1,8 +1,25 @@
+import 'package:card_studio/core/project_settings.dart';
+
 import 'layout_struct.dart';
 import 'render.dart';
 import 'package:flutter/material.dart';
 import 'output_layout_control.dart';
 import 'page_preview.dart';
+
+var sampleLayoutData = LayoutData(
+  SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
+  300,
+  SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
+  SizePhysical(1, 1, PhysicalSizeType.centimeter),
+  SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
+  ValuePhysical(0.3, PhysicalSizeType.centimeter),
+  LayoutStyle.duplex,
+);
+
+var sampleProjectSettings = ProjectSettings(
+    "",
+    SizePhysical(6.3, 8.15, PhysicalSizeType.centimeter),
+    SynthesizedBleed.mirror);
 
 class LayoutPage extends StatelessWidget {
   const LayoutPage({
@@ -14,25 +31,13 @@ class LayoutPage extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
     var lrPreviewPadding = 8.0;
     var pagePreviewLeft = PagePreview(
-      LayoutData(
-        SizePhysical(21, 29.7),
-        SizePhysical(6.3, 8.8),
-        SizePhysical(0.3, 0.3),
-        ValuePhysical(0.5),
-        ValuePhysical(0.02),
-      ),
-      SizePhysical(0.7, 0.7),
+      sampleLayoutData,
+      SizePhysical(6.3, 8.15, PhysicalSizeType.centimeter),
       [],
     );
     var pagePreviewRight = PagePreview(
-      LayoutData(
-        SizePhysical(21, 29.7),
-        SizePhysical(6.3, 8.8),
-        SizePhysical(0.3, 0.3),
-        ValuePhysical(0.5),
-        ValuePhysical(0.02),
-      ),
-      SizePhysical(0.7, 0.7),
+      sampleLayoutData,
+      SizePhysical(6.3, 8.15, PhysicalSizeType.centimeter),
       [],
     );
     var leftSide = Padding(
@@ -107,14 +112,8 @@ class LayoutPage extends StatelessWidget {
                       children: [
                         ElevatedButton(
                             onPressed: () async {
-                              final imageUint =
-                                  await createImageBytesFromWidget(
-                                      context, pagePreviewLeft, 1000, 1000);
-                              final directory =
-                                  await openExportDirectoryPicker();
-                              if (directory != null) {
-                                await savePng(imageUint, directory, "export");
-                              }
+                              renderRender(context, sampleProjectSettings,
+                                  sampleLayoutData, []);
                             },
                             child: Text("Print")),
                         SegmentedButton(

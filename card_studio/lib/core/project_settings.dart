@@ -8,5 +8,13 @@ class ProjectSettings {
 
   SizePhysical cardSize;
 
-  ProjectSettings(this.baseDirectory, this.cardSize);
+  /// Individual card can override this settings.
+  SynthesizedBleed synthesizedBleed;
+
+  ProjectSettings(this.baseDirectory, this.cardSize, this.synthesizedBleed);
+}
+
+enum SynthesizedBleed {
+  mirror,
+  none,
 }

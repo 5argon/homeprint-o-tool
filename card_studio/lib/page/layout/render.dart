@@ -10,11 +10,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
+import 'page_preview.dart';
+
 Future renderRender(
-  LayoutData layoutData,
+  BuildContext context,
   ProjectSettings projectSettings,
+  LayoutData layoutData,
   List<IncludeItem> includeItems,
-) {}
+) async {
+  var toRender = PagePreview(
+    layoutData,
+    projectSettings.cardSize,
+    [],
+  );
+  final imageUint =
+      await createImageBytesFromWidget(context, toRender, 1000, 1000);
+  final directory = await openExportDirectoryPicker();
+  if (directory != null) {
+    await savePng(imageUint, directory, "export");
+  }
+}
 
 Future<String?> openExportDirectoryPicker() async {
   String? directory = await FilePicker.platform.getDirectoryPath(
