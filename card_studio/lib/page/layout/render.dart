@@ -22,6 +22,8 @@ Future renderRender(
     layoutData,
     projectSettings.cardSize,
     [],
+    false,
+    false,
   );
   final pixelWidth = layoutData.paperSize.widthInch * layoutData.pixelPerInch;
   final pixelHeight = layoutData.paperSize.heightInch * layoutData.pixelPerInch;

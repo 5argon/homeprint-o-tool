@@ -1,36 +1,52 @@
 import 'package:card_studio/core/project_settings.dart';
-import 'package:card_studio/core/save_file.dart';
-
 import 'package:flutter/material.dart';
 
 import '../layout/layout_struct.dart';
 import '../layout/page_preview.dart';
-import '../layout/render.dart';
 
-class ReviewPage extends StatelessWidget {
-  final ProjectSettings projectSettings;
-  final LayoutData layoutData;
+enum PreviewStyle {
+  dual,
+  front,
+  back,
+}
+
+class ReviewPage extends StatefulWidget {
+  final ProjectSettings _projectSettings;
+  final LayoutData _layoutData;
 
   const ReviewPage({
     super.key,
-    required this.projectSettings,
-    required this.layoutData,
-  });
+    required ProjectSettings projectSettings,
+    required LayoutData layoutData,
+  })  : _projectSettings = projectSettings,
+        _layoutData = layoutData;
+
+  @override
+  State<ReviewPage> createState() => _ReviewPageState();
+}
+
+class _ReviewPageState extends State<ReviewPage> {
+  bool _previewCutLine = false;
+  PreviewStyle _previewStyle = PreviewStyle.dual;
 
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
     var lrPreviewPadding = 8.0;
     var pagePreviewLeft = PagePreview(
-      layoutData,
-      projectSettings.cardSize,
+      widget._layoutData,
+      widget._projectSettings.cardSize,
       [],
+      false,
+      _previewCutLine,
     );
 
     var pagePreviewRight = PagePreview(
-      layoutData,
-      projectSettings.cardSize,
+      widget._layoutData,
+      widget._projectSettings.cardSize,
       [],
+      false,
+      _previewCutLine,
     );
 
     var leftSide = Padding(
@@ -60,23 +76,35 @@ class ReviewPage extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            "Front",
+            "Back",
             style: textTheme.labelSmall,
           )
         ],
       ),
     );
 
+    List<Widget> previewChildren = [];
+    switch (_previewStyle) {
+      case PreviewStyle.dual:
+        previewChildren = [
+          Flexible(child: leftSide),
+          Flexible(child: rightSide)
+        ];
+        break;
+      case PreviewStyle.front:
+        previewChildren = [
+          Flexible(child: leftSide),
+        ];
+        break;
+      case PreviewStyle.back:
+        previewChildren = [
+          Flexible(child: rightSide),
+        ];
+        break;
+    }
     var dualPreviewRow = Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Flexible(
-          child: leftSide,
-        ),
-        Flexible(
-          child: rightSide,
-        ),
-      ],
+      children: previewChildren,
     );
 
     return Column(
@@ -103,17 +131,31 @@ class ReviewPage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SegmentedButton(
-                          segments: [
-                            ButtonSegment(value: 0, label: Text("Dual")),
-                            ButtonSegment(value: 1, label: Text("Front")),
-                            ButtonSegment(value: 2, label: Text("Back")),
-                          ],
-                          selected: {0},
-                          onSelectionChanged: (p0) {
-                            print("do something");
-                          },
+                        SizedBox(
+                          width: 300,
+                          child: SegmentedButton(
+                            segments: [
+                              ButtonSegment(value: 0, label: Text("Dual")),
+                              ButtonSegment(value: 1, label: Text("Front")),
+                              ButtonSegment(value: 2, label: Text("Back")),
+                            ],
+                            selected: {_previewStyle.index},
+                            onSelectionChanged: (p0) {
+                              setState(() {
+                                _previewStyle = PreviewStyle.values[p0.first];
+                              });
+                            },
+                          ),
                         ),
+                        SizedBox(width: 16),
+                        Checkbox(
+                            value: _previewCutLine,
+                            onChanged: (checked) {
+                              setState(() {
+                                _previewCutLine = checked ?? false;
+                              });
+                            }),
+                        Text("Preview Cut Line")
                       ],
                     ),
                   ),

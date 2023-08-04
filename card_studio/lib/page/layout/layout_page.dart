@@ -5,23 +5,32 @@ import 'package:flutter/material.dart';
 import 'output_layout_control.dart';
 import 'page_preview.dart';
 
-class LayoutPage extends StatelessWidget {
-  final ProjectSettings projectSettings;
-  final LayoutData layoutData;
+class LayoutPage extends StatefulWidget {
+  final ProjectSettings _projectSettings;
+  final LayoutData _layoutData;
 
   const LayoutPage({
     super.key,
-    required this.projectSettings,
-    required this.layoutData,
-  });
+    required ProjectSettings projectSettings,
+    required LayoutData layoutData,
+  })  : _projectSettings = projectSettings,
+        _layoutData = layoutData;
 
+  @override
+  State<LayoutPage> createState() => _LayoutPageState();
+}
+
+class _LayoutPageState extends State<LayoutPage> {
+  bool _previewCuttingLine = false;
   @override
   Widget build(BuildContext context) {
     var lrPreviewPadding = 8.0;
     var layoutPreview = PagePreview(
-      layoutData,
-      projectSettings.cardSize,
+      widget._layoutData,
+      widget._projectSettings.cardSize,
       [],
+      true,
+      _previewCuttingLine,
     );
 
     var leftSide = Padding(

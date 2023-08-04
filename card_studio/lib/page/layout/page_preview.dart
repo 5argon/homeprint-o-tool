@@ -13,11 +13,15 @@ class PagePreview extends StatelessWidget {
   final LayoutData layoutData;
   final SizePhysical cardSize;
   final List<CardGame> cards;
+  final bool layout;
+  final bool previewCuttingLine;
 
   PagePreview(
     this.layoutData,
     this.cardSize,
     this.cards,
+    this.layout,
+    this.previewCuttingLine,
   );
 
   // Future<Uint8List> _capturePng() async {
