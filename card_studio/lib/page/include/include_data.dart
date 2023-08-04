@@ -1,5 +1,7 @@
 import '../../core/card.dart';
 
+typedef Includes = List<IncludeItem>;
+
 /// CardGroup or page break. Array of this became the output.
 class IncludeItem {
   CardGroup? cardGroup;

@@ -8,49 +8,64 @@ import 'card.dart';
 import 'project_settings.dart';
 import 'package:path/path.dart' as p;
 
+/// In the "Cards" tab, each card must be in a group.
+typedef DefinedCards = List<CardGroup>;
+typedef DefinedInstances = List<CardEachSingle>;
+
+typedef LoadResult = ({SaveFile saveFile, String basePath, String fileName});
+
 class SaveFile {
   ProjectSettings projectSettings;
-  List<CardEachSingle> instances;
-  List<CardGroup> cardGroups;
+  DefinedInstances instances;
+  DefinedCards cardGroups;
 
-  /// Opens a dialog to choose JSON file.
-  static Future<SaveFile?> loadFromFilePicker() async {
+  /// Opens a dialog to choose JSON file. Return `null` if cancel out of dialog.
+  static Future<LoadResult?> loadFromFilePicker() async {
     final pickResult = await FilePicker.platform.pickFiles(
       dialogTitle: "Choose a JSON file representing the project.",
       allowedExtensions: ['json'],
     );
     if (pickResult == null) return null;
-    final filePath = pickResult.files.single.toString();
+    final filePath = pickResult.files.single.path;
+    if (filePath == null) return null;
     return await loadFromPath(filePath);
   }
 
-  static Future<SaveFile?> loadFromPath(String filePath) async {
+  static Future<LoadResult> loadFromPath(String filePath) async {
     final fileToLoad = File(filePath);
     final jsonString = await fileToLoad.readAsString();
     Map<String, dynamic> jsonDynamic = jsonDecode(jsonString);
-    final baseDirectory = p.dirname(filePath);
-    return SaveFile.fromJson(baseDirectory, jsonDynamic);
+    final LoadResult result = (
+      saveFile: SaveFile.fromJson(jsonDynamic),
+      basePath: p.dirname(filePath),
+      fileName: p.basename(filePath),
+    );
+    return result;
   }
 
-  Future saveToFile(String currentBasePath, String? projectFileName) async {
-    var file = File('$currentBasePath/$projectFileName.json');
+  /// [path] includes extension (.json).
+  /// Returns file name and directory of the file.
+  Future<({String fileName, String baseDirectory})> saveToFile(
+      String path) async {
+    var file = File(path);
     final jsonString = jsonEncode(toJson());
     await file.writeAsString(jsonString);
+    final baseDirectory = p.dirname(path);
+    final fileName = p.basename(path);
+    return (fileName: fileName, baseDirectory: baseDirectory);
   }
 
-  factory SaveFile.fromJson(String baseDirectory, Map<String, dynamic> json) {
-    final projectSettings =
-        ProjectSettings.fromJson(baseDirectory, json['projectSettings']);
+  factory SaveFile.fromJson(Map<String, dynamic> json) {
+    final projectSettings = ProjectSettings.fromJson(json['projectSettings']);
     final instances = List<CardEachSingle>.from(
         json['instances'].map((instance) => CardEachSingle.fromJson(instance)));
     final cardGroups = List<CardGroup>.from(json['cardGroups']
         .map((instance) => CardGroup.fromJson(instance, instances)));
-    return SaveFile._internal(projectSettings, instances, cardGroups);
+    return SaveFile(projectSettings, instances, cardGroups);
   }
 
   factory SaveFile.hack() {
     var ps = ProjectSettings(
-        "",
         SizePhysical(6.3, 8.15, PhysicalSizeType.centimeter),
         SynthesizedBleed.mirror);
 
@@ -93,14 +108,14 @@ class SaveFile {
     CardEach peteCard = CardEach(peteFront, peteBack);
     CardEach guitarCard = CardEach(guitar, playerCardBack);
     CardEach hardTimesCard = CardEach(hardTimes, playerCardBack);
-    return SaveFile._internal(ps, [
+    return SaveFile(ps, [
       playerCardBack
     ], [
       CardGroup([peteCard, guitarCard, hardTimesCard], "Default Group")
     ]);
   }
 
-  SaveFile._internal(this.projectSettings, this.instances, this.cardGroups);
+  SaveFile(this.projectSettings, this.instances, this.cardGroups);
 
   Map<String, dynamic> toJson() {
     return {

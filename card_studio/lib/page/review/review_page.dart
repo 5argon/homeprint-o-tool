@@ -103,19 +103,6 @@ class ReviewPage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton(
-                            onPressed: () async {
-                              renderRender(
-                                  context, projectSettings, layoutData, []);
-                            },
-                            child: Text("Print")),
-                        ElevatedButton(
-                            onPressed: () async {
-                              SaveFile.hack().saveToFile(
-                                  "/Users/5argon/Desktop/TabooPrintProject",
-                                  "test");
-                            },
-                            child: Text("Hack")),
                         SegmentedButton(
                           segments: [
                             ButtonSegment(value: 0, label: Text("Dual")),
