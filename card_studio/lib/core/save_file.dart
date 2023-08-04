@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import '../page/layout/layout_struct.dart';
 import 'card.dart';
 import 'project_settings.dart';
+import 'package:path/path.dart' as p;
 
 class SaveFile {
   ProjectSettings projectSettings;
@@ -13,15 +14,22 @@ class SaveFile {
   List<CardGroup> cardGroups;
 
   /// Opens a dialog to choose JSON file.
-  static Future<SaveFile?> fromFile(String path) async {
+  static Future<SaveFile?> loadFromFilePicker() async {
     final pickResult = await FilePicker.platform.pickFiles(
       dialogTitle: "Choose a JSON file representing the project.",
       allowedExtensions: ['json'],
     );
     if (pickResult == null) return null;
-    final jsonString = pickResult.files.single.toString();
+    final filePath = pickResult.files.single.toString();
+    return await loadFromPath(filePath);
+  }
+
+  static Future<SaveFile?> loadFromPath(String filePath) async {
+    final fileToLoad = File(filePath);
+    final jsonString = await fileToLoad.readAsString();
     Map<String, dynamic> jsonDynamic = jsonDecode(jsonString);
-    return SaveFile.fromJson(path, jsonDynamic);
+    final baseDirectory = p.dirname(filePath);
+    return SaveFile.fromJson(baseDirectory, jsonDynamic);
   }
 
   Future saveToFile(String currentBasePath, String? projectFileName) async {

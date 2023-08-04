@@ -26,6 +26,10 @@ class LayoutData {
   /// Defines how would you use the printed paper to make a double sided card.
   LayoutStyle layoutStyle;
 
+  bool duplexFlipHorizontal;
+  bool duplexFlipVertical;
+  bool duplexRotate180;
+
   LayoutData(
     this.paperSize,
     this.pixelPerInch,
@@ -34,6 +38,9 @@ class LayoutData {
     this.perCardWhitePadding,
     this.perCardCutGuideLength,
     this.layoutStyle,
+    this.duplexFlipHorizontal,
+    this.duplexFlipVertical,
+    this.duplexRotate180,
   );
 }
 
@@ -46,9 +53,6 @@ enum LayoutStyle {
 
   /// Print once and fold after cutting to get double sided card. Folding line is on the shorter side of the card.
   foldingShort,
-
-  /// Back side of the card are listed next to the front side. Requires gluing together front and back graphics.
-  separate,
 }
 
 class SizePhysical {
