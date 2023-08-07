@@ -1,5 +1,6 @@
 import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/page/include/include_data.dart';
+import 'package:card_studio/page/layout/page_preview_frame.dart';
 import 'package:card_studio/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
@@ -39,20 +40,24 @@ class _ReviewPageState extends State<ReviewPage> {
 
     var textTheme = Theme.of(context).textTheme;
     var lrPreviewPadding = 8.0;
-    var pagePreviewLeft = PagePreview(
-      widget.layoutData,
-      widget.projectSettings.cardSize,
-      cards.front,
-      false,
-      _previewCutLine,
+    var pagePreviewLeft = PagePreviewFrame(
+      child: PagePreview(
+        widget.layoutData,
+        widget.projectSettings.cardSize,
+        cards.front,
+        false,
+        _previewCutLine,
+      ),
     );
 
-    var pagePreviewRight = PagePreview(
-      widget.layoutData,
-      widget.projectSettings.cardSize,
-      cards.back,
-      false,
-      _previewCutLine,
+    var pagePreviewRight = PagePreviewFrame(
+      child: PagePreview(
+        widget.layoutData,
+        widget.projectSettings.cardSize,
+        cards.back,
+        false,
+        _previewCutLine,
+      ),
     );
 
     var leftSide = Padding(

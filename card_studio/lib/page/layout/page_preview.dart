@@ -121,17 +121,15 @@ class PagePreview extends StatelessWidget {
         ]));
     List<Widget> allCardRows = List.filled(verticalCards, cardRow);
 
-    var repaintBoundary = AspectRatio(
+    var allRows = AspectRatio(
         aspectRatio: ld.paperSize.widthCm / ld.paperSize.heightCm,
-        child: Placeholder(
-          child: Column(children: [
-            marginRow,
-            guideRow,
-            ...allCardRows,
-            guideRow,
-            marginRow
-          ]),
-        ));
-    return repaintBoundary;
+        child: Column(children: [
+          marginRow,
+          guideRow,
+          ...allCardRows,
+          guideRow,
+          marginRow
+        ]));
+    return allRows;
   }
 }

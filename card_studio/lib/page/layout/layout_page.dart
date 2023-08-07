@@ -1,4 +1,5 @@
 import 'package:card_studio/core/project_settings.dart';
+import 'package:card_studio/page/layout/page_preview_frame.dart';
 
 import 'layout_struct.dart';
 import 'package:flutter/material.dart';
@@ -25,12 +26,14 @@ class _LayoutPageState extends State<LayoutPage> {
   @override
   Widget build(BuildContext context) {
     var lrPreviewPadding = 8.0;
-    var layoutPreview = PagePreview(
-      widget._layoutData,
-      widget._projectSettings.cardSize,
-      [],
-      true,
-      _previewCuttingLine,
+    var layoutPreview = PagePreviewFrame(
+      child: PagePreview(
+        widget._layoutData,
+        widget._projectSettings.cardSize,
+        [],
+        true,
+        _previewCuttingLine,
+      ),
     );
 
     var leftSide = Padding(
