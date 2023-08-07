@@ -52,8 +52,8 @@ class PagePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final ld = layoutData;
     final cardCount = calculateCardCountPerPage(layoutData, cardSize);
-    final horizontalCards = cardCount.rows;
-    final verticalCards = cardCount.columns;
+    final horizontalCards = cardCount.columns;
+    final verticalCards = cardCount.rows;
 
     assert(horizontalCards >= 1);
     assert(verticalCards >= 1);
@@ -164,13 +164,20 @@ class PagePreview extends StatelessWidget {
 
     var allRows = AspectRatio(
         aspectRatio: ld.paperSize.widthCm / ld.paperSize.heightCm,
-        child: Column(children: [
-          marginRow,
-          guideRow,
-          ...allCardRows,
-          guideRow,
-          marginRow
-        ]));
+        child: Stack(
+          children: [
+            Container(
+              color: Colors.white,
+            ),
+            Column(children: [
+              marginRow,
+              guideRow,
+              ...allCardRows,
+              guideRow,
+              marginRow
+            ])
+          ],
+        ));
     return allRows;
   }
 }

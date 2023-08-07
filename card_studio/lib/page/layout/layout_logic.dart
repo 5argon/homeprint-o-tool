@@ -11,5 +11,5 @@ import 'layout_struct.dart';
       (2 * (ld.marginSize.heightCm + ld.edgeCutGuideSize.heightCm));
   int horizontalCards = cardSpaceHorizontal ~/ cardSize.widthCm;
   int verticalCards = cardSpaceVertical ~/ cardSize.heightCm;
-  return (rows: horizontalCards, columns: verticalCards);
+  return (rows: verticalCards, columns: horizontalCards);
 }

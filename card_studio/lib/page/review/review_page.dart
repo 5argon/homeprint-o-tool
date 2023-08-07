@@ -49,7 +49,7 @@ class _ReviewPageState extends State<ReviewPage> {
         cards.front,
         false,
         _previewCutLine,
-        null,
+        widget.baseDirectory,
       ),
     );
 

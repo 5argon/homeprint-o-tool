@@ -74,7 +74,7 @@ class CardEach {
     if (backInstance is String) {
       // Search from matching UUID in instances instead.
       for (var instance in instances) {
-        if (instance.uuid == frontInstance) {
+        if (instance.uuid == backInstance) {
           back = instance;
           break;
         }

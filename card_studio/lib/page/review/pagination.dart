@@ -37,7 +37,7 @@ typedef RowColCards = List<List<CardEachSingle?>>;
   final onThisPage = allIncludes.sublist(start, end);
 
   final frontCards = onThisPage.map((e) => e.front).toList();
-  final backCards = onThisPage.map((e) => e.front).toList();
+  final backCards = onThisPage.map((e) => e.back).toList();
   return (
     front: distributeRowCol(
         cardCountRowCol.rows, cardCountRowCol.columns, frontCards),
