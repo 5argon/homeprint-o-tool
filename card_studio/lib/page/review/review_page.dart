@@ -1,4 +1,6 @@
 import 'package:card_studio/core/project_settings.dart';
+import 'package:card_studio/page/include/include_data.dart';
+import 'package:card_studio/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
 import '../layout/layout_struct.dart';
@@ -11,40 +13,44 @@ enum PreviewStyle {
 }
 
 class ReviewPage extends StatefulWidget {
-  final ProjectSettings _projectSettings;
-  final LayoutData _layoutData;
+  const ReviewPage(
+      {super.key,
+      required this.projectSettings,
+      required this.layoutData,
+      required this.includes});
 
-  const ReviewPage({
-    super.key,
-    required ProjectSettings projectSettings,
-    required LayoutData layoutData,
-  })  : _projectSettings = projectSettings,
-        _layoutData = layoutData;
+  final ProjectSettings projectSettings;
+  final LayoutData layoutData;
+  final Includes includes;
 
   @override
   State<ReviewPage> createState() => _ReviewPageState();
 }
 
 class _ReviewPageState extends State<ReviewPage> {
+  int _page = 1;
   bool _previewCutLine = false;
   PreviewStyle _previewStyle = PreviewStyle.dual;
 
   @override
   Widget build(BuildContext context) {
+    final cards = cardsAtPage(widget.includes, widget.layoutData,
+        widget.projectSettings.cardSize, _page);
+
     var textTheme = Theme.of(context).textTheme;
     var lrPreviewPadding = 8.0;
     var pagePreviewLeft = PagePreview(
-      widget._layoutData,
-      widget._projectSettings.cardSize,
-      [],
+      widget.layoutData,
+      widget.projectSettings.cardSize,
+      cards.front,
       false,
       _previewCutLine,
     );
 
     var pagePreviewRight = PagePreview(
-      widget._layoutData,
-      widget._projectSettings.cardSize,
-      [],
+      widget.layoutData,
+      widget.projectSettings.cardSize,
+      cards.back,
       false,
       _previewCutLine,
     );
@@ -83,7 +89,7 @@ class _ReviewPageState extends State<ReviewPage> {
       ),
     );
 
-    List<Widget> previewChildren = [];
+    List<Widget> previewChildren;
     switch (_previewStyle) {
       case PreviewStyle.dual:
         previewChildren = [
@@ -102,6 +108,7 @@ class _ReviewPageState extends State<ReviewPage> {
         ];
         break;
     }
+
     var dualPreviewRow = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: previewChildren,

@@ -1,3 +1,5 @@
+import 'package:card_studio/page/layout/layout_logic.dart';
+import 'package:card_studio/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
 import 'layout_struct.dart';
@@ -7,12 +9,12 @@ import 'layout_struct.dart';
 /// then make it as big as required.
 ///
 /// This renders just 1 page and how many cards can fit depends on the layout struct.
-/// [cards] sequentially fill these slots from left to right, then top to bottom. If cards
-/// are over available slots, it throws an error.
+/// [cards] is an array of array. The first layer is a row. The second layer is each card
+/// in the row (e.g. column). Overflows are discarded.
 class PagePreview extends StatelessWidget {
   final LayoutData layoutData;
   final SizePhysical cardSize;
-  final List<CardGame> cards;
+  final RowColCards cards;
   final bool layout;
   final bool previewCuttingLine;
 
@@ -41,12 +43,9 @@ class PagePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ld = layoutData;
-    var cardSpaceHorizontal = ld.paperSize.widthCm -
-        (2 * (ld.marginSize.widthCm + ld.edgeCutGuideSize.widthCm));
-    var cardSpaceVertical = ld.paperSize.heightCm -
-        (2 * (ld.marginSize.heightCm + ld.edgeCutGuideSize.heightCm));
-    int horizontalCards = cardSpaceHorizontal ~/ cardSize.widthCm;
-    int verticalCards = cardSpaceVertical ~/ cardSize.heightCm;
+    final cardCount = calculateCardCountPerPage(layoutData, cardSize);
+    final horizontalCards = cardCount.rows;
+    final verticalCards = cardCount.columns;
 
     assert(horizontalCards >= 1);
     assert(verticalCards >= 1);

@@ -92,6 +92,10 @@ class _MyHomePageState extends State<MyHomePage> {
         _projectSettings = value.saveFile.projectSettings;
         _definedCards = value.saveFile.cardGroups;
         _definedInstances = value.saveFile.instances;
+        // Include everything for now.
+        for (var i = 0; i < _definedCards.length; i++) {
+          _includes.add(IncludeItem.cardGroup(_definedCards[i], 1));
+        }
       });
       return;
     });
@@ -122,14 +126,15 @@ class _MyHomePageState extends State<MyHomePage> {
               switch (_selectedIndex) {
                 case 4:
                   var layoutPage = LayoutPage(
-                    layoutData: defaultLayoutData,
-                    projectSettings: defaultProjectSettings,
+                    layoutData: _layoutData,
+                    projectSettings: _projectSettings,
                   );
                   return layoutPage;
                 case 5:
                   var reviewPage = ReviewPage(
-                    layoutData: defaultLayoutData,
-                    projectSettings: defaultProjectSettings,
+                    layoutData: _layoutData,
+                    projectSettings: _projectSettings,
+                    includes: _includes,
                   );
                   return reviewPage;
                 default:

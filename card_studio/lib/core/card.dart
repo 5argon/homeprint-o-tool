@@ -5,6 +5,14 @@ class CardGroup {
   late List<CardEach> cards;
   CardGroup(this.cards, this.name);
 
+  List<CardEach> linearize() {
+    final result = <CardEach>[];
+    for (var card in cards) {
+      result.addAll(card.linearize());
+    }
+    return result;
+  }
+
   CardGroup.fromJson(
       Map<String, dynamic> json, List<CardEachSingle> instances) {
     name = json['name'];
@@ -20,14 +28,34 @@ class CardGroup {
       'cards': cards.map((e) => e.toJson(instances)).toList(),
     };
   }
+
+  /// How many cards are in this group.
+  int count() {
+    var total = 0;
+    for (var card in cards) {
+      total += card.amount;
+    }
+    return total;
+  }
 }
 
+/// Represent a card, which consists of front side and back side.
 class CardEach {
   CardEachSingle? front;
   CardEachSingle? back;
-  CardEach(this.front, this.back);
+
+  /// On including this card, automatically duplicates itself by this many count.
+  late int amount;
+
+  CardEach(this.front, this.back, this.amount);
+
+  List<CardEach> linearize() {
+    return List.filled(amount, this);
+  }
 
   CardEach.fromJson(Map<String, dynamic> json, List<CardEachSingle> instances) {
+    amount = json['amount'] ?? 1;
+
     final frontInstance = json['frontInstance'];
     if (frontInstance is String) {
       // Search from matching UUID in instances instead.
@@ -59,6 +87,7 @@ class CardEach {
 
   Map<String, dynamic> toJson(List<CardEachSingle> instances) {
     Map<String, dynamic> writeObject = {};
+    writeObject['amount'] = amount;
     // Match this object by pointer address among instances.
     // If found, write just the UUID instead.
     var foundFront = false;
