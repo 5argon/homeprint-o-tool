@@ -1,11 +1,11 @@
 import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/page/include/include_data.dart';
-import 'package:card_studio/page/layout/page_preview_frame.dart';
 import 'package:card_studio/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/page_preview/page_preview.dart';
+import '../../core/page_preview/page_preview_frame.dart';
 import '../layout/layout_struct.dart';
-import '../layout/page_preview.dart';
 
 enum PreviewStyle {
   dual,
@@ -18,11 +18,13 @@ class ReviewPage extends StatefulWidget {
       {super.key,
       required this.projectSettings,
       required this.layoutData,
-      required this.includes});
+      required this.includes,
+      required this.baseDirectory});
 
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
   final Includes includes;
+  final String baseDirectory;
 
   @override
   State<ReviewPage> createState() => _ReviewPageState();
@@ -47,6 +49,7 @@ class _ReviewPageState extends State<ReviewPage> {
         cards.front,
         false,
         _previewCutLine,
+        null,
       ),
     );
 
@@ -57,6 +60,7 @@ class _ReviewPageState extends State<ReviewPage> {
         cards.back,
         false,
         _previewCutLine,
+        widget.baseDirectory,
       ),
     );
 

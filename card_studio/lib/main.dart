@@ -4,12 +4,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'core/page_preview/render.dart';
 import 'core/project_settings.dart';
 import 'core/save_file.dart';
 import 'page/include/include_data.dart';
 import 'page/layout/layout_page.dart';
 import 'page/layout/layout_struct.dart';
-import 'page/layout/render.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,10 +24,16 @@ class MyApp extends StatelessWidget {
       create: (BuildContext context) {},
       child: MaterialApp(
         title: 'Namer App',
+        themeMode: ThemeMode.system,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme:
               ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 0, 70, 56)),
+          brightness: Brightness.light,
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.dark,
         ),
         home: MyHomePage(),
       ),
@@ -131,12 +137,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                   return layoutPage;
                 case 5:
-                  var reviewPage = ReviewPage(
-                    layoutData: _layoutData,
-                    projectSettings: _projectSettings,
-                    includes: _includes,
-                  );
-                  return reviewPage;
+                  final baseDirectory = _baseDirectory;
+                  if (baseDirectory != null) {
+                    var reviewPage = ReviewPage(
+                      layoutData: _layoutData,
+                      projectSettings: _projectSettings,
+                      includes: _includes,
+                      baseDirectory: baseDirectory,
+                    );
+                    return reviewPage;
+                  }
+                  return wipPage;
                 default:
                   return wipPage;
               }
@@ -259,8 +270,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: OutlinedButton(
                             onPressed: () {
-                              renderRender(context, _projectSettings,
-                                  _layoutData, _includes);
+                              final baseDirectory = _baseDirectory;
+                              if (baseDirectory != null) {
+                                renderRender(context, _projectSettings,
+                                    _layoutData, _includes, baseDirectory);
+                              }
                             },
                             child: Text("Export")),
                       ),

@@ -1,21 +1,20 @@
 import 'package:card_studio/core/project_settings.dart';
-import 'package:card_studio/page/layout/page_preview_frame.dart';
 
+import '../../core/page_preview/page_preview.dart';
+import '../../core/page_preview/page_preview_frame.dart';
 import 'layout_struct.dart';
 import 'package:flutter/material.dart';
 import 'output_layout_control.dart';
-import 'page_preview.dart';
 
 class LayoutPage extends StatefulWidget {
-  final ProjectSettings _projectSettings;
-  final LayoutData _layoutData;
+  final ProjectSettings projectSettings;
+  final LayoutData layoutData;
 
   const LayoutPage({
     super.key,
-    required ProjectSettings projectSettings,
-    required LayoutData layoutData,
-  })  : _projectSettings = projectSettings,
-        _layoutData = layoutData;
+    required this.projectSettings,
+    required this.layoutData,
+  });
 
   @override
   State<LayoutPage> createState() => _LayoutPageState();
@@ -28,11 +27,12 @@ class _LayoutPageState extends State<LayoutPage> {
     var lrPreviewPadding = 8.0;
     var layoutPreview = PagePreviewFrame(
       child: PagePreview(
-        widget._layoutData,
-        widget._projectSettings.cardSize,
+        widget.layoutData,
+        widget.projectSettings.cardSize,
         [],
         true,
         _previewCuttingLine,
+        null,
       ),
     );
 
