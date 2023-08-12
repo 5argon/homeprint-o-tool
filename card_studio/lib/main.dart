@@ -47,16 +47,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 var defaultLayoutData = LayoutData(
-  SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
-  300,
-  SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
-  SizePhysical(1, 1, PhysicalSizeType.centimeter),
-  SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
-  ValuePhysical(0.3, PhysicalSizeType.centimeter),
-  LayoutStyle.duplex,
-  false,
-  false,
-  false,
+  paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
+  pixelPerInch: 300,
+  marginSize: SizePhysical(0.2, 0.2, PhysicalSizeType.centimeter),
+  edgeCutGuideSize: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
+  perCardWhitePadding: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
+  perCardCutGuideLength: ValuePhysical(0.3, PhysicalSizeType.centimeter),
+  layoutStyle: LayoutStyle.duplex,
+  duplexFlipHorizontal: false,
+  duplexFlipVertical: false,
+  duplexRotate180: false,
 );
 
 var defaultProjectSettings = ProjectSettings(

@@ -20,7 +20,7 @@ class PagePreview extends StatelessWidget {
   final SizePhysical cardSize;
   final RowColCards cards;
   final bool layout;
-  final bool previewCuttingLine;
+  final bool previewCutLine;
 
   /// Must provide to show any image.
   final String? baseDirectory;
@@ -30,7 +30,7 @@ class PagePreview extends StatelessWidget {
     this.cardSize,
     this.cards,
     this.layout,
-    this.previewCuttingLine,
+    this.previewCutLine,
     this.baseDirectory,
   );
 
@@ -58,14 +58,14 @@ class PagePreview extends StatelessWidget {
     assert(horizontalCards >= 1);
     assert(verticalCards >= 1);
 
-    const flexMultiplier = 1000000;
+    const flexMultiplier = 10000000;
     int marginFlex =
         (ld.marginSize.heightCm / ld.paperSize.heightCm * flexMultiplier)
             .round();
     int guideFlex =
         (ld.edgeCutGuideSize.heightCm / ld.paperSize.heightCm * flexMultiplier)
             .round();
-    int cardFlex =
+    int cardFlexVertical =
         (cardSize.heightCm / ld.paperSize.heightCm * flexMultiplier).round();
 
     int guideCornerFlex =
@@ -73,12 +73,16 @@ class PagePreview extends StatelessWidget {
     int guideCornerSecondFlex =
         (ld.edgeCutGuideSize.widthCm / ld.paperSize.widthCm * flexMultiplier)
             .round();
-    int guideCardFlex = ((ld.paperSize.widthCm -
-                ((ld.marginSize.widthCm + ld.edgeCutGuideSize.widthCm) * 2)) /
-            horizontalCards /
-            ld.paperSize.widthCm *
-            flexMultiplier)
-        .round();
+
+    double horizontalAllEachCard = (ld.paperSize.widthCm -
+            ((ld.marginSize.widthCm + ld.edgeCutGuideSize.widthCm) * 2)) /
+        horizontalCards;
+    double verticalAllEachCard = (ld.paperSize.heightCm -
+            ((ld.marginSize.heightCm + ld.edgeCutGuideSize.heightCm) * 2)) /
+        verticalCards;
+
+    double cardHorizontalToPaper = horizontalAllEachCard / ld.paperSize.widthCm;
+    int cardAreaFlex = (cardHorizontalToPaper * flexMultiplier).round();
 
     Widget verticalMargin = Expanded(
         flex: guideCornerFlex,
@@ -107,15 +111,30 @@ class PagePreview extends StatelessWidget {
         if (cards.length > i && cards[i].length > j) {
           card = cards[i][j];
         }
+
+        double horizontalBleedEachCard =
+            horizontalAllEachCard - cardSize.widthCm;
+        double horizontalActualEachCard =
+            horizontalAllEachCard - horizontalBleedEachCard;
+        double verticalBleedEachCard = verticalAllEachCard - cardSize.heightCm;
+        double verticalActualEachCard =
+            verticalAllEachCard - verticalBleedEachCard;
         Widget entireCardArea = Expanded(
-            flex: guideCardFlex,
+            flex: cardAreaFlex,
             child: CardArea(
-                baseDirectory: baseDirectory, card: card, layout: layout));
+              horizontalSpace: horizontalActualEachCard / horizontalAllEachCard,
+              verticalSpace: verticalActualEachCard / verticalAllEachCard,
+              baseDirectory: baseDirectory,
+              card: card,
+              cardSize: cardSize,
+              layoutMode: layout,
+              previewCutLine: previewCutLine,
+            ));
         realCards.add(entireCardArea);
       }
 
       Widget cardRow = Expanded(
-          flex: cardFlex,
+          flex: cardFlexVertical,
           child: Row(children: [
             verticalMargin,
             cut,
@@ -134,14 +153,14 @@ class PagePreview extends StatelessWidget {
           flashing: false,
         ));
     Widget guideCard = Expanded(
-        flex: guideCardFlex,
+        flex: cardAreaFlex,
         child: CutGuide(
           direction: GuideDirection.horizontal,
           lineSize: ld.edgeCutGuideSize,
           layoutMode: layout,
           layoutGuideColor: Colors.blue,
-          totalSize: guideCardFlex.toDouble(),
-          cardSize: guideCardFlex.toDouble(),
+          totalSize: cardAreaFlex.toDouble(),
+          cardSize: cardAreaFlex.toDouble(),
         ));
     List<Widget> guideCards = List.filled(horizontalCards, guideCard);
     Widget marginRow = Expanded(

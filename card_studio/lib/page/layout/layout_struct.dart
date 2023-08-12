@@ -30,18 +30,18 @@ class LayoutData {
   bool duplexFlipVertical;
   bool duplexRotate180;
 
-  LayoutData(
-    this.paperSize,
-    this.pixelPerInch,
-    this.marginSize,
-    this.edgeCutGuideSize,
-    this.perCardWhitePadding,
-    this.perCardCutGuideLength,
-    this.layoutStyle,
-    this.duplexFlipHorizontal,
-    this.duplexFlipVertical,
-    this.duplexRotate180,
-  );
+  LayoutData({
+    required this.paperSize,
+    required this.pixelPerInch,
+    required this.marginSize,
+    required this.edgeCutGuideSize,
+    required this.perCardWhitePadding,
+    required this.perCardCutGuideLength,
+    required this.layoutStyle,
+    required this.duplexFlipHorizontal,
+    required this.duplexFlipVertical,
+    required this.duplexRotate180,
+  });
 }
 
 enum LayoutStyle {

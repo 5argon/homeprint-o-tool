@@ -10,19 +10,22 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
 import '../../page/layout/layout_struct.dart';
+import '../../page/review/pagination.dart';
 import 'page_preview.dart';
 
 Future renderRender(
   BuildContext context,
   ProjectSettings projectSettings,
   LayoutData layoutData,
-  List<IncludeItem> includeItems,
+  Includes includeItems,
   String baseDirectory,
 ) async {
+  final cards =
+      cardsAtPage(includeItems, layoutData, projectSettings.cardSize, 1);
   var toRender = PagePreview(
     layoutData,
     projectSettings.cardSize,
-    [],
+    cards.front,
     false,
     false,
     baseDirectory,
@@ -49,7 +52,7 @@ Future savePng(Uint8List imageData, String directory, String fileName) async {
 }
 
 Future<Uint8List> createImageBytesFromWidget(BuildContext context,
-    Widget widget, double pixelWidth, double pixelHeight) {
+    Widget widget, double pixelWidth, double pixelHeight) async {
   final flutterView = View.of(context);
   final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
   final RenderView renderView = RenderView(
@@ -83,6 +86,9 @@ Future<Uint8List> createImageBytesFromWidget(BuildContext context,
     ..flushLayout()
     ..flushCompositingBits()
     ..flushPaint();
+
+  // Wait 3 seconds for render (lol)
+  await Future.delayed(Duration(seconds: 3));
 
   return repaintBoundary
       .toImage(pixelRatio: flutterView.devicePixelRatio)
