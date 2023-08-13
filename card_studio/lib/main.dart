@@ -84,6 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
   LayoutData _layoutData = defaultLayoutData;
 
   Future? fileLoadingFuture;
+  Future? renderingFuture;
+  int exportingCurrentPage = 0;
+  ExportingFrontBack exportingFrontBack = ExportingFrontBack.front;
+  int exportingTotalPage = 0;
 
   @override
   initState() {
@@ -154,6 +158,26 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         },
         future: fileLoadingFuture);
+
+    Widget rendering = FutureBuilder(
+        builder: (context, snapshot) {
+          String frontBack =
+              exportingFrontBack == ExportingFrontBack.front ? "Front" : "Back";
+          Widget exporting = Center(
+            child: Text(
+                "Exporting page $exportingCurrentPage of $exportingTotalPage ($frontBack)"),
+          );
+          switch (snapshot.connectionState) {
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return exporting;
+            default:
+              {
+                return visiblePage;
+              }
+          }
+        },
+        future: renderingFuture);
 
     return Builder(builder: (context) {
       return Scaffold(
@@ -269,18 +293,43 @@ class _MyHomePageState extends State<MyHomePage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: OutlinedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               final baseDirectory = _baseDirectory;
                               if (baseDirectory != null) {
-                                renderRender(context, _projectSettings,
-                                    _layoutData, _includes, baseDirectory);
+                                final flutterView = View.of(context);
+                                final directory =
+                                    await openExportDirectoryPicker();
+                                if (directory != null) {
+                                  final renderingFuture = renderRender(
+                                      directory,
+                                      flutterView,
+                                      _projectSettings,
+                                      _layoutData,
+                                      _includes,
+                                      baseDirectory, (currentPage) {
+                                    setState(() {
+                                      exportingCurrentPage = currentPage;
+                                    });
+                                  }, (frontBack) {
+                                    setState(() {
+                                      exportingFrontBack = frontBack;
+                                    });
+                                  }, (totalPage) {
+                                    setState(() {
+                                      exportingTotalPage = totalPage;
+                                    });
+                                  });
+                                  setState(() {
+                                    this.renderingFuture = renderingFuture;
+                                  });
+                                }
                               }
                             },
                             child: Text("Export")),
                       ),
                     ]),
               ),
-              Expanded(child: visiblePage),
+              Expanded(child: rendering),
             ],
           ),
         ),

@@ -10,36 +10,69 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
+import '../../page/layout/layout_logic.dart';
 import '../../page/layout/layout_struct.dart';
 import '../../page/review/pagination.dart';
 import 'page_preview.dart';
 
+enum ExportingFrontBack { front, back }
+
 Future renderRender(
-  BuildContext context,
+  String directory,
+  ui.FlutterView flutterView,
   ProjectSettings projectSettings,
   LayoutData layoutData,
   Includes includeItems,
   String baseDirectory,
+  void Function(int) onCurrentPageUpdate,
+  void Function(ExportingFrontBack) onFrontBackUpdate,
+  void Function(int) onTotalPageUpdate,
 ) async {
-  final cards =
-      cardsAtPage(includeItems, layoutData, projectSettings.cardSize, 1);
+  final cardCountRowCol =
+      calculateCardCountPerPage(layoutData, projectSettings.cardSize);
+  final pagination = calculatePagination(includeItems, layoutData,
+      projectSettings.cardSize, cardCountRowCol.rows, cardCountRowCol.columns);
+  final pixelWidth = layoutData.paperSize.widthInch * layoutData.pixelPerInch;
+  final pixelHeight = layoutData.paperSize.heightInch * layoutData.pixelPerInch;
+  onTotalPageUpdate(pagination.totalPages);
+  for (var i = 0; i < pagination.totalPages; i++) {
+    onCurrentPageUpdate(i + 1);
+    final cards =
+        cardsAtPage(includeItems, layoutData, projectSettings.cardSize, i + 1);
+    const filePrefix = "export";
+    onFrontBackUpdate(ExportingFrontBack.front);
+    await newMethod(layoutData, projectSettings, cards.front, baseDirectory,
+        flutterView, pixelWidth, pixelHeight, directory, filePrefix, "A", i);
+    onFrontBackUpdate(ExportingFrontBack.back);
+    await newMethod(layoutData, projectSettings, cards.back, baseDirectory,
+        flutterView, pixelWidth, pixelHeight, directory, filePrefix, "B", i);
+  }
+}
+
+Future<void> newMethod(
+    LayoutData layoutData,
+    ProjectSettings projectSettings,
+    RowColCards cardsOnePage,
+    String baseDirectory,
+    ui.FlutterView flutterView,
+    double pixelWidth,
+    double pixelHeight,
+    String directory,
+    String fileName,
+    String frontBackSuffix,
+    int pageNumber) async {
   var toRender = PagePreview(
     layoutData: layoutData,
     cardSize: projectSettings.cardSize,
-    cards: cards.front,
+    cards: cardsOnePage,
     layout: false,
     previewCutLine: false,
     baseDirectory: baseDirectory,
   );
-  final flutterView = View.of(context);
-  final pixelWidth = layoutData.paperSize.widthInch * layoutData.pixelPerInch;
-  final pixelHeight = layoutData.paperSize.heightInch * layoutData.pixelPerInch;
   final imageUint = await createImageBytesFromWidget(flutterView, toRender,
       pixelWidth, pixelHeight, toRender.waitForAllImages());
-  final directory = await openExportDirectoryPicker();
-  if (directory != null) {
-    await savePng(imageUint, directory, "export");
-  }
+  await savePng(
+      imageUint, directory, "${fileName}_${pageNumber}_$frontBackSuffix");
 }
 
 Future<String?> openExportDirectoryPicker() async {
