@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class CardGroup {
@@ -118,12 +119,10 @@ class CardEachSingle {
   /// Relative to project's base directory. Not starting with a slash.
   late String relativeFilePath;
 
-  /// Use 0,0 for exactly at center. Use 1,1 or -1,-1 for exactly at the edge.
-  late XY contentCenterOffset;
+  late Alignment contentCenterOffset;
 
-  /// Content area's aspect ratio is always the same as project's card size.
-  /// Expand 1 meant that the frame is touching the edge of image. Expand until
-  /// the first edge touches.
+  /// From 0.0 to 1.0. At 1.0, expand from [contentCenterOffset] until one side
+  /// of the card's shape (in project settings) touches any edge.
   late double contentExpand;
 
   /// Rotation to apply to make this card match with project's card size.
@@ -145,7 +144,7 @@ class CardEachSingle {
 
   CardEachSingle.fromJson(Map<String, dynamic> json) {
     relativeFilePath = json['relativeFilePath'];
-    contentCenterOffset = XY.fromJson(json['contentCenterOffset']);
+    contentCenterOffset = alignmentFromJson(json['contentCenterOffset']);
     contentExpand = json['contentExpand'];
     rotation = Rotation.values.byName(json['rotation']);
     synthesizedBleed =
@@ -157,7 +156,7 @@ class CardEachSingle {
   Map<String, dynamic> toJson() {
     return {
       'relativeFilePath': relativeFilePath,
-      'contentCenterOffset': contentCenterOffset.toJson(),
+      'contentCenterOffset': alignmentToJson(contentCenterOffset),
       'contentExpand': contentExpand,
       'rotation': rotation.name,
       'synthesizedBleed': synthesizedBleed.name,
@@ -179,20 +178,15 @@ enum PerCardSynthesizedBleed {
   none,
 }
 
-class XY {
-  late double x;
-  late double y;
-  XY(this.x, this.y);
+Alignment alignmentFromJson(Map<String, dynamic> json) {
+  final x = json['x'];
+  final y = json['y'];
+  return Alignment(x, y);
+}
 
-  XY.fromJson(Map<String, dynamic> json) {
-    x = json['x'];
-    y = json['y'];
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'x': x,
-      'y': y,
-    };
-  }
+Map<String, dynamic> alignmentToJson(Alignment alignment) {
+  return {
+    'x': alignment.x,
+    'y': alignment.y,
+  };
 }

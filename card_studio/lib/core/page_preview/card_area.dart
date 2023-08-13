@@ -67,7 +67,6 @@ class CardArea extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget imageWidget = Container();
     if (card != null && baseDirectory != null) {
-      final cropRect = EdgeInsets.all(0.2);
       // final renderChild =
       //     Image.file(File(p.join(baseDirectory, card.relativeFilePath)));
       // imageWidget = Cropper(cropRect: cropRect, renderChild: renderChild);
@@ -84,18 +83,33 @@ class CardArea extends StatelessWidget {
               }
               return LayoutBuilder(
                 builder: (context, constraints) {
-                  final parentWidth = constraints.maxWidth;
-                  final parentHeight = constraints.maxHeight;
-                  final imageWidth = descriptorData.width;
-                  final imageHeight = descriptorData.height;
+                  final expand = card.contentExpand;
 
-                  final heightFitScale = (imageHeight / parentHeight);
-                  final widthFitScale = (imageWidth / parentWidth);
+                  final parentWidth = constraints.maxWidth;
+                  final imageWidth = descriptorData.width;
+                  final contentWidth = parentWidth * horizontalSpace;
+                  final widthFitScale = (imageWidth / contentWidth);
+
+                  final parentHeight = constraints.maxHeight;
+                  final imageHeight = descriptorData.height;
+                  final contentHeight = parentHeight * verticalSpace;
+                  final heightFitScale = (imageHeight / contentHeight);
+
+                  final widthAfterHeightFit = heightFitScale * contentWidth;
+                  // If not, then the opposite must be true.
+                  final focusWidth = widthAfterHeightFit >= contentWidth;
+
+                  double finalScale;
+                  if (focusWidth) {
+                    finalScale = widthFitScale * expand;
+                  } else {
+                    finalScale = heightFitScale * expand;
+                  }
 
                   final imageFileWidget = Image.file(
                     fileObject,
-                    alignment: Alignment(0, 0),
-                    scale: widthFitScale,
+                    alignment: card.contentCenterOffset * finalScale,
+                    scale: finalScale,
                     fit: BoxFit.none,
                   );
 

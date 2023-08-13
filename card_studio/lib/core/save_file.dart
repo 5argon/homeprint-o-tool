@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 
 import '../page/layout/layout_struct.dart';
 import 'card.dart';
@@ -71,7 +72,7 @@ class SaveFile {
 
     CardEachSingle playerCardBack = CardEachSingle(
         "coldtoes ppete/_playerback.png",
-        XY(0, 0),
+        Alignment(0, 0),
         1,
         Rotation.none,
         PerCardSynthesizedBleed.projectSettings,
@@ -79,28 +80,28 @@ class SaveFile {
 
     CardEachSingle peteFront = CardEachSingle(
         "coldtoes ppete/046 Parallel Ashcan Pete-1.png",
-        XY(0, 0),
+        Alignment(0, 0),
         1,
         Rotation.counterClockwise90,
         PerCardSynthesizedBleed.projectSettings,
         null);
     CardEachSingle peteBack = CardEachSingle(
         "coldtoes ppete/046 Parallel Ashcan Pete-2.png",
-        XY(0, 0),
+        Alignment(0, 0),
         1,
         Rotation.counterClockwise90,
         PerCardSynthesizedBleed.projectSettings,
         null);
     CardEachSingle guitar = CardEachSingle(
         "coldtoes ppete/047 Pete's Guitar-1.png",
-        XY(0, 0),
+        Alignment(0, 0),
         1,
         Rotation.none,
         PerCardSynthesizedBleed.projectSettings,
         null);
     CardEachSingle hardTimes = CardEachSingle(
         "coldtoes ppete/048 Hard Times-1.png",
-        XY(0, 0),
+        Alignment(0, 0),
         1,
         Rotation.none,
         PerCardSynthesizedBleed.projectSettings,
