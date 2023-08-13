@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:card_studio/page/layout/layout_helper.dart';
 import 'package:card_studio/page/layout/layout_logic.dart';
 import 'package:card_studio/page/review/pagination.dart';
@@ -25,38 +27,40 @@ class PagePreview extends StatelessWidget {
   /// Must provide to show any image.
   final String? baseDirectory;
 
-  PagePreview(
-    this.layoutData,
-    this.cardSize,
-    this.cards,
-    this.layout,
-    this.previewCutLine,
-    this.baseDirectory,
-  );
+  late int horizontalCards;
+  late int verticalCards;
+  late List<Completer> completers;
 
-  // Future<Uint8List> _capturePng() async {
-  //       print('inside');
-  //       RenderObject? ro = globalKey!.currentContext!.findRenderObject();
-  //       ui.Image image = await ro.toImage(pixelRatio: 3.0);
-  //       ByteData byteData =
-  //           await image.toByteData(format: ui.ImageByteFormat.png);
-  //       var pngBytes = byteData.buffer.asUint8List();
-  //       var bs64 = base64Encode(pngBytes);
-  //       print(pngBytes);
-  //       print(bs64);
-  //       return pngBytes;
-  //   }
-  // }
+  PagePreview({
+    required this.layoutData,
+    required this.cardSize,
+    required this.cards,
+    required this.layout,
+    required this.previewCutLine,
+    required this.baseDirectory,
+  }) {
+    final cardCount = calculateCardCountPerPage(layoutData, cardSize);
+    horizontalCards = cardCount.columns;
+    verticalCards = cardCount.rows;
+    assert(horizontalCards >= 1);
+    assert(verticalCards >= 1);
+    completers = [];
+    for (var i = 0; i < horizontalCards * verticalCards; i++) {
+      final com = Completer();
+      completers.add(com);
+    }
+  }
+
+  /// Check if this page is completely rendered yet.
+  Future waitForAllImages() async {
+    for (var i = 0; i < completers.length; i++) {
+      await completers[i].future;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final ld = layoutData;
-    final cardCount = calculateCardCountPerPage(layoutData, cardSize);
-    final horizontalCards = cardCount.columns;
-    final verticalCards = cardCount.rows;
-
-    assert(horizontalCards >= 1);
-    assert(verticalCards >= 1);
 
     const flexMultiplier = 10000000;
     int marginFlex =
@@ -119,17 +123,20 @@ class PagePreview extends StatelessWidget {
         double verticalBleedEachCard = verticalAllEachCard - cardSize.heightCm;
         double verticalActualEachCard =
             verticalAllEachCard - verticalBleedEachCard;
-        Widget entireCardArea = Expanded(
-            flex: cardAreaFlex,
-            child: CardArea(
-              horizontalSpace: horizontalActualEachCard / horizontalAllEachCard,
-              verticalSpace: verticalActualEachCard / verticalAllEachCard,
-              baseDirectory: baseDirectory,
-              card: card,
-              cardSize: cardSize,
-              layoutMode: layout,
-              previewCutLine: previewCutLine,
-            ));
+        final cardArea = CardArea(
+          horizontalSpace: horizontalActualEachCard / horizontalAllEachCard,
+          verticalSpace: verticalActualEachCard / verticalAllEachCard,
+          baseDirectory: baseDirectory,
+          card: card,
+          cardSize: cardSize,
+          layoutMode: layout,
+          previewCutLine: previewCutLine,
+        );
+        cardArea.getDescriptorFuture?.then((value) {
+          final index = (i * horizontalCards) + j;
+          completers[index].complete();
+        });
+        Widget entireCardArea = Expanded(flex: cardAreaFlex, child: cardArea);
         realCards.add(entireCardArea);
       }
 

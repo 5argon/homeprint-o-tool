@@ -27,12 +27,12 @@ class _LayoutPageState extends State<LayoutPage> {
     var lrPreviewPadding = 8.0;
     var layoutPreview = PagePreviewFrame(
       child: PagePreview(
-        widget.layoutData,
-        widget.projectSettings.cardSize,
-        [],
-        true,
-        _previewCuttingLine,
-        null,
+        layoutData: widget.layoutData,
+        cardSize: widget.projectSettings.cardSize,
+        cards: [],
+        layout: true,
+        previewCutLine: _previewCuttingLine,
+        baseDirectory: null,
       ),
     );
 

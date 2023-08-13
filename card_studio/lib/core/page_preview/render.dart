@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -23,17 +24,18 @@ Future renderRender(
   final cards =
       cardsAtPage(includeItems, layoutData, projectSettings.cardSize, 1);
   var toRender = PagePreview(
-    layoutData,
-    projectSettings.cardSize,
-    cards.front,
-    false,
-    false,
-    baseDirectory,
+    layoutData: layoutData,
+    cardSize: projectSettings.cardSize,
+    cards: cards.front,
+    layout: false,
+    previewCutLine: false,
+    baseDirectory: baseDirectory,
   );
+  final flutterView = View.of(context);
   final pixelWidth = layoutData.paperSize.widthInch * layoutData.pixelPerInch;
   final pixelHeight = layoutData.paperSize.heightInch * layoutData.pixelPerInch;
-  final imageUint = await createImageBytesFromWidget(
-      context, toRender, pixelWidth, pixelHeight);
+  final imageUint = await createImageBytesFromWidget(flutterView, toRender,
+      pixelWidth, pixelHeight, toRender.waitForAllImages());
   final directory = await openExportDirectoryPicker();
   if (directory != null) {
     await savePng(imageUint, directory, "export");
@@ -51,9 +53,12 @@ Future savePng(Uint8List imageData, String directory, String fileName) async {
   await File("$directory/$fileName.png").writeAsBytes(imageData);
 }
 
-Future<Uint8List> createImageBytesFromWidget(BuildContext context,
-    Widget widget, double pixelWidth, double pixelHeight) async {
-  final flutterView = View.of(context);
+Future<Uint8List> createImageBytesFromWidget(
+    ui.FlutterView flutterView,
+    Widget widget,
+    double pixelWidth,
+    double pixelHeight,
+    Future loading) async {
   final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
   final RenderView renderView = RenderView(
     view: flutterView,
@@ -79,6 +84,8 @@ Future<Uint8List> createImageBytesFromWidget(BuildContext context,
     ),
   ).attachToRenderTree(buildOwner);
 
+  // First time make the descriptor load.
+  // Need to do it again only after we are sure descriptor finished loading.
   buildOwner
     ..buildScope(rootElement)
     ..finalizeTree();
@@ -87,8 +94,18 @@ Future<Uint8List> createImageBytesFromWidget(BuildContext context,
     ..flushCompositingBits()
     ..flushPaint();
 
-  // Wait 3 seconds for render (lol)
-  await Future.delayed(Duration(seconds: 3));
+  // Wait for image descriptor to async load.
+  // Wait 1 second
+  // await Future.delayed(Duration(seconds: 1));
+  await loading;
+
+  buildOwner
+    ..buildScope(rootElement)
+    ..finalizeTree();
+  pipelineOwner
+    ..flushLayout()
+    ..flushCompositingBits()
+    ..flushPaint();
 
   return repaintBoundary
       .toImage(pixelRatio: flutterView.devicePixelRatio)

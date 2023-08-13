@@ -44,23 +44,23 @@ class _ReviewPageState extends State<ReviewPage> {
     var lrPreviewPadding = 8.0;
     var pagePreviewLeft = PagePreviewFrame(
       child: PagePreview(
-        widget.layoutData,
-        widget.projectSettings.cardSize,
-        cards.front,
-        false,
-        _previewCutLine,
-        widget.baseDirectory,
+        layoutData: widget.layoutData,
+        cardSize: widget.projectSettings.cardSize,
+        cards: cards.front,
+        layout: false,
+        previewCutLine: _previewCutLine,
+        baseDirectory: widget.baseDirectory,
       ),
     );
 
     var pagePreviewRight = PagePreviewFrame(
       child: PagePreview(
-        widget.layoutData,
-        widget.projectSettings.cardSize,
-        cards.back,
-        false,
-        _previewCutLine,
-        widget.baseDirectory,
+        layoutData: widget.layoutData,
+        cardSize: widget.projectSettings.cardSize,
+        cards: cards.back,
+        layout: false,
+        previewCutLine: _previewCutLine,
+        baseDirectory: widget.baseDirectory,
       ),
     );
 

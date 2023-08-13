@@ -25,10 +25,14 @@ class CardArea extends StatelessWidget {
       final f = File(p.join(baseDirectory, card.relativeFilePath));
       getDescriptorFuture = getDescriptor(f);
       fileObject = f;
+    } else {
+      getDescriptorFuture = Future.value();
     }
   }
 
-  Future<ImageDescriptor>? getDescriptorFuture;
+  /// If no graphic this completes immediately, if with graphic you can check
+  /// if they are loaded yet here.
+  Future<ImageDescriptor?>? getDescriptorFuture;
   File? fileObject;
 
   /// Card is centered in this area. It takes this much space horizontally. (Max 1.0)
@@ -74,20 +78,20 @@ class CardArea extends StatelessWidget {
                   final parentHeight = constraints.maxHeight;
                   final imageWidth = descriptorData.width;
                   final imageHeight = descriptorData.height;
-                  debugPrint(parentWidth.toString());
-                  debugPrint(parentHeight.toString());
-                  debugPrint(imageWidth.toString());
-                  debugPrint(imageHeight.toString());
-                  final imageFile = Image.file(
+
+                  final heightFitScale = (imageHeight / parentHeight);
+                  final widthFitScale = (imageWidth / parentWidth);
+
+                  final imageFileWidget = Image.file(
                     fileObject,
                     alignment: Alignment(0, 0),
-                    scale: imageHeight / parentHeight,
+                    scale: widthFitScale,
                     fit: BoxFit.none,
                   );
                   return SizedBox(
                     height: double.infinity,
                     width: double.infinity,
-                    child: imageFile,
+                    child: imageFileWidget,
                   );
                 },
               );
