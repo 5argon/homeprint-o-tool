@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:card_studio/core/page_preview/parallel_guide.dart';
 import 'package:card_studio/page/layout/layout_helper.dart';
 import 'package:card_studio/page/layout/layout_logic.dart';
 import 'package:card_studio/page/review/pagination.dart';
@@ -96,17 +97,35 @@ class PagePreview extends StatelessWidget {
           flashing: false,
         ));
 
+    double horizontalBleedEachCard = horizontalAllEachCard - cardSize.widthCm;
+    double horizontalActualEachCard =
+        horizontalAllEachCard - horizontalBleedEachCard;
+    double horizontalSpace = horizontalActualEachCard / horizontalAllEachCard;
     List<Widget> allCardRows = [];
     for (var i = 0; i < verticalCards; i++) {
       int cutFlex =
           (ld.edgeCutGuideSize.widthCm / ld.paperSize.widthCm * flexMultiplier)
               .round();
+
+      double verticalBleedEachCard = verticalAllEachCard - cardSize.heightCm;
+      double verticalActualEachCard =
+          verticalAllEachCard - verticalBleedEachCard;
+      double verticalSpace = verticalActualEachCard / verticalAllEachCard;
+
       Widget cut = Expanded(
           flex: cutFlex,
-          child: LayoutHelper(
-            color: Colors.blue,
-            visible: layout,
-            flashing: false,
+          child: Stack(
+            children: [
+              LayoutHelper(
+                color: Colors.blue,
+                visible: layout,
+                flashing: false,
+              ),
+              ParallelGuide(
+                  spaceTaken: verticalSpace,
+                  axis: Axis.horizontal,
+                  color: Colors.black)
+            ],
           ));
 
       List<Widget> realCards = [];
@@ -116,23 +135,16 @@ class PagePreview extends StatelessWidget {
           card = cards[i][j];
         }
 
-        double horizontalBleedEachCard =
-            horizontalAllEachCard - cardSize.widthCm;
-        double horizontalActualEachCard =
-            horizontalAllEachCard - horizontalBleedEachCard;
-        double verticalBleedEachCard = verticalAllEachCard - cardSize.heightCm;
-        double verticalActualEachCard =
-            verticalAllEachCard - verticalBleedEachCard;
         final cardArea = CardArea(
-          horizontalSpace: horizontalActualEachCard / horizontalAllEachCard,
-          verticalSpace: verticalActualEachCard / verticalAllEachCard,
+          horizontalSpace: horizontalSpace,
+          verticalSpace: verticalSpace,
           baseDirectory: baseDirectory,
           card: card,
           cardSize: cardSize,
           layoutMode: layout,
           previewCutLine: previewCutLine,
         );
-        cardArea.getDescriptorFuture?.then((value) {
+        cardArea.waitForLoad(context).then((value) {
           final index = (i * horizontalCards) + j;
           completers[index].complete();
         });
@@ -161,13 +173,18 @@ class PagePreview extends StatelessWidget {
         ));
     Widget guideCard = Expanded(
         flex: cardAreaFlex,
-        child: CutGuide(
-          direction: GuideDirection.horizontal,
-          lineSize: ld.edgeCutGuideSize,
-          layoutMode: layout,
-          layoutGuideColor: Colors.blue,
-          totalSize: cardAreaFlex.toDouble(),
-          cardSize: cardAreaFlex.toDouble(),
+        child: Stack(
+          children: [
+            LayoutHelper(
+              color: Colors.blue,
+              visible: layout,
+              flashing: false,
+            ),
+            ParallelGuide(
+                spaceTaken: horizontalSpace,
+                axis: Axis.vertical,
+                color: Colors.black)
+          ],
         ));
     List<Widget> guideCards = List.filled(horizontalCards, guideCard);
     Widget marginRow = Expanded(

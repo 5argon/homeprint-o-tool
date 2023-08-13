@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 
 import '../../page/layout/layout_helper.dart';
+import 'parallel_guide.dart';
 
 class CardArea extends StatelessWidget {
   CardArea({
@@ -23,16 +24,16 @@ class CardArea extends StatelessWidget {
     final baseDirectory = this.baseDirectory;
     if (card != null && baseDirectory != null) {
       final f = File(p.join(baseDirectory, card.relativeFilePath));
-      getDescriptorFuture = getDescriptor(f);
+      _getDescriptorFuture = getDescriptor(f);
       fileObject = f;
     } else {
-      getDescriptorFuture = Future.value();
+      _getDescriptorFuture = Future.value();
     }
   }
 
   /// If no graphic this completes immediately, if with graphic you can check
   /// if they are loaded yet here.
-  Future<ImageDescriptor?>? getDescriptorFuture;
+  Future<ImageDescriptor?>? _getDescriptorFuture;
   File? fileObject;
 
   /// Card is centered in this area. It takes this much space horizontally. (Max 1.0)
@@ -51,6 +52,15 @@ class CardArea extends StatelessWidget {
     final buff = await ImmutableBuffer.fromUint8List(bytes);
     final descriptor = await ImageDescriptor.encoded(buff);
     return descriptor;
+  }
+
+  Future waitForLoad(BuildContext context) async {
+    final fileObject = this.fileObject;
+    if (fileObject != null) {
+      final fileImageProvider = FileImage(fileObject);
+      await precacheImage(fileImageProvider, context);
+    }
+    await _getDescriptorFuture;
   }
 
   @override
@@ -88,6 +98,7 @@ class CardArea extends StatelessWidget {
                     scale: widthFitScale,
                     fit: BoxFit.none,
                   );
+
                   return SizedBox(
                     height: double.infinity,
                     width: double.infinity,
@@ -96,52 +107,21 @@ class CardArea extends StatelessWidget {
                 },
               );
             },
-            future: getDescriptorFuture);
+            future: _getDescriptorFuture);
       }
     }
-    int flexMultiplier = 1000000;
     Widget verticalGuide = Container();
     Widget horizontalGuide = Container();
     if (previewCutLine) {
-      verticalGuide = Row(
-        children: [
-          Spacer(flex: (((1 - horizontalSpace) / 2) * flexMultiplier).round()),
-          Expanded(
-            flex: (horizontalSpace * flexMultiplier).round(),
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border(
-                left: BorderSide(
-                  color: Colors.red,
-                ),
-                right: BorderSide(
-                  color: Colors.red,
-                ),
-              )),
-            ),
-          ),
-          Spacer(flex: (((1 - horizontalSpace) / 2) * flexMultiplier).round()),
-        ],
+      verticalGuide = ParallelGuide(
+        spaceTaken: horizontalSpace,
+        axis: Axis.vertical,
+        color: Colors.red,
       );
-      horizontalGuide = Column(
-        children: [
-          Spacer(flex: (((1 - verticalSpace) / 2) * flexMultiplier).round()),
-          Expanded(
-            flex: (verticalSpace * flexMultiplier).round(),
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border(
-                top: BorderSide(
-                  color: Colors.red,
-                ),
-                bottom: BorderSide(
-                  color: Colors.red,
-                ),
-              )),
-            ),
-          ),
-          Spacer(flex: (((1 - verticalSpace) / 2) * flexMultiplier).round()),
-        ],
+      horizontalGuide = ParallelGuide(
+        spaceTaken: verticalSpace,
+        axis: Axis.horizontal,
+        color: Colors.red,
       );
     }
     Widget eachCardFrame = Container();
