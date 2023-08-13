@@ -6,7 +6,6 @@ import 'package:card_studio/page/layout/layout_logic.dart';
 import 'package:card_studio/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
-import '../../page/layout/cut_guide.dart';
 import '../../page/layout/layout_struct.dart';
 import '../card.dart';
 import 'card_area.dart';

@@ -85,17 +85,22 @@ class CardArea extends StatelessWidget {
                 builder: (context, constraints) {
                   final expand = card.contentExpand;
 
+                  final rotated = card.rotation == Rotation.clockwise90 ||
+                      card.rotation == Rotation.counterClockwise90;
+
                   final parentWidth = constraints.maxWidth;
-                  final imageWidth = descriptorData.width;
+                  final imageWidth =
+                      rotated ? descriptorData.height : descriptorData.width;
                   final contentWidth = parentWidth * horizontalSpace;
                   final widthFitScale = (imageWidth / contentWidth);
 
                   final parentHeight = constraints.maxHeight;
-                  final imageHeight = descriptorData.height;
+                  final imageHeight =
+                      rotated ? descriptorData.width : descriptorData.height;
                   final contentHeight = parentHeight * verticalSpace;
                   final heightFitScale = (imageHeight / contentHeight);
 
-                  final widthAfterHeightFit = heightFitScale * contentWidth;
+                  final widthAfterHeightFit = heightFitScale / contentWidth;
                   // If not, then the opposite must be true.
                   final focusWidth = widthAfterHeightFit >= contentWidth;
 
@@ -113,10 +118,26 @@ class CardArea extends StatelessWidget {
                     fit: BoxFit.none,
                   );
 
-                  return SizedBox(
-                    height: double.infinity,
-                    width: double.infinity,
-                    child: imageFileWidget,
+                  int turns;
+                  switch (card.rotation) {
+                    case Rotation.none:
+                      turns = 0;
+                      break;
+                    case Rotation.clockwise90:
+                      turns = 1;
+                      break;
+                    case Rotation.counterClockwise90:
+                      turns = 3;
+                      break;
+                  }
+
+                  return RotatedBox(
+                    quarterTurns: turns,
+                    child: SizedBox(
+                      height: double.infinity,
+                      width: double.infinity,
+                      child: imageFileWidget,
+                    ),
                   );
                 },
               );
