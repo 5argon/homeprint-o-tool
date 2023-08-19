@@ -58,7 +58,17 @@ class CardArea extends StatelessWidget {
     final fileObject = this.fileObject;
     if (fileObject != null) {
       final fileImageProvider = FileImage(fileObject);
-      await precacheImage(fileImageProvider, context);
+      final begin = DateTime.timestamp();
+      await precacheImage(
+        fileImageProvider,
+        context,
+        onError: (exception, stackTrace) {
+          print("Error loading image: $exception");
+        },
+      );
+      final end = DateTime.timestamp();
+      print(
+          "${card?.relativeFilePath ?? ""} Precache took ${end.millisecondsSinceEpoch - begin.millisecondsSinceEpoch} ms");
     }
     await _getDescriptorFuture;
   }

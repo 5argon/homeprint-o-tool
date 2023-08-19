@@ -150,7 +150,7 @@ class CardEachSingle {
     synthesizedBleed =
         PerCardSynthesizedBleed.values.byName(json['synthesizedBleed']);
     name = json['name'];
-    uuid = json['uuid'];
+    uuid = json['uuid'] ?? Uuid().v4();
   }
 
   Map<String, dynamic> toJson() {

@@ -53,9 +53,13 @@ class PagePreview extends StatelessWidget {
 
   /// Check if this page is completely rendered yet.
   Future waitForAllImages() async {
+    final start = DateTime.timestamp();
     for (var i = 0; i < completers.length; i++) {
       await completers[i].future;
     }
+    final finish = DateTime.timestamp();
+    print(
+        "Page took ${finish.millisecondsSinceEpoch - start.millisecondsSinceEpoch} ms");
   }
 
   @override

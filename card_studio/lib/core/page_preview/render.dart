@@ -41,15 +41,50 @@ Future renderRender(
         cardsAtPage(includeItems, layoutData, projectSettings.cardSize, i + 1);
     const filePrefix = "export";
     onFrontBackUpdate(ExportingFrontBack.front);
-    await newMethod(layoutData, projectSettings, cards.front, baseDirectory,
-        flutterView, pixelWidth, pixelHeight, directory, filePrefix, "A", i);
+    await renderOneSide(
+        layoutData,
+        projectSettings,
+        cards.front,
+        baseDirectory,
+        flutterView,
+        pixelWidth,
+        pixelHeight,
+        directory,
+        filePrefix,
+        "A",
+        i,
+        true);
+    await renderOneSide(
+        layoutData,
+        projectSettings,
+        cards.front,
+        baseDirectory,
+        flutterView,
+        pixelWidth,
+        pixelHeight,
+        directory,
+        filePrefix,
+        "A",
+        i,
+        false);
     onFrontBackUpdate(ExportingFrontBack.back);
-    await newMethod(layoutData, projectSettings, cards.back, baseDirectory,
-        flutterView, pixelWidth, pixelHeight, directory, filePrefix, "B", i);
+    await renderOneSide(
+        layoutData,
+        projectSettings,
+        cards.back,
+        baseDirectory,
+        flutterView,
+        pixelWidth,
+        pixelHeight,
+        directory,
+        filePrefix,
+        "B",
+        i,
+        false);
   }
 }
 
-Future<void> newMethod(
+Future<void> renderOneSide(
     LayoutData layoutData,
     ProjectSettings projectSettings,
     RowColCards cardsOnePage,
@@ -60,7 +95,8 @@ Future<void> newMethod(
     String directory,
     String fileName,
     String frontBackSuffix,
-    int pageNumber) async {
+    int pageNumber,
+    bool fakeRun) async {
   var toRender = PagePreview(
     layoutData: layoutData,
     cardSize: projectSettings.cardSize,
@@ -70,7 +106,7 @@ Future<void> newMethod(
     baseDirectory: baseDirectory,
   );
   final imageUint = await createImageBytesFromWidget(flutterView, toRender,
-      pixelWidth, pixelHeight, toRender.waitForAllImages());
+      pixelWidth, pixelHeight, toRender.waitForAllImages(), fakeRun);
   await savePng(
       imageUint, directory, "${fileName}_${pageNumber}_$frontBackSuffix");
 }
@@ -91,7 +127,8 @@ Future<Uint8List> createImageBytesFromWidget(
     Widget widget,
     double pixelWidth,
     double pixelHeight,
-    Future loading) async {
+    Future loading,
+    bool fakeRun) async {
   final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
   final RenderView renderView = RenderView(
     view: flutterView,
@@ -119,6 +156,7 @@ Future<Uint8List> createImageBytesFromWidget(
 
   // First time make the descriptor load.
   // Need to do it again only after we are sure descriptor finished loading.
+  final start = DateTime.timestamp();
   buildOwner
     ..buildScope(rootElement)
     ..finalizeTree();
@@ -126,12 +164,14 @@ Future<Uint8List> createImageBytesFromWidget(
     ..flushLayout()
     ..flushCompositingBits()
     ..flushPaint();
+  final finish = DateTime.timestamp();
+  print(
+      "First render took ${finish.millisecondsSinceEpoch - start.millisecondsSinceEpoch} ms");
 
   // Wait for image descriptor to async load.
-  // Wait 1 second
-  // await Future.delayed(Duration(seconds: 1));
   await loading;
 
+  final start2 = DateTime.timestamp();
   buildOwner
     ..buildScope(rootElement)
     ..finalizeTree();
@@ -139,9 +179,21 @@ Future<Uint8List> createImageBytesFromWidget(
     ..flushLayout()
     ..flushCompositingBits()
     ..flushPaint();
+  final finish2 = DateTime.timestamp();
+  print(
+      "Second render took ${finish2.millisecondsSinceEpoch - start2.millisecondsSinceEpoch} ms");
 
-  return repaintBoundary
-      .toImage(pixelRatio: flutterView.devicePixelRatio)
-      .then((image) => image.toByteData(format: ui.ImageByteFormat.png))
-      .then((byteData) => byteData!.buffer.asUint8List());
+  if (!fakeRun) {
+    final start3 = DateTime.timestamp();
+    final bytes = await repaintBoundary
+        .toImage(pixelRatio: flutterView.devicePixelRatio)
+        .then((image) => image.toByteData(format: ui.ImageByteFormat.png))
+        .then((byteData) => byteData!.buffer.asUint8List());
+    final finish3 = DateTime.timestamp();
+    print(
+        "Third render took ${finish3.millisecondsSinceEpoch - start3.millisecondsSinceEpoch} ms");
+    return bytes;
+  } else {
+    return Uint8List(0);
+  }
 }
