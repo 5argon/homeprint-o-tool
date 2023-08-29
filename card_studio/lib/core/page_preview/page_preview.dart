@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:card_studio/core/page_preview/parallel_guide.dart';
 import 'package:card_studio/page/layout/layout_helper.dart';
 import 'package:card_studio/page/layout/layout_logic.dart';
@@ -9,7 +7,6 @@ import 'package:flutter/material.dart';
 import '../../page/layout/layout_struct.dart';
 import '../card.dart';
 import 'card_area.dart';
-import 'card_area_2.dart';
 
 /// Use for both output preview and actual image export. On preview it stretches
 /// to the parent object. On export we can control parent to have the same aspect
@@ -30,7 +27,6 @@ class PagePreview extends StatelessWidget {
 
   late int horizontalCards;
   late int verticalCards;
-  late List<Completer> completers;
 
   PagePreview({
     required this.layoutData,
@@ -45,33 +41,6 @@ class PagePreview extends StatelessWidget {
     verticalCards = cardCount.rows;
     assert(horizontalCards >= 1);
     assert(verticalCards >= 1);
-    completers = [];
-    for (var i = 0; i < horizontalCards * verticalCards; i++) {
-      final com = Completer();
-      completers.add(com);
-    }
-  }
-
-  Future forceLoad(BuildContext context, String baseDirectory) async {
-    for (var i = 0; i < cards.length; i++) {
-      for (var j = 0; j < cards[i].length; j++) {
-        final card = cards[i][j];
-        if (card != null) {
-          await card.forceLoad(context, baseDirectory);
-        }
-      }
-    }
-  }
-
-  /// Check if this page is completely rendered yet.
-  Future waitForAllImages() async {
-    final start = DateTime.timestamp();
-    for (var i = 0; i < completers.length; i++) {
-      await completers[i].future;
-    }
-    final finish = DateTime.timestamp();
-    print(
-        "Page took ${finish.millisecondsSinceEpoch - start.millisecondsSinceEpoch} ms");
   }
 
   @override
@@ -159,10 +128,6 @@ class PagePreview extends StatelessWidget {
           layoutMode: layout,
           previewCutLine: previewCutLine,
         );
-        cardArea.waitForLoad(context).then((value) {
-          final index = (i * horizontalCards) + j;
-          completers[index].complete();
-        });
         Widget entireCardArea = Expanded(flex: cardAreaFlex, child: cardArea);
         realCards.add(entireCardArea);
       }

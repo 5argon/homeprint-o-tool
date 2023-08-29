@@ -4,8 +4,6 @@ import 'dart:typed_data';
 
 import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/page/include/include_data.dart';
-import 'package:path/path.dart';
-import 'package:widgets_to_image/widgets_to_image.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
