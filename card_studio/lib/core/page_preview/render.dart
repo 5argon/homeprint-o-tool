@@ -4,6 +4,8 @@ import 'dart:typed_data';
 
 import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/page/include/include_data.dart';
+import 'package:path/path.dart';
+import 'package:widgets_to_image/widgets_to_image.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,7 @@ import 'page_preview.dart';
 enum ExportingFrontBack { front, back }
 
 Future renderRender(
+  BuildContext context,
   String directory,
   ui.FlutterView flutterView,
   ProjectSettings projectSettings,
@@ -41,46 +44,34 @@ Future renderRender(
         cardsAtPage(includeItems, layoutData, projectSettings.cardSize, i + 1);
     const filePrefix = "export";
     onFrontBackUpdate(ExportingFrontBack.front);
+
     await renderOneSide(
-        layoutData,
-        projectSettings,
-        cards.front,
-        baseDirectory,
-        flutterView,
-        pixelWidth,
-        pixelHeight,
-        directory,
-        filePrefix,
-        "A",
-        i,
-        true);
-    await renderOneSide(
-        layoutData,
-        projectSettings,
-        cards.front,
-        baseDirectory,
-        flutterView,
-        pixelWidth,
-        pixelHeight,
-        directory,
-        filePrefix,
-        "A",
-        i,
-        false);
+      layoutData,
+      projectSettings,
+      cards.front,
+      baseDirectory,
+      flutterView,
+      pixelWidth,
+      pixelHeight,
+      directory,
+      filePrefix,
+      "A",
+      i,
+    );
     onFrontBackUpdate(ExportingFrontBack.back);
     await renderOneSide(
-        layoutData,
-        projectSettings,
-        cards.back,
-        baseDirectory,
-        flutterView,
-        pixelWidth,
-        pixelHeight,
-        directory,
-        filePrefix,
-        "B",
-        i,
-        false);
+      layoutData,
+      projectSettings,
+      cards.back,
+      baseDirectory,
+      flutterView,
+      pixelWidth,
+      pixelHeight,
+      directory,
+      filePrefix,
+      "B",
+      i,
+    );
   }
 }
 
@@ -95,8 +86,7 @@ Future<void> renderOneSide(
     String directory,
     String fileName,
     String frontBackSuffix,
-    int pageNumber,
-    bool fakeRun) async {
+    int pageNumber) async {
   var toRender = PagePreview(
     layoutData: layoutData,
     cardSize: projectSettings.cardSize,
@@ -105,8 +95,8 @@ Future<void> renderOneSide(
     previewCutLine: false,
     baseDirectory: baseDirectory,
   );
-  final imageUint = await createImageBytesFromWidget(flutterView, toRender,
-      pixelWidth, pixelHeight, toRender.waitForAllImages(), fakeRun);
+  final imageUint = await createImageBytesFromWidget(
+      flutterView, toRender, pixelWidth, pixelHeight);
   await savePng(
       imageUint, directory, "${fileName}_${pageNumber}_$frontBackSuffix");
 }
@@ -122,13 +112,8 @@ Future savePng(Uint8List imageData, String directory, String fileName) async {
   await File("$directory/$fileName.png").writeAsBytes(imageData);
 }
 
-Future<Uint8List> createImageBytesFromWidget(
-    ui.FlutterView flutterView,
-    Widget widget,
-    double pixelWidth,
-    double pixelHeight,
-    Future loading,
-    bool fakeRun) async {
+Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
+    Widget widget, double pixelWidth, double pixelHeight) async {
   final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
   final RenderView renderView = RenderView(
     view: flutterView,
@@ -154,46 +139,29 @@ Future<Uint8List> createImageBytesFromWidget(
     ),
   ).attachToRenderTree(buildOwner);
 
-  // First time make the descriptor load.
-  // Need to do it again only after we are sure descriptor finished loading.
-  final start = DateTime.timestamp();
-  buildOwner
-    ..buildScope(rootElement)
-    ..finalizeTree();
-  pipelineOwner
-    ..flushLayout()
-    ..flushCompositingBits()
-    ..flushPaint();
-  final finish = DateTime.timestamp();
-  print(
-      "First render took ${finish.millisecondsSinceEpoch - start.millisecondsSinceEpoch} ms");
+  // Still can't find reliable way to wait for images to load by code.
+  // Render once and wait for long period of time then render again didn't help,
+  // it seems like the Image widget needs multiple renders to get them to load
+  // and also some time in-between each render. Both number 10 here are arbitrary.
 
-  // Wait for image descriptor to async load.
-  await loading;
-
-  final start2 = DateTime.timestamp();
-  buildOwner
-    ..buildScope(rootElement)
-    ..finalizeTree();
-  pipelineOwner
-    ..flushLayout()
-    ..flushCompositingBits()
-    ..flushPaint();
-  final finish2 = DateTime.timestamp();
-  print(
-      "Second render took ${finish2.millisecondsSinceEpoch - start2.millisecondsSinceEpoch} ms");
-
-  if (!fakeRun) {
-    final start3 = DateTime.timestamp();
-    final bytes = await repaintBoundary
-        .toImage(pixelRatio: flutterView.devicePixelRatio)
-        .then((image) => image.toByteData(format: ui.ImageByteFormat.png))
-        .then((byteData) => byteData!.buffer.asUint8List());
-    final finish3 = DateTime.timestamp();
-    print(
-        "Third render took ${finish3.millisecondsSinceEpoch - start3.millisecondsSinceEpoch} ms");
-    return bytes;
-  } else {
-    return Uint8List(0);
+  for (var i = 0; i < 10; i++) {
+    buildOwner
+      ..buildScope(rootElement)
+      ..finalizeTree();
+    pipelineOwner
+      ..flushLayout()
+      ..flushCompositingBits()
+      ..flushPaint();
+    await Future.delayed(Duration(milliseconds: 10));
   }
+
+  final start3 = DateTime.timestamp();
+  final bytes = await repaintBoundary
+      .toImage(pixelRatio: flutterView.devicePixelRatio)
+      .then((image) => image.toByteData(format: ui.ImageByteFormat.png))
+      .then((byteData) => byteData!.buffer.asUint8List());
+  final finish3 = DateTime.timestamp();
+  print(
+      "Third render took ${finish3.millisecondsSinceEpoch - start3.millisecondsSinceEpoch} ms");
+  return bytes;
 }

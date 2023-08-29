@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:path/path.dart' as p;
 
 class CardGroup {
   String? name;
@@ -151,6 +154,14 @@ class CardEachSingle {
         PerCardSynthesizedBleed.values.byName(json['synthesizedBleed']);
     name = json['name'];
     uuid = json['uuid'] ?? Uuid().v4();
+  }
+
+  Future forceLoad(BuildContext context, String baseDirectory) async {
+    final f = File(p.join(baseDirectory, relativeFilePath));
+    final fo = Image.file(f);
+    await precacheImage(fo.image, context, onError: (exception, stackTrace) {
+      print("Error loading image: $exception");
+    });
   }
 
   Map<String, dynamic> toJson() {

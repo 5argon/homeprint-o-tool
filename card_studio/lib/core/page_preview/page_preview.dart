@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../../page/layout/layout_struct.dart';
 import '../card.dart';
 import 'card_area.dart';
+import 'card_area_2.dart';
 
 /// Use for both output preview and actual image export. On preview it stretches
 /// to the parent object. On export we can control parent to have the same aspect
@@ -48,6 +49,17 @@ class PagePreview extends StatelessWidget {
     for (var i = 0; i < horizontalCards * verticalCards; i++) {
       final com = Completer();
       completers.add(com);
+    }
+  }
+
+  Future forceLoad(BuildContext context, String baseDirectory) async {
+    for (var i = 0; i < cards.length; i++) {
+      for (var j = 0; j < cards[i].length; j++) {
+        final card = cards[i][j];
+        if (card != null) {
+          await card.forceLoad(context, baseDirectory);
+        }
+      }
     }
   }
 
