@@ -45,13 +45,14 @@ class CardGroup {
 
 /// Represent a card, which consists of front side and back side.
 class CardEach {
+  String? name;
   CardEachSingle? front;
   CardEachSingle? back;
 
   /// On including this card, automatically duplicates itself by this many count.
   late int amount;
 
-  CardEach(this.front, this.back, this.amount);
+  CardEach(this.front, this.back, this.amount, this.name);
 
   List<CardEach> linearize() {
     return List.filled(amount, this);
@@ -59,6 +60,7 @@ class CardEach {
 
   CardEach.fromJson(Map<String, dynamic> json, List<CardEachSingle> instances) {
     amount = json['amount'] ?? 1;
+    name = json['name'] ?? "";
 
     final frontInstance = json['frontInstance'];
     if (frontInstance is String) {
@@ -92,6 +94,7 @@ class CardEach {
   Map<String, dynamic> toJson(List<CardEachSingle> instances) {
     Map<String, dynamic> writeObject = {};
     writeObject['amount'] = amount;
+    writeObject['name'] = name;
     // Match this object by pointer address among instances.
     // If found, write just the UUID instead.
     var foundFront = false;
@@ -136,6 +139,7 @@ class CardEachSingle {
   late PerCardSynthesizedBleed synthesizedBleed;
 
   /// Optional name but recommended for instances.
+  /// Cards in a group can be automatically sorted by name.
   String? name;
 
   /// In serialized JSON, card that use instances will be linked by this UUID.

@@ -106,9 +106,10 @@ class SaveFile {
         Rotation.none,
         PerCardSynthesizedBleed.projectSettings,
         null);
-    CardEach peteCard = CardEach(peteFront, peteBack, 1);
-    CardEach guitarCard = CardEach(guitar, playerCardBack, 1);
-    CardEach hardTimesCard = CardEach(hardTimes, playerCardBack, 1);
+    CardEach peteCard = CardEach(peteFront, peteBack, 1, "Pete");
+    CardEach guitarCard = CardEach(guitar, playerCardBack, 1, "Guitar");
+    CardEach hardTimesCard =
+        CardEach(hardTimes, playerCardBack, 1, "Hard Times");
     return SaveFile(ps, [
       playerCardBack
     ], [

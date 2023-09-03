@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'core/page_preview/render.dart';
 import 'core/project_settings.dart';
 import 'core/save_file.dart';
+import 'page/card/card_page.dart';
 import 'page/include/include_data.dart';
 import 'page/layout/layout_page.dart';
 import 'page/layout/layout_struct.dart';
@@ -134,6 +135,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 return Text('Error: ${snapshot.error}');
               }
               switch (_selectedIndex) {
+                case 2:
+                  var cardPage = CardPage(
+                    definedCards: _definedCards,
+                    definedInstances: _definedInstances,
+                  );
+                  return cardPage;
                 case 4:
                   var layoutPage = LayoutPage(
                     layoutData: _layoutData,
