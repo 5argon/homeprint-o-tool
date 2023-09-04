@@ -72,8 +72,9 @@ class CardEach {
         }
       }
     } else {
-      front =
-          json['front'] == null ? null : CardEachSingle.fromJson(json['front']);
+      front = json['front'] == null
+          ? null
+          : CardEachSingle.fromJson(json['front'], isInstance: false);
     }
 
     final backInstance = json['backInstance'];
@@ -86,8 +87,9 @@ class CardEach {
         }
       }
     } else {
-      back =
-          json['back'] == null ? null : CardEachSingle.fromJson(json['back']);
+      back = json['back'] == null
+          ? null
+          : CardEachSingle.fromJson(json['back'], isInstance: false);
     }
   }
 
@@ -145,11 +147,20 @@ class CardEachSingle {
   /// In serialized JSON, card that use instances will be linked by this UUID.
   late String uuid;
 
-  CardEachSingle(this.relativeFilePath, this.contentCenterOffset,
-      this.contentExpand, this.rotation, this.synthesizedBleed, this.name)
+  late bool isInstance;
+
+  CardEachSingle(
+      this.relativeFilePath,
+      this.contentCenterOffset,
+      this.contentExpand,
+      this.rotation,
+      this.synthesizedBleed,
+      this.name,
+      this.isInstance)
       : uuid = Uuid().v4();
 
-  CardEachSingle.fromJson(Map<String, dynamic> json) {
+  CardEachSingle.fromJson(Map<String, dynamic> json,
+      {this.isInstance = false}) {
     relativeFilePath = json['relativeFilePath'];
     contentCenterOffset = alignmentFromJson(json['contentCenterOffset']);
     contentExpand = json['contentExpand'];
@@ -158,14 +169,6 @@ class CardEachSingle {
         PerCardSynthesizedBleed.values.byName(json['synthesizedBleed']);
     name = json['name'];
     uuid = json['uuid'] ?? Uuid().v4();
-  }
-
-  Future forceLoad(BuildContext context, String baseDirectory) async {
-    final f = File(p.join(baseDirectory, relativeFilePath));
-    final fo = Image.file(f);
-    await precacheImage(fo.image, context, onError: (exception, stackTrace) {
-      print("Error loading image: $exception");
-    });
   }
 
   Map<String, dynamic> toJson() {

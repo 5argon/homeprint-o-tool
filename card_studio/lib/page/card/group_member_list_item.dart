@@ -13,6 +13,13 @@ class GroupMemberListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final numberLabel = SizedBox(
+      width: 50,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+        child: Text("#1"),
+      ),
+    );
     final cardNameBox = TextFormField(
       initialValue: cardEach.name ?? "",
       decoration: InputDecoration(
@@ -50,21 +57,27 @@ class GroupMemberListItem extends StatelessWidget {
                       ),
                       SizedBox(width: 16),
                       removeButton,
+                      numberLabel,
                     ],
                   ),
                   Row(
                     children: [
                       Expanded(
                         child: GroupMemberListItemOneSide(
-                            isBack: false,
-                            cardEachSingle: cardEach.front,
-                            definedInstances: definedInstances),
+                          isBack: false,
+                          cardEachSingle: cardEach.front,
+                          definedInstances: definedInstances,
+                          instance: cardEach.front?.isInstance ?? false,
+                        ),
                       ),
+                      SizedBox(width: 16),
                       Expanded(
                         child: GroupMemberListItemOneSide(
-                            isBack: true,
-                            cardEachSingle: cardEach.back,
-                            definedInstances: definedInstances),
+                          isBack: true,
+                          cardEachSingle: cardEach.back,
+                          definedInstances: definedInstances,
+                          instance: cardEach.back?.isInstance ?? false,
+                        ),
                       )
                     ],
                   ),

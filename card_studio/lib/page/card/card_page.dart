@@ -11,9 +11,13 @@ class CardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final addButton = ElevatedButton(
+    final createGroupButton = ElevatedButton(
       onPressed: () {},
-      child: const Text('Add'),
+      child: const Text('Create Group'),
+    );
+    final sortAllButton = ElevatedButton(
+      onPressed: () {},
+      child: const Text('Sort All'),
     );
     List<GroupListItem> groups = definedCards.map<GroupListItem>((e) {
       return GroupListItem(cardGroup: e, definedInstances: definedInstances);
@@ -21,7 +25,23 @@ class CardPage extends StatelessWidget {
     final listView = ListView(children: groups);
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: listView,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              children: [
+                createGroupButton,
+                SizedBox(
+                  width: 8,
+                ),
+                sortAllButton,
+              ],
+            ),
+          ),
+          Expanded(child: listView),
+        ],
+      ),
     );
   }
 }

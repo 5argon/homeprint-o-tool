@@ -58,8 +58,8 @@ class SaveFile {
 
   factory SaveFile.fromJson(Map<String, dynamic> json) {
     final projectSettings = ProjectSettings.fromJson(json['projectSettings']);
-    final instances = List<CardEachSingle>.from(
-        json['instances'].map((instance) => CardEachSingle.fromJson(instance)));
+    final instances = List<CardEachSingle>.from(json['instances'].map(
+        (instance) => CardEachSingle.fromJson(instance, isInstance: true)));
     final cardGroups = List<CardGroup>.from(json['cardGroups']
         .map((instance) => CardGroup.fromJson(instance, instances)));
     return SaveFile(projectSettings, instances, cardGroups);
@@ -76,7 +76,8 @@ class SaveFile {
         1,
         Rotation.none,
         PerCardSynthesizedBleed.projectSettings,
-        "Player Card Back");
+        "Player Card Back",
+        true);
 
     CardEachSingle peteFront = CardEachSingle(
         "coldtoes ppete/046 Parallel Ashcan Pete-1.png",
@@ -84,28 +85,32 @@ class SaveFile {
         1,
         Rotation.counterClockwise90,
         PerCardSynthesizedBleed.projectSettings,
-        null);
+        null,
+        false);
     CardEachSingle peteBack = CardEachSingle(
         "coldtoes ppete/046 Parallel Ashcan Pete-2.png",
         Alignment(0, 0),
         1,
         Rotation.counterClockwise90,
         PerCardSynthesizedBleed.projectSettings,
-        null);
+        null,
+        false);
     CardEachSingle guitar = CardEachSingle(
         "coldtoes ppete/047 Pete's Guitar-1.png",
         Alignment(0, 0),
         1,
         Rotation.none,
         PerCardSynthesizedBleed.projectSettings,
-        null);
+        null,
+        false);
     CardEachSingle hardTimes = CardEachSingle(
         "coldtoes ppete/048 Hard Times-1.png",
         Alignment(0, 0),
         1,
         Rotation.none,
         PerCardSynthesizedBleed.projectSettings,
-        null);
+        null,
+        false);
     CardEach peteCard = CardEach(peteFront, peteBack, 1, "Pete");
     CardEach guitarCard = CardEach(guitar, playerCardBack, 1, "Guitar");
     CardEach hardTimesCard =

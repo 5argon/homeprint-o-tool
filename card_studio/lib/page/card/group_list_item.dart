@@ -13,6 +13,10 @@ class GroupListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final removeButton = IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.delete),
+    );
     final groupName = TextFormField(
       initialValue: cardGroup.name ?? "",
       decoration: InputDecoration(
@@ -27,8 +31,21 @@ class GroupListItem extends StatelessWidget {
       return GroupMemberListItem(
           cardEach: e, definedInstances: definedInstances);
     }).toList();
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [groupName, ...groupMembers, addButton]);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Row(
+            children: [
+              Expanded(child: groupName),
+              removeButton,
+            ],
+          ),
+        ),
+        ...groupMembers,
+        addButton
+      ]),
+    );
   }
 }
