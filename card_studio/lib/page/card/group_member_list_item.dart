@@ -1,15 +1,20 @@
 import 'package:card_studio/core/save_file.dart';
 import 'package:card_studio/page/card/group_member_list_item_one_side.dart';
+import 'package:card_studio/page/card/single_card_preview.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/card.dart';
 
 class GroupMemberListItem extends StatelessWidget {
+  final String basePath;
   final CardEach cardEach;
   final DefinedInstances definedInstances;
 
   GroupMemberListItem(
-      {super.key, required this.cardEach, required this.definedInstances});
+      {super.key,
+      required this.basePath,
+      required this.cardEach,
+      required this.definedInstances});
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +46,23 @@ class GroupMemberListItem extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
-            SizedBox(width: 100, height: 100, child: Placeholder()),
-            SizedBox(width: 100, height: 100, child: Placeholder()),
+            SizedBox(
+                width: 100,
+                height: 100,
+                child: SingleCardPreview(
+                  basePath: basePath,
+                  instance: cardEach.front?.isInstance ?? false,
+                  cardEachSingle: cardEach.front,
+                )),
+            SizedBox(width: 4),
+            SizedBox(
+                width: 100,
+                height: 100,
+                child: SingleCardPreview(
+                  basePath: basePath,
+                  instance: cardEach.back?.isInstance ?? false,
+                  cardEachSingle: cardEach.back,
+                )),
             SizedBox(width: 16),
             Expanded(
               child: Column(

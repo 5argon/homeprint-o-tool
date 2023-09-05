@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import '../../core/save_file.dart';
 
 class CardPage extends StatelessWidget {
+  final String basePath;
   final DefinedCards definedCards;
   final DefinedInstances definedInstances;
   CardPage(
-      {super.key, required this.definedCards, required this.definedInstances});
+      {super.key,
+      required this.basePath,
+      required this.definedCards,
+      required this.definedInstances});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,8 @@ class CardPage extends StatelessWidget {
       child: const Text('Sort All'),
     );
     List<GroupListItem> groups = definedCards.map<GroupListItem>((e) {
-      return GroupListItem(cardGroup: e, definedInstances: definedInstances);
+      return GroupListItem(
+          basePath: basePath, cardGroup: e, definedInstances: definedInstances);
     }).toList();
     final listView = ListView(children: groups);
     return Padding(

@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import '../../core/card.dart';
 
 class GroupListItem extends StatelessWidget {
+  final String basePath;
   final CardGroup cardGroup;
   final DefinedInstances definedInstances;
 
   GroupListItem(
-      {super.key, required this.cardGroup, required this.definedInstances});
+      {super.key,
+      required this.basePath,
+      required this.cardGroup,
+      required this.definedInstances});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,7 @@ class GroupListItem extends StatelessWidget {
     );
     final groupMembers = cardGroup.cards.map<GroupMemberListItem>((e) {
       return GroupMemberListItem(
-          cardEach: e, definedInstances: definedInstances);
+          basePath: basePath, cardEach: e, definedInstances: definedInstances);
     }).toList();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),

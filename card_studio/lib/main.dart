@@ -136,7 +136,12 @@ class _MyHomePageState extends State<MyHomePage> {
               }
               switch (_selectedIndex) {
                 case 2:
+                  final baseDirectory = _baseDirectory;
+                  if (baseDirectory == null) {
+                    return Text("Need base directory to render cards.");
+                  }
                   var cardPage = CardPage(
+                    basePath: baseDirectory,
                     definedCards: _definedCards,
                     definedInstances: _definedInstances,
                   );
