@@ -1,6 +1,7 @@
 import 'package:card_studio/core/save_file.dart';
 import 'package:card_studio/page/card/group_member_list_item_one_side.dart';
 import 'package:card_studio/page/card/single_card_preview.dart';
+import 'package:card_studio/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/card.dart';
@@ -8,12 +9,14 @@ import '../../core/card.dart';
 class GroupMemberListItem extends StatelessWidget {
   final String basePath;
   final CardEach cardEach;
+  final SizePhysical cardSize;
   final DefinedInstances definedInstances;
 
   GroupMemberListItem(
       {super.key,
       required this.basePath,
       required this.cardEach,
+      required this.cardSize,
       required this.definedInstances});
 
   @override
@@ -51,6 +54,8 @@ class GroupMemberListItem extends StatelessWidget {
                 height: 100,
                 child: SingleCardPreview(
                   basePath: basePath,
+                  cardSize: cardSize,
+                  bleedFactor: cardEach.front?.contentExpand ?? 1.0,
                   instance: cardEach.front?.isInstance ?? false,
                   cardEachSingle: cardEach.front,
                 )),
@@ -60,6 +65,8 @@ class GroupMemberListItem extends StatelessWidget {
                 height: 100,
                 child: SingleCardPreview(
                   basePath: basePath,
+                  cardSize: cardSize,
+                  bleedFactor: cardEach.back?.contentExpand ?? 1.0,
                   instance: cardEach.back?.isInstance ?? false,
                   cardEachSingle: cardEach.back,
                 )),

@@ -142,6 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                   var cardPage = CardPage(
                     basePath: baseDirectory,
+                    projectSettings: _projectSettings,
                     definedCards: _definedCards,
                     definedInstances: _definedInstances,
                   );
