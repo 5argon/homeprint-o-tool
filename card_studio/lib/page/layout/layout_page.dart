@@ -33,6 +33,7 @@ class _LayoutPageState extends State<LayoutPage> {
         layout: true,
         previewCutLine: _previewCuttingLine,
         baseDirectory: null,
+        hideInnerCutLine: true,
       ),
     );
 

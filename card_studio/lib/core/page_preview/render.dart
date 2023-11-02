@@ -44,6 +44,7 @@ Future renderRender(
     onFrontBackUpdate(ExportingFrontBack.front);
 
     await renderOneSide(
+      false,
       layoutData,
       projectSettings,
       cards.front,
@@ -58,6 +59,7 @@ Future renderRender(
     );
     onFrontBackUpdate(ExportingFrontBack.back);
     await renderOneSide(
+      true,
       layoutData,
       projectSettings,
       cards.back,
@@ -74,6 +76,7 @@ Future renderRender(
 }
 
 Future<void> renderOneSide(
+    bool back,
     LayoutData layoutData,
     ProjectSettings projectSettings,
     RowColCards cardsOnePage,
@@ -92,11 +95,12 @@ Future<void> renderOneSide(
     layout: false,
     previewCutLine: false,
     baseDirectory: baseDirectory,
+    hideInnerCutLine: back,
   );
   final imageUint = await createImageBytesFromWidget(
       flutterView, toRender, pixelWidth, pixelHeight);
   await savePng(
-      imageUint, directory, "${fileName}_${pageNumber}_$frontBackSuffix");
+      imageUint, directory, "${fileName}_${pageNumber + 1}_$frontBackSuffix");
 }
 
 Future<String?> openExportDirectoryPicker() async {

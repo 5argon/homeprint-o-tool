@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:card_studio/page/layout/back_strategy.dart';
+
 import '../../core/card.dart';
 import '../include/include_data.dart';
 import '../layout/layout_logic.dart';
@@ -39,22 +41,29 @@ typedef RowColCards = List<List<CardEachSingle?>>;
   final frontCards = onThisPage.map((e) => e.front).toList();
   final backCards = onThisPage.map((e) => e.back).toList();
   return (
-    front: distributeRowCol(
-        cardCountRowCol.rows, cardCountRowCol.columns, frontCards),
-    back: distributeRowCol(
-        cardCountRowCol.rows, cardCountRowCol.columns, backCards),
+    front: distributeRowCol(cardCountRowCol.rows, cardCountRowCol.columns,
+        frontCards, BackStrategy.exact),
+    back: distributeRowCol(cardCountRowCol.rows, cardCountRowCol.columns,
+        backCards, BackStrategy.invertedRow),
   );
 }
 
 /// List of list is row then column.
-RowColCards distributeRowCol(int rows, int cols, List<CardEachSingle?> cards) {
+RowColCards distributeRowCol(int rows, int cols, List<CardEachSingle?> cards,
+    BackStrategy backStrategy) {
   RowColCards allRows = [];
   for (var v = 0; v < cards.length; v++) {
     final row = v ~/ cols;
     if (allRows.length <= row) {
-      allRows.add([]);
+      allRows.add(List.filled(cols, null));
     }
-    allRows[row].add(cards[v]);
+    final int target;
+    if (backStrategy == BackStrategy.invertedRow) {
+      target = cols - 1 - (v % cols);
+    } else {
+      target = v % cols;
+    }
+    allRows[row][target] = cards[v];
   }
   return allRows;
 }

@@ -58,8 +58,12 @@ class SaveFile {
 
   factory SaveFile.fromJson(Map<String, dynamic> json) {
     final projectSettings = ProjectSettings.fromJson(json['projectSettings']);
-    final instances = List<CardEachSingle>.from(json['instances'].map(
-        (instance) => CardEachSingle.fromJson(instance, isInstance: true)));
+    var instances = <CardEachSingle>[];
+    final instancesJson = json['instances'];
+    if (instancesJson != null) {
+      instances = List<CardEachSingle>.from(instancesJson.map(
+          (instance) => CardEachSingle.fromJson(instance, isInstance: true)));
+    }
     final cardGroups = List<CardGroup>.from(json['cardGroups']
         .map((instance) => CardGroup.fromJson(instance, instances)));
     return SaveFile(projectSettings, instances, cardGroups);

@@ -19,6 +19,8 @@ class CardArea extends StatelessWidget {
     required this.cardSize,
     required this.layoutMode,
     required this.previewCutLine,
+    required this.showVerticalInnerCutLine,
+    required this.showHorizontalInnerCutLine,
   }) {
     final card = this.card;
     final baseDirectory = this.baseDirectory;
@@ -46,6 +48,8 @@ class CardArea extends StatelessWidget {
   final SizePhysical cardSize;
   final bool layoutMode;
   final bool previewCutLine;
+  final bool showVerticalInnerCutLine;
+  final bool showHorizontalInnerCutLine;
 
   Future<ImageDescriptor> getDescriptor(File loadedFile) async {
     final bytes = await loadedFile.readAsBytes();
@@ -91,7 +95,7 @@ class CardArea extends StatelessWidget {
                   final contentHeight = parentHeight * verticalSpace;
                   final heightFitScale = (imageHeight / contentHeight);
 
-                  final widthAfterHeightFit = heightFitScale / contentWidth;
+                  final widthAfterHeightFit = heightFitScale * contentWidth;
                   // If not, then the opposite must be true.
                   final focusWidth = widthAfterHeightFit >= contentWidth;
 
@@ -138,16 +142,20 @@ class CardArea extends StatelessWidget {
     }
     Widget verticalGuide = Container();
     Widget horizontalGuide = Container();
-    if (previewCutLine) {
+    Color previewColor = Colors.red;
+    Color realColor = Color.fromARGB(60, 255, 255, 255);
+    if (previewCutLine || showVerticalInnerCutLine) {
       verticalGuide = ParallelGuide(
         spaceTaken: horizontalSpace,
         axis: Axis.vertical,
-        color: Colors.red,
+        color: previewCutLine ? previewColor : realColor,
       );
+    }
+    if (previewCutLine || showHorizontalInnerCutLine) {
       horizontalGuide = ParallelGuide(
         spaceTaken: verticalSpace,
         axis: Axis.horizontal,
-        color: Colors.red,
+        color: previewCutLine ? previewColor : realColor,
       );
     }
     Widget eachCardFrame = Container();

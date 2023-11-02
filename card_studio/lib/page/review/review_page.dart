@@ -50,6 +50,7 @@ class _ReviewPageState extends State<ReviewPage> {
         layout: false,
         previewCutLine: _previewCutLine,
         baseDirectory: widget.baseDirectory,
+        hideInnerCutLine: true,
       ),
     );
 
@@ -61,6 +62,7 @@ class _ReviewPageState extends State<ReviewPage> {
         layout: false,
         previewCutLine: _previewCutLine,
         baseDirectory: widget.baseDirectory,
+        hideInnerCutLine: true,
       ),
     );
 
