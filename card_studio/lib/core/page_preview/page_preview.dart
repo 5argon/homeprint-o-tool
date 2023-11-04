@@ -1,4 +1,5 @@
 import 'package:card_studio/core/page_preview/parallel_guide.dart';
+import 'package:card_studio/page/layout/back_strategy.dart';
 import 'package:card_studio/page/layout/layout_helper.dart';
 import 'package:card_studio/page/layout/layout_logic.dart';
 import 'package:card_studio/page/review/pagination.dart';
@@ -22,6 +23,8 @@ class PagePreview extends StatelessWidget {
   final bool layout;
   final bool previewCutLine;
   final bool hideInnerCutLine;
+  final bool back;
+  final BackStrategy backStrategy;
 
   /// Must provide to show any image.
   final String? baseDirectory;
@@ -37,6 +40,8 @@ class PagePreview extends StatelessWidget {
     required this.previewCutLine,
     required this.baseDirectory,
     required this.hideInnerCutLine,
+    required this.back,
+    required this.backStrategy,
   }) {
     final cardCount = calculateCardCountPerPage(layoutData, cardSize);
     horizontalCards = cardCount.columns;
@@ -131,6 +136,8 @@ class PagePreview extends StatelessWidget {
           previewCutLine: previewCutLine,
           showHorizontalInnerCutLine: !hideInnerCutLine,
           showVerticalInnerCutLine: !hideInnerCutLine,
+          back: back,
+          backStrategy: backStrategy,
         );
         Widget entireCardArea = Expanded(flex: cardAreaFlex, child: cardArea);
         realCards.add(entireCardArea);

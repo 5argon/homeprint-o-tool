@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:card_studio/core/card.dart';
+import 'package:card_studio/page/layout/back_strategy.dart';
 import 'package:card_studio/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
@@ -21,6 +22,8 @@ class CardArea extends StatelessWidget {
     required this.previewCutLine,
     required this.showVerticalInnerCutLine,
     required this.showHorizontalInnerCutLine,
+    required this.back,
+    required this.backStrategy,
   }) {
     final card = this.card;
     final baseDirectory = this.baseDirectory;
@@ -50,6 +53,8 @@ class CardArea extends StatelessWidget {
   final bool previewCutLine;
   final bool showVerticalInnerCutLine;
   final bool showHorizontalInnerCutLine;
+  final bool back;
+  final BackStrategy backStrategy;
 
   Future<ImageDescriptor> getDescriptor(File loadedFile) async {
     final bytes = await loadedFile.readAsBytes();
@@ -155,6 +160,11 @@ class CardArea extends StatelessWidget {
                     case Rotation.counterClockwise90:
                       turns = 3;
                       break;
+                  }
+                  if (back &&
+                      backStrategy == BackStrategy.invertedRow &&
+                      card.rotation != Rotation.none) {
+                    turns = turns + 2;
                   }
 
                   return RotatedBox(

@@ -1,5 +1,6 @@
 import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/page/include/include_data.dart';
+import 'package:card_studio/page/layout/back_strategy.dart';
 import 'package:card_studio/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
@@ -51,6 +52,8 @@ class _ReviewPageState extends State<ReviewPage> {
         previewCutLine: _previewCutLine,
         baseDirectory: widget.baseDirectory,
         hideInnerCutLine: true,
+        back: false,
+        backStrategy: BackStrategy.invertedRow,
       ),
     );
 
@@ -63,6 +66,8 @@ class _ReviewPageState extends State<ReviewPage> {
         previewCutLine: _previewCutLine,
         baseDirectory: widget.baseDirectory,
         hideInnerCutLine: true,
+        back: true,
+        backStrategy: BackStrategy.invertedRow,
       ),
     );
 

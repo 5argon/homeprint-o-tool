@@ -1,4 +1,5 @@
 import 'package:card_studio/core/project_settings.dart';
+import 'package:card_studio/page/layout/back_strategy.dart';
 
 import '../../core/page_preview/page_preview.dart';
 import '../../core/page_preview/page_preview_frame.dart';
@@ -34,6 +35,8 @@ class _LayoutPageState extends State<LayoutPage> {
         previewCutLine: _previewCuttingLine,
         baseDirectory: null,
         hideInnerCutLine: true,
+        back: false,
+        backStrategy: BackStrategy.invertedRow,
       ),
     );
 
