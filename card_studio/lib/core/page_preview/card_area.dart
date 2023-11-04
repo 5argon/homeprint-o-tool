@@ -78,8 +78,6 @@ class CardArea extends StatelessWidget {
               }
               return LayoutBuilder(
                 builder: (context, constraints) {
-                  final expand = card.contentExpand;
-
                   final rotated = card.rotation == Rotation.clockwise90 ||
                       card.rotation == Rotation.counterClockwise90;
 
@@ -99,11 +97,44 @@ class CardArea extends StatelessWidget {
                   // If not, then the opposite must be true.
                   final focusWidth = widthAfterHeightFit >= contentWidth;
 
+                  // This expand was relative to the image's dimension.
+                  // Card Area dimension might turns out to be different shape depending on margin settings.
+                  final originalExpand = card.contentExpand;
+
+                  final cardWidth = cardSize.widthCm;
+                  final cardHeight = cardSize.heightCm;
+                  final heightFitScaleCardToImage = (imageHeight / cardHeight);
+                  final widthFitScaleCardToImage = (imageWidth / cardWidth);
+
+                  // Check
+                  final widthAfterHeightFit2 =
+                      heightFitScaleCardToImage * cardSize.widthCm;
+                  final heightAfterWidthFit2 =
+                      widthFitScaleCardToImage * cardSize.heightCm;
+                  final expandFocusWidth = widthAfterHeightFit2 >= imageWidth;
+
+                  final double effectiveExpand;
+                  if (expandFocusWidth != focusWidth) {
+                    // Different focus, need to swap expand to the other axis.
+                    if (expandFocusWidth) {
+                      final scaledDown =
+                          heightAfterWidthFit2 * widthFitScaleCardToImage;
+                      final newExpand = scaledDown / imageHeight;
+                      effectiveExpand = newExpand;
+                    } else {
+                      final scaledDown = widthAfterHeightFit2 * originalExpand;
+                      final newExpand = scaledDown / imageWidth;
+                      effectiveExpand = newExpand;
+                    }
+                  } else {
+                    effectiveExpand = originalExpand;
+                  }
+
                   double finalScale;
                   if (focusWidth) {
-                    finalScale = widthFitScale * expand;
+                    finalScale = widthFitScale * effectiveExpand;
                   } else {
-                    finalScale = heightFitScale * expand;
+                    finalScale = heightFitScale * effectiveExpand;
                   }
 
                   final imageFileWidget = Image.file(
