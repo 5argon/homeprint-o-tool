@@ -98,7 +98,6 @@ Future<void> renderOneSide(
     baseDirectory: baseDirectory,
     hideInnerCutLine: true,
     back: back,
-    backStrategy: BackStrategy.invertedRow,
   );
   final imageUint = await createImageBytesFromWidget(
       flutterView, toRender, pixelWidth, pixelHeight);

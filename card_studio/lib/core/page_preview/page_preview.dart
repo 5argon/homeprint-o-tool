@@ -24,7 +24,6 @@ class PagePreview extends StatelessWidget {
   final bool previewCutLine;
   final bool hideInnerCutLine;
   final bool back;
-  final BackStrategy backStrategy;
 
   /// Must provide to show any image.
   final String? baseDirectory;
@@ -41,7 +40,6 @@ class PagePreview extends StatelessWidget {
     required this.baseDirectory,
     required this.hideInnerCutLine,
     required this.back,
-    required this.backStrategy,
   }) {
     final cardCount = calculateCardCountPerPage(layoutData, cardSize);
     horizontalCards = cardCount.columns;
@@ -137,7 +135,7 @@ class PagePreview extends StatelessWidget {
           showHorizontalInnerCutLine: !hideInnerCutLine,
           showVerticalInnerCutLine: !hideInnerCutLine,
           back: back,
-          backStrategy: backStrategy,
+          backStrategy: layoutData.backStrategy,
         );
         Widget entireCardArea = Expanded(flex: cardAreaFlex, child: cardArea);
         realCards.add(entireCardArea);

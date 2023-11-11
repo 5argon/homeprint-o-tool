@@ -53,7 +53,6 @@ class _ReviewPageState extends State<ReviewPage> {
         baseDirectory: widget.baseDirectory,
         hideInnerCutLine: true,
         back: false,
-        backStrategy: BackStrategy.invertedRow,
       ),
     );
 
@@ -67,7 +66,6 @@ class _ReviewPageState extends State<ReviewPage> {
         baseDirectory: widget.baseDirectory,
         hideInnerCutLine: true,
         back: true,
-        backStrategy: BackStrategy.invertedRow,
       ),
     );
 

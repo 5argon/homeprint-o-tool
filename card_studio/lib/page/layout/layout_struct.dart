@@ -1,3 +1,5 @@
+import 'package:card_studio/page/layout/back_strategy.dart';
+
 class LayoutData {
   SizePhysical paperSize;
 
@@ -26,9 +28,7 @@ class LayoutData {
   /// Defines how would you use the printed paper to make a double sided card.
   LayoutStyle layoutStyle;
 
-  bool duplexFlipHorizontal;
-  bool duplexFlipVertical;
-  bool duplexRotate180;
+  BackStrategy backStrategy;
 
   LayoutData({
     required this.paperSize,
@@ -38,9 +38,7 @@ class LayoutData {
     required this.perCardWhitePadding,
     required this.perCardCutGuideLength,
     required this.layoutStyle,
-    required this.duplexFlipHorizontal,
-    required this.duplexFlipVertical,
-    required this.duplexRotate180,
+    required this.backStrategy,
   });
 }
 

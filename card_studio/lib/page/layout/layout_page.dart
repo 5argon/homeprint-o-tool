@@ -36,7 +36,6 @@ class _LayoutPageState extends State<LayoutPage> {
         baseDirectory: null,
         hideInnerCutLine: true,
         back: false,
-        backStrategy: BackStrategy.invertedRow,
       ),
     );
 
