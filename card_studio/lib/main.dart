@@ -104,46 +104,46 @@ class _MyHomePageState extends State<MyHomePage> {
         _definedCards = value.saveFile.cardGroups;
         _definedInstances = value.saveFile.instances;
         // Include everything for now.
-        // for (var i = 0; i < _definedCards.length; i++) {
-        //   _includes.add(IncludeItem.cardGroup(_definedCards[i], 2));
-        // }
-        final lita = _definedCards.where((element) {
-          return element.name == "Lita";
-        }).first;
+        for (var i = 0; i < _definedCards.length; i++) {
+          _includes.add(IncludeItem.cardGroup(_definedCards[i], 1));
+        }
+        // final lita = _definedCards.where((element) {
+        //   return element.name == "Lita";
+        // }).first;
         // _includes.add(IncludeItem.cardGroup(lita, 1));
         // for (var i = 0; i < _definedCards.length; i++) {
         //   if (_definedCards[i].name != "Lita") {
         //     _includes.add(IncludeItem.cardGroup(_definedCards[i], 2));
         //   }
         // }
-        final pete = _definedCards.where((element) {
-          return element.name == "Parallel Ashcan Pete";
-        }).first;
-        final zoey = _definedCards.where((element) {
-          return element.name == "Parallel Zoey Samaras";
-        }).first;
-        final jim = _definedCards.where((element) {
-          return element.name == "Parallel Jim Culver";
-        }).first;
-        final laid = _definedCards.where((element) {
-          return element.name == "Laid to Rest";
-        }).first;
-        final suzi = _definedCards.where((element) {
-          return element.name == "Subject 5U-21";
-        }).first;
-        final blob = _definedCards.where((element) {
-          return element.name == "The Blob That Ate Everything ELSE";
-        }).first;
+        // final pete = _definedCards.where((element) {
+        //   return element.name == "Parallel Ashcan Pete";
+        // }).first;
+        // final zoey = _definedCards.where((element) {
+        //   return element.name == "Parallel Zoey Samaras";
+        // }).first;
+        // final jim = _definedCards.where((element) {
+        //   return element.name == "Parallel Jim Culver";
+        // }).first;
+        // final laid = _definedCards.where((element) {
+        //   return element.name == "Laid to Rest";
+        // }).first;
+        // final suzi = _definedCards.where((element) {
+        //   return element.name == "Subject 5U-21";
+        // }).first;
+        // final blob = _definedCards.where((element) {
+        //   return element.name == "The Blob That Ate Everything ELSE";
+        // }).first;
 
         // _includes.add(IncludeItem.cardGroup(pete, 1));
         // _includes.add(IncludeItem.cardGroup(zoey, 1));
         // _includes.add(IncludeItem.cardGroup(jim, 2));
 
-        _includes.add(IncludeItem.cardGroup(suzi, 1));
-        _includes.add(IncludeItem.cardGroup(zoey, 1));
-        _includes.add(IncludeItem.cardGroup(laid, 1));
-        _includes.add(IncludeItem.cardGroup(jim, 1));
-        _includes.add(IncludeItem.cardGroup(blob, 2));
+        // _includes.add(IncludeItem.cardGroup(suzi, 1));
+        // _includes.add(IncludeItem.cardGroup(zoey, 1));
+        // _includes.add(IncludeItem.cardGroup(laid, 1));
+        // _includes.add(IncludeItem.cardGroup(jim, 1));
+        // _includes.add(IncludeItem.cardGroup(blob, 2));
       });
       return;
     });

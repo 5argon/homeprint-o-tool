@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/page/include/include_data.dart';
 import 'package:card_studio/page/layout/back_strategy.dart';
@@ -123,69 +125,77 @@ class _ReviewPageState extends State<ReviewPage> {
         break;
     }
 
+    final cannotPageLeft = _page <= 1;
+    final cannotPageRight = _page >= cards.pagination.totalPages;
+    var paginationControl = Row(children: [
+      IconButton(
+          onPressed: cannotPageLeft
+              ? null
+              : () {
+                  setState(() {
+                    _page = max(1, _page - 1);
+                  });
+                },
+          icon: Icon(Icons.arrow_left)),
+      SizedBox(width: 8),
+      Text("Page $_page of ${cards.pagination.totalPages}"),
+      SizedBox(width: 8),
+      IconButton(
+          onPressed: cannotPageRight
+              ? null
+              : () {
+                  setState(() {
+                    _page = min(cards.pagination.totalPages, _page + 1);
+                  });
+                },
+          icon: Icon(Icons.arrow_right)),
+    ]);
+
     var dualPreviewRow = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: previewChildren,
     );
-
     return Column(
       children: [
-        Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(4)),
-          ),
-          child: SizedBox(
-            height: 500,
-            child: Column(
+        Expanded(child: dualPreviewRow),
+        SizedBox(
+          height: 50,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: dualPreviewRow,
-                ),
+                paginationControl,
+                SizedBox(width: 16),
                 SizedBox(
-                  height: 50,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 300,
-                          child: SegmentedButton(
-                            segments: [
-                              ButtonSegment(value: 0, label: Text("Dual")),
-                              ButtonSegment(value: 1, label: Text("Front")),
-                              ButtonSegment(value: 2, label: Text("Back")),
-                            ],
-                            selected: {_previewStyle.index},
-                            onSelectionChanged: (p0) {
-                              setState(() {
-                                _previewStyle = PreviewStyle.values[p0.first];
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Checkbox(
-                            value: _previewCutLine,
-                            onChanged: (checked) {
-                              setState(() {
-                                _previewCutLine = checked ?? false;
-                              });
-                            }),
-                        Text("Preview Cut Line")
-                      ],
-                    ),
+                  width: 300,
+                  child: SegmentedButton(
+                    segments: [
+                      ButtonSegment(value: 0, label: Text("Dual")),
+                      ButtonSegment(value: 1, label: Text("Front")),
+                      ButtonSegment(value: 2, label: Text("Back")),
+                    ],
+                    selected: {_previewStyle.index},
+                    onSelectionChanged: (p0) {
+                      setState(() {
+                        _previewStyle = PreviewStyle.values[p0.first];
+                      });
+                    },
                   ),
-                )
+                ),
+                SizedBox(width: 16),
+                Checkbox(
+                    value: _previewCutLine,
+                    onChanged: (checked) {
+                      setState(() {
+                        _previewCutLine = checked ?? false;
+                      });
+                    }),
+                Text("Preview Cut Line")
               ],
             ),
           ),
-        ),
-        Flexible(child: Text("Review Control"))
+        )
       ],
     );
   }

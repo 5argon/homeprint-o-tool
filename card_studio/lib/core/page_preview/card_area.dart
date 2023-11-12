@@ -56,7 +56,7 @@ class CardArea extends StatelessWidget {
   final bool back;
   final BackStrategy backStrategy;
 
-  Future<ImageDescriptor> getDescriptor(File loadedFile) async {
+  Future<ImageDescriptor?> getDescriptor(File loadedFile) async {
     final bytes = await loadedFile.readAsBytes();
     final buff = await ImmutableBuffer.fromUint8List(bytes);
     final descriptor = await ImageDescriptor.encoded(buff);
