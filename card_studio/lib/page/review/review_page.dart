@@ -195,7 +195,8 @@ class _ReviewPageState extends State<ReviewPage> {
               ],
             ),
           ),
-        )
+        ),
+        SizedBox(height: 40),
       ],
     );
   }

@@ -253,6 +253,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          _previousFileName ?? "(No Loaded Project)",
+                          style: textTheme.bodySmall,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: OutlinedButton(
                             onPressed: () {
                               final fut = SaveFile.loadFromFilePicker()
@@ -266,6 +273,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                     _definedInstances =
                                         loadResult.saveFile.instances;
                                     _baseDirectory = loadResult.basePath;
+                                    _previousFileName = loadResult.fileName;
+                                    // Overwrite inclues to all cards on load.
+                                    Includes newIncludes = [];
+                                    for (var i = 0;
+                                        i < _definedCards.length;
+                                        i++) {
+                                      newIncludes.add(IncludeItem.cardGroup(
+                                          _definedCards[i], 1));
+                                    }
+                                    _includes = newIncludes;
                                   });
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
