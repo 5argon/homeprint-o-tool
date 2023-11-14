@@ -65,12 +65,13 @@ CardsAtPage cardsAtPage(Includes includes, Includes skipIncludes,
 
   final frontCards = onThisPage.map((e) => e.front).toList();
   final backCards = onThisPage.map((e) => e.back).toList();
-  final skipCards = allSkips.map((e) => e.back).toList();
+  final skipCardsFront = allSkips.map((e) => e.front).toList();
+  final skipCardsBack = allSkips.map((e) => e.back).toList();
   return CardsAtPage(
     distributeRowCol(page, cardCountRowCol.rows, cardCountRowCol.columns,
-        frontCards, skipCards, BackStrategy.exact, validSkips),
+        frontCards, skipCardsFront, BackStrategy.exact, validSkips),
     distributeRowCol(page, cardCountRowCol.rows, cardCountRowCol.columns,
-        backCards, skipCards, BackStrategy.invertedRow, validSkips),
+        backCards, skipCardsBack, BackStrategy.invertedRow, validSkips),
     pagination,
   );
 }
@@ -85,22 +86,36 @@ RowColCards distributeRowCol(
     BackStrategy backStrategy,
     List<int> skips) {
   RowColCards allRows = [];
-  for (var v = 0, runningIndex = 0; v < cards.length; v++, runningIndex++) {
-    // final previousSkips = skips.length * page;
-    while (skips.contains(runningIndex + 1)) {
-      runningIndex++;
-    }
-    final row = runningIndex ~/ cols;
+  final previousSkips = skips.length * (page - 1);
+  final cardCount = rows * cols;
+  var realCount = 0;
+  var skipCount = previousSkips;
+  for (var v = 0; v < cardCount; v++) {
+    final row = v ~/ cols;
     if (allRows.length <= row) {
       allRows.add(List.filled(cols, null));
     }
     final int target;
     if (backStrategy == BackStrategy.invertedRow) {
-      target = cols - 1 - (runningIndex % cols);
+      target = cols - 1 - (v % cols);
     } else {
-      target = runningIndex % cols;
+      target = v % cols;
     }
-    allRows[row][target] = cards[v];
+    final CardEachSingle? cardToAdd;
+    final isSkip = skips.contains(v + 1);
+    if (isSkip) {
+      if (skipCards.isNotEmpty) {
+        final skipCycleIndex = skipCount % skipCards.length;
+        skipCount++;
+        cardToAdd = skipCards[skipCycleIndex];
+      } else {
+        cardToAdd = null;
+      }
+    } else {
+      cardToAdd = cards[realCount];
+      realCount++;
+    }
+    allRows[row][target] = cardToAdd;
   }
   return allRows;
 }

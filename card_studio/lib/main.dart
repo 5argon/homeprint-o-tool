@@ -305,6 +305,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   Includes newSkipIncludes = [];
                   newSkipIncludes
+                      .add(IncludeItem.cardGroup(_definedCards[8], 1));
+                  newSkipIncludes
                       .add(IncludeItem.cardGroup(_definedCards[4], 1));
                   _skipIncludes = newSkipIncludes;
                 });
