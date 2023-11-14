@@ -1,5 +1,4 @@
 import 'package:card_studio/core/page_preview/parallel_guide.dart';
-import 'package:card_studio/page/layout/back_strategy.dart';
 import 'package:card_studio/page/layout/layout_helper.dart';
 import 'package:card_studio/page/layout/layout_logic.dart';
 import 'package:card_studio/page/review/pagination.dart';

@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// to select a base directory at some point. Loading any JSON file will set
   /// that directory as a base.
   String? _baseDirectory;
-  String? _previousFileName = "project.json";
+  String? _previousFileName;
 
   // These three are defined by project.
   ProjectSettings _projectSettings = defaultProjectSettings;

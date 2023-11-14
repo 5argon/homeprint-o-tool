@@ -1,5 +1,4 @@
 import 'package:card_studio/core/project_settings.dart';
-import 'package:card_studio/page/layout/back_strategy.dart';
 
 import '../../core/page_preview/page_preview.dart';
 import '../../core/page_preview/page_preview_frame.dart';
