@@ -21,11 +21,13 @@ class ReviewPage extends StatefulWidget {
       required this.projectSettings,
       required this.layoutData,
       required this.includes,
+      required this.skipIncludes,
       required this.baseDirectory});
 
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
   final Includes includes;
+  final Includes skipIncludes;
   final String baseDirectory;
 
   @override
@@ -39,8 +41,8 @@ class _ReviewPageState extends State<ReviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final cards = cardsAtPage(widget.includes, widget.layoutData,
-        widget.projectSettings.cardSize, _page);
+    final cards = cardsAtPage(widget.includes, widget.skipIncludes,
+        widget.layoutData, widget.projectSettings.cardSize, _page);
 
     var textTheme = Theme.of(context).textTheme;
     var lrPreviewPadding = 8.0;

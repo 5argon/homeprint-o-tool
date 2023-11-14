@@ -30,6 +30,8 @@ class LayoutData {
 
   BackStrategy backStrategy;
 
+  List<int> skips;
+
   LayoutData({
     required this.paperSize,
     required this.pixelPerInch,
@@ -39,6 +41,7 @@ class LayoutData {
     required this.perCardCutGuideLength,
     required this.layoutStyle,
     required this.backStrategy,
+    required this.skips,
   });
 }
 

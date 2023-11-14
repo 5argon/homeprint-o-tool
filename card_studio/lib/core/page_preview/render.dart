@@ -24,6 +24,7 @@ Future renderRender(
   ProjectSettings projectSettings,
   LayoutData layoutData,
   Includes includeItems,
+  Includes skipIncludeItems,
   String baseDirectory,
   void Function(int) onCurrentPageUpdate,
   void Function(ExportingFrontBack) onFrontBackUpdate,
@@ -38,8 +39,8 @@ Future renderRender(
   onTotalPageUpdate(pagination.totalPages);
   for (var i = 0; i < pagination.totalPages; i++) {
     onCurrentPageUpdate(i + 1);
-    final cards =
-        cardsAtPage(includeItems, layoutData, projectSettings.cardSize, i + 1);
+    final cards = cardsAtPage(includeItems, skipIncludeItems, layoutData,
+        projectSettings.cardSize, i + 1);
     const filePrefix = "export";
     onFrontBackUpdate(ExportingFrontBack.front);
 
