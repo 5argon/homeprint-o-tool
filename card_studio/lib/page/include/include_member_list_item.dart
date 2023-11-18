@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 
 import '../../core/card.dart';
 
-class GroupMemberListItem extends StatelessWidget {
+class IncludeMemberListItem extends StatelessWidget {
   final String basePath;
   final CardEach cardEach;
   final SizePhysical cardSize;
   final DefinedInstances definedInstances;
   final int order;
 
-  GroupMemberListItem(
+  IncludeMemberListItem(
       {super.key,
       required this.basePath,
       required this.cardEach,
@@ -23,28 +23,18 @@ class GroupMemberListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numberLabel = SizedBox(
+    final orderLabel = SizedBox(
       width: 50,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
         child: Text("#$order"),
       ),
     );
-    final cardNameBox = TextFormField(
-      initialValue: cardEach.name ?? "",
-      decoration: InputDecoration(
-        labelText: "Card name",
-      ),
+    final cardNameBox = Text(
+      cardEach.name ?? "",
     );
-    final quantityBox = TextFormField(
-      initialValue: cardEach.amount.toString(),
-      decoration: InputDecoration(
-        labelText: "Copies",
-      ),
-    );
-    final removeButton = IconButton(
-      onPressed: () {},
-      icon: Icon(Icons.delete),
+    final quantityBox = Text(
+      "x ${cardEach.amount.toString()} Cards",
     );
     return Card(
       child: Padding(
@@ -85,8 +75,7 @@ class GroupMemberListItem extends StatelessWidget {
                         child: quantityBox,
                       ),
                       SizedBox(width: 16),
-                      removeButton,
-                      numberLabel,
+                      orderLabel,
                     ],
                   ),
                   Row(
@@ -97,7 +86,7 @@ class GroupMemberListItem extends StatelessWidget {
                           cardEachSingle: cardEach.front,
                           definedInstances: definedInstances,
                           instance: cardEach.front?.isInstance ?? false,
-                          showEditButton: true,
+                          showEditButton: false,
                         ),
                       ),
                       SizedBox(width: 16),
@@ -107,7 +96,7 @@ class GroupMemberListItem extends StatelessWidget {
                           cardEachSingle: cardEach.back,
                           definedInstances: definedInstances,
                           instance: cardEach.back?.isInstance ?? false,
-                          showEditButton: true,
+                          showEditButton: false,
                         ),
                       )
                     ],

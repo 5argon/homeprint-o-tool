@@ -1,4 +1,5 @@
 import 'package:card_studio/core/card.dart';
+import 'package:card_studio/page/include/include_page.dart';
 import 'package:card_studio/page/layout/back_strategy.dart';
 import 'package:card_studio/page/review/review_page.dart';
 import 'package:file_picker/file_picker.dart';
@@ -52,7 +53,7 @@ var defaultLayoutData = LayoutData(
   pixelPerInch: 300,
   paperSize: SizePhysical(13, 19, PhysicalSizeType.inch),
   // paperSize: SizePhysical(8.3, 11.7, PhysicalSizeType.inch),
-  marginSize: SizePhysical(0.2, 0.5, PhysicalSizeType.centimeter),
+  marginSize: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
   edgeCutGuideSize: SizePhysical(0.1, 0.1, PhysicalSizeType.centimeter),
   perCardWhitePadding: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
   perCardCutGuideLength: ValuePhysical(0.3, PhysicalSizeType.centimeter),
@@ -188,12 +189,36 @@ class _MyHomePageState extends State<MyHomePage> {
                     definedInstances: _definedInstances,
                   );
                   return cardPage;
-                case 4:
+                case 3:
                   var layoutPage = LayoutPage(
                     layoutData: _layoutData,
                     projectSettings: _projectSettings,
                   );
                   return layoutPage;
+                case 4:
+                  final baseDirectory = _baseDirectory;
+                  if (baseDirectory == null) {
+                    return Text("Need base directory to render cards.");
+                  }
+                  var includePage = IncludePage(
+                    basePath: baseDirectory,
+                    projectSettings: _projectSettings,
+                    definedCards: _definedCards,
+                    definedInstances: _definedInstances,
+                    includes: _includes,
+                    skipIncludes: _skipIncludes,
+                    onIncludesChanged: (p0) {
+                      setState(() {
+                        _includes = p0;
+                      });
+                    },
+                    onSkipIncludesChanged: (p0) {
+                      setState(() {
+                        _skipIncludes = p0;
+                      });
+                    },
+                  );
+                  return includePage;
                 case 5:
                   final baseDirectory = _baseDirectory;
                   if (baseDirectory != null) {
@@ -370,7 +395,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "Project",
+                          "Catalog",
                           style: textTheme.titleMedium,
                         ),
                       ),
@@ -389,10 +414,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           label: Text("Settings")),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Instance")),
+                          label: Text("Instances")),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Card")),
+                          label: Text("Items")),
                       Divider(
                         indent: 20,
                         endIndent: 20,
@@ -406,10 +431,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Include")),
+                          label: Text("Paper")),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Layout")),
+                          label: Text("Cards")),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
                           label: Text("Review")),

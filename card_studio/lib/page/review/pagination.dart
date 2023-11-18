@@ -112,8 +112,12 @@ RowColCards distributeRowCol(
         cardToAdd = null;
       }
     } else {
-      cardToAdd = cards[realCount];
-      realCount++;
+      if (cards.length > realCount) {
+        cardToAdd = cards[realCount];
+        realCount++;
+      } else {
+        cardToAdd = null;
+      }
     }
     allRows[row][target] = cardToAdd;
   }

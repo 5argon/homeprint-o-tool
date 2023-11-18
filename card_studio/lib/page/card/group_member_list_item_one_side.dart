@@ -8,6 +8,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
   final DefinedInstances definedInstances;
   final bool isBack;
   final bool instance;
+  final bool showEditButton;
 
   GroupMemberListItemOneSide({
     super.key,
@@ -15,6 +16,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     required this.definedInstances,
     required this.isBack,
     required this.instance,
+    required this.showEditButton,
   });
 
   @override
@@ -42,7 +44,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
       child: Row(
         children: [
-          editButton,
+          showEditButton ? editButton : Container(),
           SizedBox(width: 4),
           Expanded(
             child: Column(
