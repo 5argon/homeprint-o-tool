@@ -50,7 +50,8 @@ class CardEach {
   CardEachSingle? front;
   CardEachSingle? back;
 
-  /// On including this card, automatically duplicates itself by this many count.
+  /// On including this card as a group, automatically duplicates itself by this many count.
+  /// Individual add will not be affected.
   late int amount;
 
   CardEach(this.front, this.back, this.amount, this.name);

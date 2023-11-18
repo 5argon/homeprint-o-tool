@@ -31,7 +31,7 @@ class IncludeItem {
       }
     } else if (cardEach != null) {
       for (var i = 0; i < amount; i++) {
-        result.addAll(cardEach.linearize());
+        result.add(cardEach);
       }
     }
     return result;
@@ -44,7 +44,7 @@ class IncludeItem {
     if (cardGroup != null) {
       return cardGroup.count() * amount;
     } else if (cardEach != null) {
-      return cardEach.amount * amount;
+      return amount;
     } else {
       return 0;
     }

@@ -14,8 +14,8 @@ class IncludeListItem extends StatelessWidget {
   final DefinedInstances definedInstances;
   final Includes includes;
   final Includes skipIncludes;
-  final Function(int) onGroupQuantityChanged;
-  final Function(int, int) onGroupMemberQuantityChanged;
+  final Function(int quantity) onAddGroup;
+  final Function(int index, int quantity) onAddIndividual;
 
   IncludeListItem({
     super.key,
@@ -25,19 +25,42 @@ class IncludeListItem extends StatelessWidget {
     required this.definedInstances,
     required this.includes,
     required this.skipIncludes,
-    required this.onGroupQuantityChanged,
-    required this.onGroupMemberQuantityChanged,
+    required this.onAddGroup,
+    required this.onAddIndividual,
   });
 
   @override
   Widget build(BuildContext context) {
+    final addButton = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: ElevatedButton(
+        onPressed: () {
+          onAddGroup(1);
+        },
+        child: Icon(Icons.add),
+      ),
+    );
     final groupName = Text(cardGroup.name ?? "");
-    final totalQuantity = Text("x${cardGroup.count()} Cards");
+
+    final individualAddCount = includes.where((element) {
+      final ce = element.cardEach;
+      // Find if individual card is a part of this group
+      if (cardGroup.cards.any((element) => element == ce)) {
+        return true;
+      } else {
+        return false;
+      }
+    }).fold(0, (previousValue, element) => previousValue + element.count());
+
+    final totalQuantityDisplay =
+        SizedBox(width: 90, child: Text("x${cardGroup.count()} Cards"));
     final groupIncludedCount = includes
         .where((element) => element.cardGroup == cardGroup)
         .fold(0, (p, e) => p + e.amount);
 
     final countNumberInCircle = CountNumberInCircle(value: groupIncludedCount);
+    final individualNumberInCircle =
+        CountNumberInCircle(value: individualAddCount, plus: true);
 
     final List<IncludeMemberListItem> groupMembers = [];
     for (var i = 0; i < cardGroup.cards.length; i++) {
@@ -47,6 +70,11 @@ class IncludeListItem extends StatelessWidget {
           cardEach: card,
           cardSize: cardSize,
           definedInstances: definedInstances,
+          includes: includes,
+          onAddIncludeItem: (p0) {
+            onAddIndividual(i, p0);
+          },
+          outerCount: groupIncludedCount,
           order: i + 1));
     }
 
@@ -55,8 +83,10 @@ class IncludeListItem extends StatelessWidget {
       child: Row(
         children: [
           Expanded(child: groupName),
-          totalQuantity,
           countNumberInCircle,
+          totalQuantityDisplay,
+          individualNumberInCircle,
+          addButton,
         ],
       ),
     );

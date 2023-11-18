@@ -54,7 +54,7 @@ class IncludePage extends StatelessWidget {
             text: "Catalog",
           ),
           Tab(
-            text: "Chosen ($count)",
+            text: "Added ($count)",
           ),
           Tab(
             text: "Extra ($extraCount)",
@@ -73,12 +73,17 @@ class IncludePage extends StatelessWidget {
         definedInstances: definedInstances,
         includes: includes,
         skipIncludes: skipIncludes,
-        onGroupQuantityChanged: (quantity) {
+        onAddGroup: (quantity) {
           final newIncludes = includes.toList();
-          newIncludes[i] = IncludeItem.cardGroup(cardGroup, quantity);
+          newIncludes.add(IncludeItem.cardGroup(cardGroup, quantity));
           onIncludesChanged(newIncludes);
         },
-        onGroupMemberQuantityChanged: (quantity, memberIndex) {},
+        onAddIndividual: (index, quantity) {
+          final newIncludes = includes.toList();
+          newIncludes
+              .add(IncludeItem.cardEach(cardGroup.cards[index], quantity));
+          onIncludesChanged(newIncludes);
+        },
       );
       groups.add(gli);
     }

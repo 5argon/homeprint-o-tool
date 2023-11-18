@@ -4,27 +4,35 @@ class CountNumberInCircle extends StatelessWidget {
   const CountNumberInCircle({
     super.key,
     required this.value,
+    this.plus,
   });
 
   final int value;
+  final bool? plus;
 
   @override
   Widget build(BuildContext context) {
     final zeroValue = value == 0;
+    final Color color;
+    if (zeroValue) {
+      color = Colors.grey;
+    } else if (plus == true) {
+      color = Colors.cyan;
+    } else {
+      color = Colors.red;
+    }
     return Container(
-      width: 35,
+      width: 50,
       margin: EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.red,
+        color: color,
         borderRadius: BorderRadius.circular(50),
       ),
-      child: zeroValue
-          ? null
-          : Text(
-              value.toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white),
-            ),
+      child: Text(
+        plus == true ? "+${value.toString()}" : value.toString(),
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.white),
+      ),
     );
   }
 }
