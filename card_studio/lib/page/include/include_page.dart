@@ -54,7 +54,7 @@ class IncludePage extends StatelessWidget {
             text: "Catalog",
           ),
           Tab(
-            text: "Added ($count)",
+            text: "Picked ($count)",
           ),
           Tab(
             text: "Extra ($extraCount)",

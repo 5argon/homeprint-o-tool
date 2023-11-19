@@ -148,7 +148,7 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
   // it seems like the Image widget needs multiple renders to get them to load
   // and also some time in-between each render. Both number 10 here are arbitrary.
 
-  for (var i = 0; i < 10; i++) {
+  for (var i = 0; i < 40; i++) {
     buildOwner
       ..buildScope(rootElement)
       ..finalizeTree();

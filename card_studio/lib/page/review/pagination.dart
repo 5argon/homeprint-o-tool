@@ -19,6 +19,9 @@ CardsPagination calculatePagination(Includes includes, LayoutData layoutData,
     SizePhysical cardSize, int row, int col) {
   final cardCountRowCol = calculateCardCountPerPage(layoutData, cardSize);
   final cardCountPerPage = cardCountRowCol.rows * cardCountRowCol.columns;
+  if (cardCountPerPage <= 0) {
+    return CardsPagination(0, 0);
+  }
   final countRequired =
       includes.fold(0, (prev, includeItem) => prev + includeItem.count());
   final totalPages = (countRequired / cardCountPerPage).ceil();

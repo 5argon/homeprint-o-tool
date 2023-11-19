@@ -52,14 +52,15 @@ class MyHomePage extends StatefulWidget {
 var defaultLayoutData = LayoutData(
   pixelPerInch: 300,
   paperSize: SizePhysical(13, 19, PhysicalSizeType.inch),
-  // paperSize: SizePhysical(8.3, 11.7, PhysicalSizeType.inch),
+  // paperSize: SizePhysical(19, 13, PhysicalSizeType.inch),
+  // paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
   marginSize: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
   edgeCutGuideSize: SizePhysical(0.1, 0.1, PhysicalSizeType.centimeter),
   perCardWhitePadding: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
   perCardCutGuideLength: ValuePhysical(0.3, PhysicalSizeType.centimeter),
   layoutStyle: LayoutStyle.duplex,
   backStrategy: BackStrategy.invertedRow,
-  skips: [21, 22, 23, 24, 25],
+  skips: [],
 );
 
 var defaultProjectSettings = ProjectSettings(
@@ -98,60 +99,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   initState() {
     super.initState();
-    // loadThenAssign("/Users/5argon/Desktop/TabooPrintProject/test.json");
-  }
-
-  loadThenAssign(String path) {
-    fileLoadingFuture = SaveFile.loadFromPath(path).then((value) {
-      setState(() {
-        _baseDirectory = value.basePath;
-        _projectSettings = value.saveFile.projectSettings;
-        _definedCards = value.saveFile.cardGroups;
-        _definedInstances = value.saveFile.instances;
-        // Include everything for now.
-        for (var i = 0; i < _definedCards.length; i++) {
-          _includes.add(IncludeItem.cardGroup(_definedCards[i], 1));
-        }
-        // final lita = _definedCards.where((element) {
-        //   return element.name == "Lita";
-        // }).first;
-        // _includes.add(IncludeItem.cardGroup(lita, 1));
-        // for (var i = 0; i < _definedCards.length; i++) {
-        //   if (_definedCards[i].name != "Lita") {
-        //     _includes.add(IncludeItem.cardGroup(_definedCards[i], 2));
-        //   }
-        // }
-        // final pete = _definedCards.where((element) {
-        //   return element.name == "Parallel Ashcan Pete";
-        // }).first;
-        // final zoey = _definedCards.where((element) {
-        //   return element.name == "Parallel Zoey Samaras";
-        // }).first;
-        // final jim = _definedCards.where((element) {
-        //   return element.name == "Parallel Jim Culver";
-        // }).first;
-        // final laid = _definedCards.where((element) {
-        //   return element.name == "Laid to Rest";
-        // }).first;
-        // final suzi = _definedCards.where((element) {
-        //   return element.name == "Subject 5U-21";
-        // }).first;
-        // final blob = _definedCards.where((element) {
-        //   return element.name == "The Blob That Ate Everything ELSE";
-        // }).first;
-
-        // _includes.add(IncludeItem.cardGroup(pete, 1));
-        // _includes.add(IncludeItem.cardGroup(zoey, 1));
-        // _includes.add(IncludeItem.cardGroup(jim, 2));
-
-        // _includes.add(IncludeItem.cardGroup(suzi, 1));
-        // _includes.add(IncludeItem.cardGroup(zoey, 1));
-        // _includes.add(IncludeItem.cardGroup(laid, 1));
-        // _includes.add(IncludeItem.cardGroup(jim, 1));
-        // _includes.add(IncludeItem.cardGroup(blob, 2));
-      });
-      return;
-    });
   }
 
   @override
@@ -306,34 +253,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   _previousFileName = loadResult.fileName;
                   // Overwrite inclues to all cards on load.
                   Includes newIncludes = [];
-                  // for (var i = 0; i < _definedCards.length; i++) {
-                  //   newIncludes.add(IncludeItem.cardGroup(_definedCards[i], 1));
-                  // }
-
-                  newIncludes.add(IncludeItem.cardGroup(_definedCards[0], 1));
-                  newIncludes.add(IncludeItem.cardGroup(_definedCards[1], 2));
-                  newIncludes.add(IncludeItem.cardGroup(_definedCards[4], 1));
-                  newIncludes.add(IncludeItem.cardGroup(_definedCards[6], 1));
-                  newIncludes
-                      .add(IncludeItem.cardEach(_definedCards[5].cards[0], 1));
-                  newIncludes
-                      .add(IncludeItem.cardEach(_definedCards[5].cards[1], 1));
-                  newIncludes
-                      .add(IncludeItem.cardEach(_definedCards[5].cards[7], 1));
-                  newIncludes
-                      .add(IncludeItem.cardEach(_definedCards[7].cards[4], 1));
-                  newIncludes
-                      .add(IncludeItem.cardEach(_definedCards[2].cards[0], 1));
-                  newIncludes
-                      .add(IncludeItem.cardEach(_definedCards[2].cards[1], 1));
+                  for (var i = 0; i < _definedCards.length; i++) {
+                    newIncludes.add(IncludeItem.cardGroup(_definedCards[i], 1));
+                  }
                   _includes = newIncludes;
-
-                  Includes newSkipIncludes = [];
-                  newSkipIncludes
-                      .add(IncludeItem.cardGroup(_definedCards[8], 1));
-                  newSkipIncludes
-                      .add(IncludeItem.cardGroup(_definedCards[4], 1));
-                  _skipIncludes = newSkipIncludes;
+                  _skipIncludes = [];
                 });
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(
@@ -417,7 +341,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           label: Text("Instances")),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Items")),
+                          label: Text("Cards")),
                       Divider(
                         indent: 20,
                         endIndent: 20,
@@ -434,7 +358,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           label: Text("Paper")),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Cards")),
+                          label: Text("Picks")),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
                           label: Text("Review")),

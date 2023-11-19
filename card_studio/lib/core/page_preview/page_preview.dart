@@ -43,12 +43,16 @@ class PagePreview extends StatelessWidget {
     final cardCount = calculateCardCountPerPage(layoutData, cardSize);
     horizontalCards = cardCount.columns;
     verticalCards = cardCount.rows;
-    assert(horizontalCards >= 1);
-    assert(verticalCards >= 1);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (horizontalCards <= 0 || verticalCards <= 0) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text("(No card can fit in this page.)"),
+      );
+    }
     final ld = layoutData;
 
     const flexMultiplier = 10000000;
