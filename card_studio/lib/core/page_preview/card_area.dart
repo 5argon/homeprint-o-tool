@@ -185,6 +185,8 @@ class CardArea extends StatelessWidget {
     Widget horizontalGuide = Container();
     Color previewColor = Colors.red;
     Color realColor = Color.fromARGB(60, 255, 255, 255);
+    print("H $horizontalSpace");
+    print("V $verticalSpace");
     if (previewCutLine || showVerticalInnerCutLine) {
       verticalGuide = ParallelGuide(
         spaceTaken: horizontalSpace,

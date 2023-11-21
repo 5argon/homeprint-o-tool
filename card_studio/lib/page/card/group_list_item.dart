@@ -11,6 +11,8 @@ class GroupListItem extends StatelessWidget {
   final CardGroup cardGroup;
   final SizePhysical cardSize;
   final DefinedInstances definedInstances;
+  final Function(CardGroup cardGroup) onCardGroupChange;
+  final Function() onDelete;
 
   GroupListItem(
       {super.key,
@@ -18,12 +20,16 @@ class GroupListItem extends StatelessWidget {
       required this.basePath,
       required this.cardGroup,
       required this.cardSize,
-      required this.definedInstances});
+      required this.definedInstances,
+      required this.onCardGroupChange,
+      required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
     final removeButton = IconButton(
-      onPressed: () {},
+      onPressed: () {
+        onDelete();
+      },
       icon: Icon(Icons.delete),
     );
     final groupName = TextFormField(
@@ -31,11 +37,20 @@ class GroupListItem extends StatelessWidget {
       decoration: InputDecoration(
         labelText: "Group Name",
       ),
+      onChanged: (value) {
+        final newCardGroup = cardGroup;
+        newCardGroup.name = value;
+        onCardGroupChange(newCardGroup);
+      },
     );
     final totalQuantity = Text(
         "Cards: ${cardGroup.count()} (Unique: ${cardGroup.uniqueCount()})");
     final addButton = ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        final newCardGroup = cardGroup;
+        newCardGroup.cards.add(CardEach(null, null, 1, ""));
+        onCardGroupChange(newCardGroup);
+      },
       child: const Text('Add Card'),
     );
     final List<GroupMemberListItem> groupMembers = [];
@@ -46,6 +61,16 @@ class GroupListItem extends StatelessWidget {
           cardEach: card,
           cardSize: cardSize,
           definedInstances: definedInstances,
+          onCardEachChange: (card) {
+            final newCardGroup = cardGroup;
+            newCardGroup.cards[i] = card;
+            onCardGroupChange(newCardGroup);
+          },
+          onDelete: () {
+            final newCardGroup = cardGroup;
+            newCardGroup.cards.removeAt(i);
+            onCardGroupChange(newCardGroup);
+          },
           order: i + 1));
     }
 

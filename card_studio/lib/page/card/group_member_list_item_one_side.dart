@@ -1,6 +1,10 @@
+import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/core/save_file.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import 'package:path/path.dart' as p;
 import '../../core/card.dart';
 
 class GroupMemberListItemOneSide extends StatelessWidget {
@@ -9,6 +13,8 @@ class GroupMemberListItemOneSide extends StatelessWidget {
   final bool isBack;
   final bool instance;
   final bool showEditButton;
+  final String basePath;
+  final Function(CardEachSingle card) onCardEachSingleChange;
 
   GroupMemberListItemOneSide({
     super.key,
@@ -17,13 +23,39 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     required this.isBack,
     required this.instance,
     required this.showEditButton,
+    required this.basePath,
+    required this.onCardEachSingleChange,
   });
 
   @override
   Widget build(BuildContext context) {
     Widget instanceMark;
-    final editButton = IconButton(onPressed: () {}, icon: Icon(Icons.edit));
     final cardEachSingle = this.cardEachSingle;
+    final editButton = IconButton(
+        onPressed: () async {
+          final path = await pickRelativePath(basePath);
+          if (path == null) return;
+          if (cardEachSingle == null) {
+            final newCard = CardEachSingle(path, Alignment.center, 0.9358,
+                Rotation.none, PerCardSynthesizedBleed.mirror, null, false);
+            onCardEachSingleChange(newCard);
+          } else {
+            final newCard = cardEachSingle;
+            newCard.relativeFilePath = path;
+            onCardEachSingleChange(newCard);
+          }
+        },
+        icon: Icon(Icons.edit));
+    final sp1 = IconButton(
+        onPressed: () async {
+          onCardEachSingleChange(definedInstances[0]);
+        },
+        icon: Icon(Icons.ac_unit));
+    final sp2 = IconButton(
+        onPressed: () async {
+          onCardEachSingleChange(definedInstances[1]);
+        },
+        icon: Icon(Icons.ac_unit));
     if (cardEachSingle != null && cardEachSingle.isInstance) {
       instanceMark = Row(
         children: [
@@ -40,11 +72,13 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     } else {
       instanceMark = Container();
     }
-    return Padding(
+    final padding = Padding(
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
       child: Row(
         children: [
           showEditButton ? editButton : Container(),
+          sp1,
+          sp2,
           SizedBox(width: 4),
           Expanded(
             child: Column(
@@ -68,5 +102,20 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         ],
       ),
     );
+    return padding;
   }
+}
+
+// Open dialog to pick JPG or PNG file, path returned is relative to baseDirectory
+Future<String?> pickRelativePath(String basePath) async {
+  final pickResult = await FilePicker.platform.pickFiles(
+    dialogTitle: "Choose an image file.",
+    allowedExtensions: ['png', 'jpg'],
+  );
+  if (pickResult == null) return null;
+  final filePath = pickResult.files.single.path;
+  final isUnderBasePath = p.isWithin(basePath, filePath ?? "");
+  if (!isUnderBasePath) return null;
+  final relativePath = p.relative(filePath ?? "", from: basePath);
+  return relativePath;
 }

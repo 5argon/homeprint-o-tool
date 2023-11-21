@@ -115,6 +115,8 @@ class IncludeMemberListItem extends StatelessWidget {
                           definedInstances: definedInstances,
                           instance: cardEach.front?.isInstance ?? false,
                           showEditButton: false,
+                          basePath: basePath,
+                          onCardEachSingleChange: (card) {},
                         ),
                       ),
                       SizedBox(width: 16),
@@ -125,6 +127,8 @@ class IncludeMemberListItem extends StatelessWidget {
                           definedInstances: definedInstances,
                           instance: cardEach.back?.isInstance ?? false,
                           showEditButton: false,
+                          basePath: basePath,
+                          onCardEachSingleChange: (card) {},
                         ),
                       )
                     ],

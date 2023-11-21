@@ -12,14 +12,19 @@ class GroupMemberListItem extends StatelessWidget {
   final SizePhysical cardSize;
   final DefinedInstances definedInstances;
   final int order;
+  final Function(CardEach card) onCardEachChange;
+  final Function() onDelete;
 
-  GroupMemberListItem(
-      {super.key,
-      required this.basePath,
-      required this.cardEach,
-      required this.cardSize,
-      required this.definedInstances,
-      required this.order});
+  GroupMemberListItem({
+    super.key,
+    required this.basePath,
+    required this.cardEach,
+    required this.cardSize,
+    required this.definedInstances,
+    required this.order,
+    required this.onCardEachChange,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,15 +40,29 @@ class GroupMemberListItem extends StatelessWidget {
       decoration: InputDecoration(
         labelText: "Card name",
       ),
+      onChanged: (value) {
+        final newCardEach = cardEach;
+        newCardEach.name = value;
+        onCardEachChange(newCardEach);
+      },
     );
     final quantityBox = TextFormField(
       initialValue: cardEach.amount.toString(),
       decoration: InputDecoration(
         labelText: "Copies",
       ),
+      onChanged: (value) {
+        final newCardEach = cardEach;
+        final tryParsed = int.tryParse(value);
+        if (tryParsed != null) {
+          newCardEach.amount = onCardEachChange(newCardEach);
+        }
+      },
     );
     final removeButton = IconButton(
-      onPressed: () {},
+      onPressed: () {
+        onDelete();
+      },
       icon: Icon(Icons.delete),
     );
     return Card(
@@ -97,7 +116,13 @@ class GroupMemberListItem extends StatelessWidget {
                           cardEachSingle: cardEach.front,
                           definedInstances: definedInstances,
                           instance: cardEach.front?.isInstance ?? false,
+                          basePath: basePath,
                           showEditButton: true,
+                          onCardEachSingleChange: (card) {
+                            final newCardEach = cardEach;
+                            newCardEach.front = card;
+                            onCardEachChange(newCardEach);
+                          },
                         ),
                       ),
                       SizedBox(width: 16),
@@ -107,7 +132,13 @@ class GroupMemberListItem extends StatelessWidget {
                           cardEachSingle: cardEach.back,
                           definedInstances: definedInstances,
                           instance: cardEach.back?.isInstance ?? false,
+                          basePath: basePath,
                           showEditButton: true,
+                          onCardEachSingleChange: (card) {
+                            final newCardEach = cardEach;
+                            newCardEach.back = card;
+                            onCardEachChange(newCardEach);
+                          },
                         ),
                       )
                     ],

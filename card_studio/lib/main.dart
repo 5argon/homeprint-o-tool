@@ -54,7 +54,7 @@ var defaultLayoutData = LayoutData(
   paperSize: SizePhysical(13, 19, PhysicalSizeType.inch),
   // paperSize: SizePhysical(19, 13, PhysicalSizeType.inch),
   // paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
-  marginSize: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
+  marginSize: SizePhysical(0.5, 6.5, PhysicalSizeType.centimeter),
   edgeCutGuideSize: SizePhysical(0.1, 0.1, PhysicalSizeType.centimeter),
   perCardWhitePadding: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
   perCardCutGuideLength: ValuePhysical(0.3, PhysicalSizeType.centimeter),
@@ -134,6 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     projectSettings: _projectSettings,
                     definedCards: _definedCards,
                     definedInstances: _definedInstances,
+                    onDefinedCardsChange: (definedCards) {
+                      setState(() {
+                        _definedCards = definedCards;
+                      });
+                    },
                   );
                   return cardPage;
                 case 3:
