@@ -62,8 +62,6 @@ class PagePreview extends StatelessWidget {
     int guideFlex =
         (ld.edgeCutGuideSize.heightCm / ld.paperSize.heightCm * flexMultiplier)
             .round();
-    int cardFlexVertical =
-        (cardSize.heightCm / ld.paperSize.heightCm * flexMultiplier).round();
 
     int guideCornerFlex =
         (ld.marginSize.widthCm / ld.paperSize.widthCm * flexMultiplier).round();
@@ -71,15 +69,20 @@ class PagePreview extends StatelessWidget {
         (ld.edgeCutGuideSize.widthCm / ld.paperSize.widthCm * flexMultiplier)
             .round();
 
-    double horizontalAllEachCard = (ld.paperSize.widthCm -
+    double horizontalAllEachCardCm = (ld.paperSize.widthCm -
             ((ld.marginSize.widthCm + ld.edgeCutGuideSize.widthCm) * 2)) /
         horizontalCards;
-    double verticalAllEachCard = (ld.paperSize.heightCm -
+    double verticalAllEachCardCm = (ld.paperSize.heightCm -
             ((ld.marginSize.heightCm + ld.edgeCutGuideSize.heightCm) * 2)) /
         verticalCards;
 
-    double cardHorizontalToPaper = horizontalAllEachCard / ld.paperSize.widthCm;
-    int cardAreaFlex = (cardHorizontalToPaper * flexMultiplier).round();
+    int cardFlexVertical =
+        (verticalAllEachCardCm / ld.paperSize.heightCm * flexMultiplier)
+            .round();
+
+    int cardFlexHorizontal =
+        (horizontalAllEachCardCm / ld.paperSize.widthCm * flexMultiplier)
+            .round();
 
     Widget verticalMargin = Expanded(
         flex: guideCornerFlex,
@@ -89,20 +92,24 @@ class PagePreview extends StatelessWidget {
           flashing: false,
         ));
 
-    double horizontalBleedEachCard = horizontalAllEachCard - cardSize.widthCm;
+    double horizontalBleedEachCard = horizontalAllEachCardCm - cardSize.widthCm;
     double horizontalActualEachCard =
-        horizontalAllEachCard - horizontalBleedEachCard;
-    double horizontalSpace = horizontalActualEachCard / horizontalAllEachCard;
+        horizontalAllEachCardCm - horizontalBleedEachCard;
+    double horizontalSpace = horizontalActualEachCard / horizontalAllEachCardCm;
+    double guideHorizontal = cardSize.widthCm / horizontalAllEachCardCm;
+
     List<Widget> allCardRows = [];
     for (var i = 0; i < verticalCards; i++) {
       int cutFlex =
           (ld.edgeCutGuideSize.widthCm / ld.paperSize.widthCm * flexMultiplier)
               .round();
 
-      double verticalBleedEachCard = verticalAllEachCard - cardSize.heightCm;
-      double verticalActualEachCard =
-          verticalAllEachCard - verticalBleedEachCard;
-      double verticalSpace = verticalActualEachCard / verticalAllEachCard;
+      double verticalBleedEachCardCm =
+          verticalAllEachCardCm - cardSize.heightCm;
+      double verticalActualEachCardCm =
+          verticalAllEachCardCm - verticalBleedEachCardCm;
+      double verticalSpace = verticalActualEachCardCm / verticalAllEachCardCm;
+      double guideVertical = cardSize.heightCm / verticalAllEachCardCm;
 
       Widget cut = Expanded(
           flex: cutFlex,
@@ -114,7 +121,7 @@ class PagePreview extends StatelessWidget {
                 flashing: false,
               ),
               ParallelGuide(
-                  spaceTaken: verticalSpace,
+                  spaceTaken: guideVertical,
                   axis: Axis.horizontal,
                   color: Colors.black)
             ],
@@ -130,6 +137,8 @@ class PagePreview extends StatelessWidget {
         final cardArea = CardArea(
           horizontalSpace: horizontalSpace,
           verticalSpace: verticalSpace,
+          guideHorizontal: guideHorizontal,
+          guideVertical: guideVertical,
           baseDirectory: baseDirectory,
           card: card,
           cardSize: cardSize,
@@ -140,7 +149,8 @@ class PagePreview extends StatelessWidget {
           back: back,
           backStrategy: layoutData.backStrategy,
         );
-        Widget entireCardArea = Expanded(flex: cardAreaFlex, child: cardArea);
+        Widget entireCardArea =
+            Expanded(flex: cardFlexHorizontal, child: cardArea);
         realCards.add(entireCardArea);
       }
 
@@ -164,7 +174,7 @@ class PagePreview extends StatelessWidget {
           flashing: false,
         ));
     Widget guideCard = Expanded(
-        flex: cardAreaFlex,
+        flex: cardFlexHorizontal,
         child: Stack(
           children: [
             LayoutHelper(
@@ -173,7 +183,7 @@ class PagePreview extends StatelessWidget {
               flashing: false,
             ),
             ParallelGuide(
-                spaceTaken: horizontalSpace,
+                spaceTaken: guideHorizontal,
                 axis: Axis.vertical,
                 color: Colors.black)
           ],

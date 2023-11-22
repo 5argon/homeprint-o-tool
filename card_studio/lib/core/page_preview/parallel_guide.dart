@@ -36,15 +36,22 @@ class ParallelGuide extends StatelessWidget {
         ),
       );
     }
+    final Widget spacer;
+    if (spaceTaken < 1) {
+      spacer = Spacer(flex: (((1 - spaceTaken) / 2) * flexMultiplier).round());
+    } else {
+      spacer = Container();
+    }
+
     var innerChildren = [
-      Spacer(flex: (((1 - spaceTaken) / 2) * flexMultiplier).round()),
+      spacer,
       Expanded(
         flex: (spaceTaken * flexMultiplier).round(),
         child: Container(
           decoration: BoxDecoration(border: border),
         ),
       ),
-      Spacer(flex: (((1 - spaceTaken) / 2) * flexMultiplier).round()),
+      spacer,
     ];
     if (axis == Axis.vertical) {
       return Row(

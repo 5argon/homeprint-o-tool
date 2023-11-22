@@ -15,6 +15,8 @@ class CardArea extends StatelessWidget {
     super.key,
     required this.horizontalSpace,
     required this.verticalSpace,
+    required this.guideHorizontal,
+    required this.guideVertical,
     required this.baseDirectory,
     required this.card,
     required this.cardSize,
@@ -46,6 +48,10 @@ class CardArea extends StatelessWidget {
 
   /// Card is centered in this area. It takes this much space vertically. (Max 1.0)
   final double verticalSpace;
+
+  final double guideHorizontal;
+  final double guideVertical;
+
   final String? baseDirectory;
   final CardEachSingle? card;
   final SizePhysical cardSize;
@@ -185,18 +191,17 @@ class CardArea extends StatelessWidget {
     Widget horizontalGuide = Container();
     Color previewColor = Colors.red;
     Color realColor = Color.fromARGB(60, 255, 255, 255);
-    print("H $horizontalSpace");
-    print("V $verticalSpace");
+
     if (previewCutLine || showVerticalInnerCutLine) {
       verticalGuide = ParallelGuide(
-        spaceTaken: horizontalSpace,
+        spaceTaken: guideHorizontal,
         axis: Axis.vertical,
         color: previewCutLine ? previewColor : realColor,
       );
     }
     if (previewCutLine || showHorizontalInnerCutLine) {
       horizontalGuide = ParallelGuide(
-        spaceTaken: verticalSpace,
+        spaceTaken: guideVertical,
         axis: Axis.horizontal,
         color: previewCutLine ? previewColor : realColor,
       );
