@@ -1,5 +1,8 @@
 import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/page/include/include_data.dart';
+import 'package:card_studio/page/layout/layout_logic.dart';
+import 'package:card_studio/page/layout/layout_struct.dart';
+import 'package:card_studio/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/save_file.dart';
@@ -8,6 +11,7 @@ import 'include_list_item.dart';
 class IncludePage extends StatelessWidget {
   final String basePath;
   final ProjectSettings projectSettings;
+  final LayoutData layoutData;
   final DefinedCards definedCards;
   final DefinedInstances definedInstances;
   final Includes includes;
@@ -18,6 +22,7 @@ class IncludePage extends StatelessWidget {
       {super.key,
       required this.basePath,
       required this.projectSettings,
+      required this.layoutData,
       required this.definedCards,
       required this.definedInstances,
       required this.includes,
@@ -27,6 +32,53 @@ class IncludePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardCountPerPage =
+        calculateCardCountPerPage(layoutData, projectSettings.cardSize);
+    final pagination = calculatePagination(
+        includes,
+        layoutData,
+        projectSettings.cardSize,
+        cardCountPerPage.rows,
+        cardCountPerPage.columns);
+    final allCount = includes.fold(
+        0, (previousValue, element) => previousValue + element.count());
+
+    final modulo = allCount % pagination.perPage;
+    final int lastPageCount;
+    if (modulo == 0) {
+      if (allCount == 0) {
+        lastPageCount = 0;
+      } else {
+        lastPageCount = pagination.perPage;
+      }
+    } else {
+      lastPageCount = modulo;
+    }
+    final remaining = pagination.perPage - lastPageCount;
+    final allCountText = Row(
+      children: [
+        Card(
+            elevation: 0,
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Text(
+                "Total ${pagination.totalPages} Pages",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )),
+        Card(
+            elevation: 0,
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Text(
+                "Last Page : $lastPageCount / ${pagination.perPage} Cards ($remaining Cards Left)",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )),
+      ],
+    );
     final createGroupButton = ElevatedButton(
       onPressed: () {
         final appended = includes.toList();
@@ -90,12 +142,10 @@ class IncludePage extends StatelessWidget {
 
     final listView = ListView(children: groups);
     var buttonRow = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        createGroupButton,
-        SizedBox(
-          width: 8,
-        ),
-        clearButton,
+        Row(children: [createGroupButton, SizedBox(width: 8), clearButton]),
+        allCountText,
       ],
     );
     return Padding(

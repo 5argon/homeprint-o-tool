@@ -77,8 +77,8 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       child: Row(
         children: [
           showEditButton ? editButton : Container(),
-          sp1,
-          sp2,
+          showEditButton && isBack ? sp1 : Container(),
+          showEditButton && isBack ? sp2 : Container(),
           SizedBox(width: 4),
           Expanded(
             child: Column(

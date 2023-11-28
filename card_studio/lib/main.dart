@@ -155,6 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   var includePage = IncludePage(
                     basePath: baseDirectory,
                     projectSettings: _projectSettings,
+                    layoutData: _layoutData,
                     definedCards: _definedCards,
                     definedInstances: _definedInstances,
                     includes: _includes,
