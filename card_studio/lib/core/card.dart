@@ -165,7 +165,7 @@ class CardEachSingle {
       {this.isInstance = false}) {
     relativeFilePath = json['relativeFilePath'];
     contentCenterOffset = alignmentFromJson(json['contentCenterOffset']);
-    contentExpand = json['contentExpand'];
+    contentExpand = jsonToDouble(json['contentExpand']);
     rotation = Rotation.values.byName(json['rotation']);
     synthesizedBleed =
         PerCardSynthesizedBleed.values.byName(json['synthesizedBleed']);
@@ -199,9 +199,20 @@ enum PerCardSynthesizedBleed {
 }
 
 Alignment alignmentFromJson(Map<String, dynamic> json) {
-  final x = json['x'];
-  final y = json['y'];
+  // if int, cast to double
+  final double x = jsonToDouble(json['x']);
+  final double y = jsonToDouble(json['y']);
   return Alignment(x, y);
+}
+
+double jsonToDouble(dynamic json) {
+  if (json is int) {
+    return json.toDouble();
+  } else if (json is double) {
+    return json;
+  } else {
+    throw Exception("Invalid alignment x value: $json");
+  }
 }
 
 Map<String, dynamic> alignmentToJson(Alignment alignment) {

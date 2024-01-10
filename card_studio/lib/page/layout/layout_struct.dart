@@ -16,13 +16,13 @@ class LayoutData {
   /// Height refer to cut guide size of of vertical side edge.
   SizePhysical edgeCutGuideSize;
 
-  /// Force white padding between cards even when they
-  /// have enough bleed to fill up the space. In this area it is possible
-  /// to print more cut guides if those on the edge are not enough.
-  SizePhysical perCardWhitePadding;
+  /// The layout maximizes amount of cards rows and column.
+  /// This setting will ensure it has at least this much white padding on each card,
+  /// while still trying to maximize amount of cards. (So you get reduced rows and columns.)
+  SizePhysical perCardPadding;
 
   /// Print cut line in the white padding on each card.
-  /// Value must be no more than [perCardWhitePadding].
+  /// Value must be no more than [perCardPadding].
   ValuePhysical perCardCutGuideLength;
 
   /// Defines how would you use the printed paper to make a double sided card.
@@ -37,7 +37,7 @@ class LayoutData {
     required this.pixelPerInch,
     required this.marginSize,
     required this.edgeCutGuideSize,
-    required this.perCardWhitePadding,
+    required this.perCardPadding,
     required this.perCardCutGuideLength,
     required this.layoutStyle,
     required this.backStrategy,

@@ -71,7 +71,7 @@ class SaveFile {
 
   factory SaveFile.hack() {
     var ps = ProjectSettings(
-        SizePhysical(6.3, 8.15, PhysicalSizeType.centimeter),
+        SizePhysical(6.15, 8.8, PhysicalSizeType.centimeter),
         SynthesizedBleed.mirror);
 
     CardEachSingle playerCardBack = CardEachSingle(

@@ -55,8 +55,10 @@ var defaultLayoutData = LayoutData(
   // paperSize: SizePhysical(19, 13, PhysicalSizeType.inch),
   // paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
   marginSize: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
-  edgeCutGuideSize: SizePhysical(0.1, 2.1, PhysicalSizeType.centimeter),
-  perCardWhitePadding: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
+  edgeCutGuideSize: SizePhysical(0.1, 0.1, PhysicalSizeType.centimeter),
+  // edgeCutGuideSize: SizePhysical(0.1, 2.1, PhysicalSizeType.centimeter),
+  perCardPadding: SizePhysical(0, 0, PhysicalSizeType.centimeter),
+  // perCardPadding: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
   perCardCutGuideLength: ValuePhysical(0.3, PhysicalSizeType.centimeter),
   layoutStyle: LayoutStyle.duplex,
   backStrategy: BackStrategy.invertedRow,
@@ -64,7 +66,7 @@ var defaultLayoutData = LayoutData(
 );
 
 var defaultProjectSettings = ProjectSettings(
-    SizePhysical(6.3, 8.15, PhysicalSizeType.centimeter),
+    SizePhysical(6.15, 8.8, PhysicalSizeType.centimeter),
     SynthesizedBleed.mirror);
 
 DefinedCards defaultDefinedCards = [CardGroup([], "Default Group")];

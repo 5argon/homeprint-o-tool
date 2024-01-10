@@ -55,7 +55,8 @@ class GroupMemberListItem extends StatelessWidget {
         final newCardEach = cardEach;
         final tryParsed = int.tryParse(value);
         if (tryParsed != null) {
-          newCardEach.amount = onCardEachChange(newCardEach);
+          newCardEach.amount = tryParsed;
+          onCardEachChange(newCardEach);
         }
       },
     );
