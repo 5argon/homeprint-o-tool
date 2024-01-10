@@ -1,8 +1,6 @@
-import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/core/save_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:path/path.dart' as p;
 import '../../core/card.dart';
@@ -35,15 +33,9 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         onPressed: () async {
           final path = await pickRelativePath(basePath);
           if (path == null) return;
-          if (cardEachSingle == null) {
-            final newCard = CardEachSingle(path, Alignment.center, 0.9358,
-                Rotation.none, PerCardSynthesizedBleed.mirror, null, false);
-            onCardEachSingleChange(newCard);
-          } else {
-            final newCard = cardEachSingle;
-            newCard.relativeFilePath = path;
-            onCardEachSingleChange(newCard);
-          }
+          final newCard = CardEachSingle(path, Alignment.center, 0.9358,
+              Rotation.none, PerCardSynthesizedBleed.mirror, null, false);
+          onCardEachSingleChange(newCard);
         },
         icon: Icon(Icons.edit));
     final sp1 = IconButton(
