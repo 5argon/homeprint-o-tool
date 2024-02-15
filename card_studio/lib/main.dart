@@ -72,7 +72,7 @@ var defaultProjectSettings = ProjectSettings(
 DefinedCards defaultDefinedCards = [CardGroup([], "Default Group")];
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 4;
+  int _selectedIndex = 3;
 
   /// Prefix this path to all the individual card file name to load image from.
   /// Image cannot load yet without this since they are all relative to this path.

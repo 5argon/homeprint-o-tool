@@ -75,8 +75,21 @@ class GroupListItem extends StatelessWidget {
           }
           final directory = Directory(filePath);
           final entities = await directory.list().toList();
-          final paths = entities.whereType<File>().map((e) => e.path).toList();
-          final cards = importCards(paths);
+          final extensions = [".png", ".jpg", ".jpeg"];
+          final paths =
+              entities.whereType<File>().map((e) => e.path).where((element) {
+            for (var ext in extensions) {
+              if (element.endsWith(ext)) {
+                return true;
+              }
+            }
+            return false;
+          }).toList();
+          CardEachSingle? firstInstance;
+          if (definedInstances.isNotEmpty) {
+            firstInstance = definedInstances.first;
+          }
+          final cards = importCards(paths, firstInstance);
           if (cards.isEmpty) {
             messenger.showSnackBar(SnackBar(
               content: Text("Cannot import any card from the folder."),

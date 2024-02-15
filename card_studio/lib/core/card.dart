@@ -46,13 +46,13 @@ class CardGroup {
 
 /// Represent a card, which consists of front side and back side.
 class CardEach {
-  String? name;
   CardEachSingle? front;
   CardEachSingle? back;
 
   /// On including this card as a group, automatically duplicates itself by this many count.
   /// Individual add will not be affected.
   late int amount;
+  String? name;
 
   CardEach(this.front, this.back, this.amount, this.name);
 
