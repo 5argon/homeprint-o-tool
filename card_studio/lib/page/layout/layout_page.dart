@@ -28,11 +28,11 @@ class _LayoutPageState extends State<LayoutPage> {
     var layoutPreview = PagePreviewFrame(
       child: PagePreview(
         layoutData: widget.layoutData,
-        cardSize: widget.projectSettings.cardSize,
         cards: [],
         layout: true,
         previewCutLine: _previewCuttingLine,
         baseDirectory: null,
+        projectSettings: widget.projectSettings,
         hideInnerCutLine: true,
         back: false,
       ),

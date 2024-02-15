@@ -49,11 +49,11 @@ class _ReviewPageState extends State<ReviewPage> {
     var pagePreviewLeft = PagePreviewFrame(
       child: PagePreview(
         layoutData: widget.layoutData,
-        cardSize: widget.projectSettings.cardSize,
         cards: cards.front,
         layout: false,
         previewCutLine: _previewCutLine,
         baseDirectory: widget.baseDirectory,
+        projectSettings: widget.projectSettings,
         hideInnerCutLine: true,
         back: false,
       ),
@@ -62,11 +62,11 @@ class _ReviewPageState extends State<ReviewPage> {
     var pagePreviewRight = PagePreviewFrame(
       child: PagePreview(
         layoutData: widget.layoutData,
-        cardSize: widget.projectSettings.cardSize,
         cards: cards.back,
         layout: false,
         previewCutLine: _previewCutLine,
         baseDirectory: widget.baseDirectory,
+        projectSettings: widget.projectSettings,
         hideInnerCutLine: true,
         back: true,
       ),

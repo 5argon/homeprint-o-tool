@@ -123,6 +123,7 @@ class IncludePage extends StatelessWidget {
         cardGroup: cardGroup,
         cardSize: projectSettings.cardSize,
         definedInstances: definedInstances,
+        projectSettings: projectSettings,
         includes: includes,
         skipIncludes: skipIncludes,
         onAddGroup: (quantity) {

@@ -1,3 +1,4 @@
+import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/core/save_file.dart';
 import 'package:card_studio/page/card/group_member_list_item_one_side.dart';
 import 'package:card_studio/page/card/single_card_preview.dart';
@@ -11,6 +12,7 @@ class GroupMemberListItem extends StatelessWidget {
   final CardEach cardEach;
   final SizePhysical cardSize;
   final DefinedInstances definedInstances;
+  final ProjectSettings projectSettings;
   final int order;
   final Function(CardEach card) onCardEachChange;
   final Function() onDelete;
@@ -21,6 +23,7 @@ class GroupMemberListItem extends StatelessWidget {
     required this.cardEach,
     required this.cardSize,
     required this.definedInstances,
+    required this.projectSettings,
     required this.order,
     required this.onCardEachChange,
     required this.onDelete,
@@ -77,7 +80,9 @@ class GroupMemberListItem extends StatelessWidget {
                 child: SingleCardPreview(
                   basePath: basePath,
                   cardSize: cardSize,
-                  bleedFactor: cardEach.front?.contentExpand ?? 1.0,
+                  bleedFactor:
+                      cardEach.front?.effectiveContentExpand(projectSettings) ??
+                          1.0,
                   instance: cardEach.front?.isInstance ?? false,
                   cardEachSingle: cardEach.front,
                 )),
@@ -88,7 +93,9 @@ class GroupMemberListItem extends StatelessWidget {
                 child: SingleCardPreview(
                   basePath: basePath,
                   cardSize: cardSize,
-                  bleedFactor: cardEach.back?.contentExpand ?? 1.0,
+                  bleedFactor:
+                      cardEach.back?.effectiveContentExpand(projectSettings) ??
+                          1.0,
                   instance: cardEach.back?.isInstance ?? false,
                   cardEachSingle: cardEach.back,
                 )),

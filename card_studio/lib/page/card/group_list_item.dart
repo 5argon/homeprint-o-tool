@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'dart:math';
 
+import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/core/save_file.dart';
 import 'package:card_studio/page/card/group_member_list_item.dart';
 import 'package:card_studio/page/card/import_cards.dart';
@@ -16,6 +16,7 @@ class GroupListItem extends StatelessWidget {
   final CardGroup cardGroup;
   final SizePhysical cardSize;
   final DefinedInstances definedInstances;
+  final ProjectSettings projectSettings;
   final Function(CardGroup cardGroup) onCardGroupChange;
   final Function() onDelete;
 
@@ -26,6 +27,7 @@ class GroupListItem extends StatelessWidget {
       required this.cardGroup,
       required this.cardSize,
       required this.definedInstances,
+      required this.projectSettings,
       required this.onCardGroupChange,
       required this.onDelete});
 
@@ -116,6 +118,7 @@ class GroupListItem extends StatelessWidget {
           cardEach: card,
           cardSize: cardSize,
           definedInstances: definedInstances,
+          projectSettings: projectSettings,
           onCardEachChange: (card) {
             final newCardGroup = cardGroup;
             newCardGroup.cards[i] = card;

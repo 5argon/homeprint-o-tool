@@ -1,7 +1,6 @@
 import 'package:card_studio/core/card.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:uuid/uuid.dart';
 
 class DecodedCardName {
   final String path;

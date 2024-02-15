@@ -91,11 +91,11 @@ Future<void> renderOneSide(
     int pageNumber) async {
   var toRender = PagePreview(
     layoutData: layoutData,
-    cardSize: projectSettings.cardSize,
     cards: cardsOnePage,
     layout: false,
     previewCutLine: false,
     baseDirectory: baseDirectory,
+    projectSettings: projectSettings,
     hideInnerCutLine: true,
     back: back,
   );

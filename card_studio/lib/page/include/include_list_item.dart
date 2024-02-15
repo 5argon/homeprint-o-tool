@@ -1,3 +1,4 @@
+import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/core/save_file.dart';
 import 'package:card_studio/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class IncludeListItem extends StatelessWidget {
   final CardGroup cardGroup;
   final SizePhysical cardSize;
   final DefinedInstances definedInstances;
+  final ProjectSettings projectSettings;
   final Includes includes;
   final Includes skipIncludes;
   final Function(int quantity) onAddGroup;
@@ -23,6 +25,7 @@ class IncludeListItem extends StatelessWidget {
     required this.cardGroup,
     required this.cardSize,
     required this.definedInstances,
+    required this.projectSettings,
     required this.includes,
     required this.skipIncludes,
     required this.onAddGroup,
@@ -70,6 +73,7 @@ class IncludeListItem extends StatelessWidget {
           cardEach: card,
           cardSize: cardSize,
           definedInstances: definedInstances,
+          projectSettings: projectSettings,
           includes: includes,
           onAddIncludeItem: (p0) {
             onAddIndividual(i, p0);

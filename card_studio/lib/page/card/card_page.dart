@@ -52,6 +52,21 @@ class _CardPageState extends State<CardPage> {
             return aName.compareTo(bName);
           }
         });
+        for (var df in newDefinedCards) {
+          df.cards.sort((a, b) {
+            final aName = a.name;
+            final bName = b.name;
+            if (aName == null && bName == null) {
+              return 0;
+            } else if (aName == null) {
+              return -1;
+            } else if (bName == null) {
+              return 1;
+            } else {
+              return aName.compareTo(bName);
+            }
+          });
+        }
         widget.onDefinedCardsChange(newDefinedCards);
       },
       child: const Text('Sort All'),
@@ -66,6 +81,7 @@ class _CardPageState extends State<CardPage> {
         cardGroup: cardGroup,
         cardSize: widget.projectSettings.cardSize,
         definedInstances: widget.definedInstances,
+        projectSettings: widget.projectSettings,
         onCardGroupChange: (cardGroup) {
           final newDefinedCards = widget.definedCards;
           newDefinedCards[i] = cardGroup;

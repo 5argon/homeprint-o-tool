@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:card_studio/core/card.dart';
+import 'package:card_studio/core/project_settings.dart';
 import 'package:card_studio/page/layout/back_strategy.dart';
 import 'package:card_studio/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class CardArea extends StatelessWidget {
     required this.guideHorizontal,
     required this.guideVertical,
     required this.baseDirectory,
+    required this.projectSettings,
     required this.card,
     required this.cardSize,
     required this.layoutMode,
@@ -53,6 +55,7 @@ class CardArea extends StatelessWidget {
   final double guideVertical;
 
   final String? baseDirectory;
+  final ProjectSettings projectSettings;
   final CardEachSingle? card;
   final SizePhysical cardSize;
   final bool layoutMode;
@@ -110,7 +113,8 @@ class CardArea extends StatelessWidget {
 
                   // This expand was relative to the image's dimension.
                   // Card Area dimension might turns out to be different shape depending on margin settings.
-                  final originalExpand = card.contentExpand;
+                  final originalExpand =
+                      card.effectiveContentExpand(projectSettings);
 
                   final cardWidth = cardSize.widthCm;
                   final cardHeight = cardSize.heightCm;

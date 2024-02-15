@@ -57,7 +57,7 @@ var defaultLayoutData = LayoutData(
   marginSize: SizePhysical(0.4, 0.4, PhysicalSizeType.centimeter),
   edgeCutGuideSize: SizePhysical(0.1, 0.1, PhysicalSizeType.centimeter),
   // edgeCutGuideSize: SizePhysical(0.1, 2.1, PhysicalSizeType.centimeter),
-  perCardPadding: SizePhysical(0, 0, PhysicalSizeType.centimeter),
+  perCardPadding: SizePhysical(0.2, 2.0, PhysicalSizeType.centimeter),
   // perCardPadding: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
   perCardCutGuideLength: ValuePhysical(0.3, PhysicalSizeType.centimeter),
   layoutStyle: LayoutStyle.duplex,

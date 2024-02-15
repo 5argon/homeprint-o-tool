@@ -1,3 +1,4 @@
+import 'package:card_studio/core/project_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -166,6 +167,27 @@ class CardEachSingle {
       this.useDefaultRotation,
       this.isInstance)
       : uuid = Uuid().v4();
+
+  double effectiveContentExpand(ProjectSettings projectSettings) {
+    if (useDefaultContentExpand) {
+      return projectSettings.defaultContentExpand;
+    }
+    return contentExpand;
+  }
+
+  Alignment effectiveContentCenterOffset(ProjectSettings projectSettings) {
+    if (useDefaultContentCenterOffset) {
+      return projectSettings.defaultContentCenterOffset;
+    }
+    return contentCenterOffset;
+  }
+
+  Rotation effectiveRotation(ProjectSettings projectSettings) {
+    if (useDefaultRotation) {
+      return projectSettings.defaultRotation;
+    }
+    return rotation;
+  }
 
   CardEachSingle.fromJson(Map<String, dynamic> json,
       {this.isInstance = false}) {

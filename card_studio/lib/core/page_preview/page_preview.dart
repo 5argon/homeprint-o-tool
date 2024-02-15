@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../page/layout/layout_struct.dart';
 import '../card.dart';
+import '../project_settings.dart';
 import 'card_area.dart';
 
 /// Use for both output preview and actual image export. On preview it stretches
@@ -17,7 +18,6 @@ import 'card_area.dart';
 /// in the row (e.g. column). Overflows are discarded.
 class PagePreview extends StatelessWidget {
   final LayoutData layoutData;
-  final SizePhysical cardSize;
   final RowColCards cards;
   final bool layout;
   final bool previewCutLine;
@@ -26,21 +26,23 @@ class PagePreview extends StatelessWidget {
 
   /// Must provide to show any image.
   final String? baseDirectory;
+  final ProjectSettings projectSettings;
 
   late int horizontalCards;
   late int verticalCards;
 
   PagePreview({
     required this.layoutData,
-    required this.cardSize,
     required this.cards,
     required this.layout,
     required this.previewCutLine,
     required this.baseDirectory,
+    required this.projectSettings,
     required this.hideInnerCutLine,
     required this.back,
   }) {
-    final cardCount = calculateCardCountPerPage(layoutData, cardSize);
+    final cardCount =
+        calculateCardCountPerPage(layoutData, projectSettings.cardSize);
     horizontalCards = cardCount.columns;
     verticalCards = cardCount.rows;
   }
@@ -92,6 +94,8 @@ class PagePreview extends StatelessWidget {
           flashing: false,
         ));
 
+    final cardSize = projectSettings.cardSize;
+
     double horizontalBleedEachCard = horizontalAllEachCardCm - cardSize.widthCm;
     double horizontalActualEachCard =
         horizontalAllEachCardCm - horizontalBleedEachCard;
@@ -140,6 +144,7 @@ class PagePreview extends StatelessWidget {
           guideHorizontal: guideHorizontal,
           guideVertical: guideVertical,
           baseDirectory: baseDirectory,
+          projectSettings: projectSettings,
           card: card,
           cardSize: cardSize,
           layoutMode: layout,
