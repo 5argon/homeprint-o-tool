@@ -2,9 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-
-import '../page/layout/layout_struct.dart';
 import 'card.dart';
 import 'project_settings.dart';
 import 'package:path/path.dart' as p;
@@ -67,63 +64,6 @@ class SaveFile {
     final cardGroups = List<CardGroup>.from(json['cardGroups']
         .map((instance) => CardGroup.fromJson(instance, instances)));
     return SaveFile(projectSettings, instances, cardGroups);
-  }
-
-  factory SaveFile.hack() {
-    var ps = ProjectSettings(
-        SizePhysical(6.15, 8.8, PhysicalSizeType.centimeter),
-        SynthesizedBleed.mirror);
-
-    CardEachSingle playerCardBack = CardEachSingle(
-        "coldtoes ppete/_playerback.png",
-        Alignment(0, 0),
-        1,
-        Rotation.none,
-        PerCardSynthesizedBleed.projectSettings,
-        "Player Card Back",
-        true);
-
-    CardEachSingle peteFront = CardEachSingle(
-        "coldtoes ppete/046 Parallel Ashcan Pete-1.png",
-        Alignment(0, 0),
-        1,
-        Rotation.counterClockwise90,
-        PerCardSynthesizedBleed.projectSettings,
-        null,
-        false);
-    CardEachSingle peteBack = CardEachSingle(
-        "coldtoes ppete/046 Parallel Ashcan Pete-2.png",
-        Alignment(0, 0),
-        1,
-        Rotation.counterClockwise90,
-        PerCardSynthesizedBleed.projectSettings,
-        null,
-        false);
-    CardEachSingle guitar = CardEachSingle(
-        "coldtoes ppete/047 Pete's Guitar-1.png",
-        Alignment(0, 0),
-        1,
-        Rotation.none,
-        PerCardSynthesizedBleed.projectSettings,
-        null,
-        false);
-    CardEachSingle hardTimes = CardEachSingle(
-        "coldtoes ppete/048 Hard Times-1.png",
-        Alignment(0, 0),
-        1,
-        Rotation.none,
-        PerCardSynthesizedBleed.projectSettings,
-        null,
-        false);
-    CardEach peteCard = CardEach(peteFront, peteBack, 1, "Pete");
-    CardEach guitarCard = CardEach(guitar, playerCardBack, 1, "Guitar");
-    CardEach hardTimesCard =
-        CardEach(hardTimes, playerCardBack, 1, "Hard Times");
-    return SaveFile(ps, [
-      playerCardBack
-    ], [
-      CardGroup([peteCard, guitarCard, hardTimesCard], "Default Group")
-    ]);
   }
 
   SaveFile(this.projectSettings, this.instances, this.cardGroups);

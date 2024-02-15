@@ -1,6 +1,11 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:card_studio/core/save_file.dart';
 import 'package:card_studio/page/card/group_member_list_item.dart';
+import 'package:card_studio/page/card/import_cards.dart';
 import 'package:card_studio/page/layout/layout_struct.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/card.dart';
@@ -51,7 +56,44 @@ class GroupListItem extends StatelessWidget {
         newCardGroup.cards.add(CardEach(null, null, 1, ""));
         onCardGroupChange(newCardGroup);
       },
-      child: const Text('Add Card'),
+      child: const Text('Create New Card'),
+    );
+    final messenger = ScaffoldMessenger.of(context);
+    final addFolderButton = ElevatedButton(
+      onPressed: () async {
+        final filePath = await FilePicker.platform.getDirectoryPath(
+          dialogTitle: "Import every files in the selected folder.",
+          initialDirectory: basePath,
+        );
+        if (filePath != null) {
+          if (!filePath.startsWith(basePath)) {
+            messenger.showSnackBar(SnackBar(
+              content: Text(
+                  "Cannot import this folder as it is outside of project's base path."),
+            ));
+            return;
+          }
+          final directory = Directory(filePath);
+          final entities = await directory.list().toList();
+          final paths = entities.whereType<File>().map((e) => e.path).toList();
+          final cards = importCards(paths);
+          if (cards.isEmpty) {
+            messenger.showSnackBar(SnackBar(
+              content: Text("Cannot import any card from the folder."),
+            ));
+            return;
+          }
+          final newCardGroup = cardGroup;
+          for (var card in cards) {
+            newCardGroup.cards.add(card);
+          }
+          onCardGroupChange(newCardGroup);
+          messenger.showSnackBar(SnackBar(
+            content: Text("Imported ${cards.length} cards from the folder."),
+          ));
+        }
+      },
+      child: const Text('Import From Folder'),
     );
     final List<GroupMemberListItem> groupMembers = [];
     for (var i = 0; i < cardGroup.cards.length; i++) {
@@ -87,9 +129,19 @@ class GroupListItem extends StatelessWidget {
 
     final inside = Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [...groupMembers, addButton]),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        ...groupMembers,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            addButton,
+            SizedBox(
+              width: 8,
+            ),
+            addFolderButton,
+          ],
+        ),
+      ]),
     );
 
     final expansion = ExpansionTile(title: head, children: [inside]);

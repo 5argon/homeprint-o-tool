@@ -130,14 +130,17 @@ class CardEachSingle {
   late String relativeFilePath;
 
   late Alignment contentCenterOffset;
+  late bool useDefaultContentCenterOffset;
 
   /// From 0.0 to 1.0. At 1.0, expand from [contentCenterOffset] until one side
   /// of the card's shape (in project settings) touches any edge.
   late double contentExpand;
+  late bool useDefaultContentExpand;
 
   /// Rotation to apply to make this card match with project's card size.
   /// Note that [contentCenterOffset] and [contentExpand] is before rotation.
   late Rotation rotation;
+  late bool useDefaultRotation;
 
   /// Used to override project-wide synthesized bleed settings per card.
   late PerCardSynthesizedBleed synthesizedBleed;
@@ -158,6 +161,9 @@ class CardEachSingle {
       this.rotation,
       this.synthesizedBleed,
       this.name,
+      this.useDefaultContentCenterOffset,
+      this.useDefaultContentExpand,
+      this.useDefaultRotation,
       this.isInstance)
       : uuid = Uuid().v4();
 
@@ -165,8 +171,13 @@ class CardEachSingle {
       {this.isInstance = false}) {
     relativeFilePath = json['relativeFilePath'];
     contentCenterOffset = alignmentFromJson(json['contentCenterOffset']);
+    useDefaultContentCenterOffset =
+        jsonToBoolOrFalse(json['useDefaultContentCenterOffset']);
     contentExpand = jsonToDouble(json['contentExpand']);
+    useDefaultContentExpand =
+        jsonToBoolOrFalse(json['useDefaultContentExpand']);
     rotation = Rotation.values.byName(json['rotation']);
+    useDefaultRotation = jsonToBoolOrFalse(json['useDefaultRotation']);
     synthesizedBleed =
         PerCardSynthesizedBleed.values.byName(json['synthesizedBleed']);
     name = json['name'];
@@ -177,8 +188,11 @@ class CardEachSingle {
     return {
       'relativeFilePath': relativeFilePath,
       'contentCenterOffset': alignmentToJson(contentCenterOffset),
+      'useDefaultContentCenterOffset': useDefaultContentCenterOffset,
       'contentExpand': contentExpand,
+      'useDefaultContentExpand': useDefaultContentExpand,
       'rotation': rotation.name,
+      'useDefaultRotation': useDefaultRotation,
       'synthesizedBleed': synthesizedBleed.name,
       'name': name,
       'uuid': uuid,
@@ -213,6 +227,13 @@ double jsonToDouble(dynamic json) {
   } else {
     throw Exception("Invalid alignment x value: $json");
   }
+}
+
+bool jsonToBoolOrFalse(dynamic json) {
+  if (json is bool) {
+    return json;
+  }
+  return false;
 }
 
 Map<String, dynamic> alignmentToJson(Alignment alignment) {

@@ -33,8 +33,17 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         onPressed: () async {
           final path = await pickRelativePath(basePath);
           if (path == null) return;
-          final newCard = CardEachSingle(path, Alignment.center, 0.9358,
-              Rotation.none, PerCardSynthesizedBleed.mirror, null, false);
+          final newCard = CardEachSingle(
+              path,
+              Alignment.center,
+              1,
+              Rotation.none,
+              PerCardSynthesizedBleed.mirror,
+              null,
+              true,
+              true,
+              true,
+              false);
           onCardEachSingleChange(newCard);
         },
         icon: Icon(Icons.edit));
