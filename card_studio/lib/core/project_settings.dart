@@ -13,7 +13,12 @@ class ProjectSettings extends ChangeNotifier {
   late double defaultContentExpand;
   late Rotation defaultRotation;
 
-  ProjectSettings(this.cardSize, this.synthesizedBleed);
+  ProjectSettings(
+      this.cardSize,
+      this.synthesizedBleed,
+      this.defaultContentCenterOffset,
+      this.defaultContentExpand,
+      this.defaultRotation);
 
   ProjectSettings.fromJson(Map<String, dynamic> json) {
     cardSize = SizePhysical.fromJson(json['cardSize']);

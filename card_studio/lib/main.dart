@@ -67,12 +67,15 @@ var defaultLayoutData = LayoutData(
 
 var defaultProjectSettings = ProjectSettings(
     SizePhysical(6.15, 8.8, PhysicalSizeType.centimeter),
-    SynthesizedBleed.mirror);
+    SynthesizedBleed.mirror,
+    Alignment.center,
+    1.0,
+    Rotation.none);
 
 DefinedCards defaultDefinedCards = [CardGroup([], "Default Group")];
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 3;
+  int _selectedIndex = 2;
 
   /// Prefix this path to all the individual card file name to load image from.
   /// Image cannot load yet without this since they are all relative to this path.
