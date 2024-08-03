@@ -69,6 +69,17 @@ class SizePhysical {
   late double _widthCm;
   late double _heightCm;
 
+  @override
+  operator ==(Object other) {
+    if (other is SizePhysical) {
+      return _widthCm == other._widthCm && _heightCm == other._heightCm;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => Object.hash(_widthCm, _heightCm);
+
   double get widthCm => _widthCm;
   double get heightCm => _heightCm;
   double get widthInch => _widthCm / 2.54;

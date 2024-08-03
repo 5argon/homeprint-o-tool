@@ -24,7 +24,7 @@ class LayoutPage extends StatefulWidget {
 }
 
 class _LayoutPageState extends State<LayoutPage> {
-  bool _previewCuttingLine = false;
+  bool _previewCuttingLine = true;
   @override
   Widget build(BuildContext context) {
     var lrPreviewPadding = 8.0;
