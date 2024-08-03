@@ -1,7 +1,7 @@
-import 'package:card_studio/core/card.dart';
-import 'package:card_studio/page/include/include_page.dart';
-import 'package:card_studio/page/layout/back_strategy.dart';
-import 'package:card_studio/page/review/review_page.dart';
+import 'package:homeprint_o_tool/core/card.dart';
+import 'package:homeprint_o_tool/page/include/include_page.dart';
+import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
+import 'package:homeprint_o_tool/page/review/review_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (BuildContext context) {},
       child: MaterialApp(
-        title: 'Namer App',
+        title: 'Homeprint O\' Tool',
         themeMode: ThemeMode.system,
         theme: ThemeData(
           useMaterial3: true,
@@ -57,11 +57,12 @@ var defaultLayoutData = LayoutData(
   marginSize: SizePhysical(0.4, 0.4, PhysicalSizeType.centimeter),
   edgeCutGuideSize: SizePhysical(0.1, 0.1, PhysicalSizeType.centimeter),
   // edgeCutGuideSize: SizePhysical(0.1, 2.1, PhysicalSizeType.centimeter),
-  perCardPadding: SizePhysical(0.2, 2.0, PhysicalSizeType.centimeter),
-  // perCardPadding: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
+  // perCardPadding: SizePhysical(0.2, 0.2, PhysicalSizeType.centimeter),
+  perCardPadding: SizePhysical(0.4, 0.4, PhysicalSizeType.centimeter),
   perCardCutGuideLength: ValuePhysical(0.3, PhysicalSizeType.centimeter),
   layoutStyle: LayoutStyle.duplex,
   backStrategy: BackStrategy.invertedRow,
+  exportRotation: ExportRotation.rotate90OppositeWay,
   skips: [],
 );
 
@@ -149,6 +150,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 case 3:
                   var layoutPage = LayoutPage(
                     layoutData: _layoutData,
+                    onLayoutDataChanged: (ld) {
+                      setState(() {
+                        _layoutData = ld;
+                      });
+                    },
                     projectSettings: _projectSettings,
                   );
                   return layoutPage;
@@ -189,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                     return reviewPage;
                   }
-                  return wipPage;
+                  return Text("Need base directory to render cards.");
                 default:
                   return wipPage;
               }

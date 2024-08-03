@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:card_studio/core/project_settings.dart';
-import 'package:card_studio/page/include/include_data.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/page/include/include_data.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -159,13 +159,14 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
     await Future.delayed(Duration(milliseconds: 10));
   }
 
-  final start3 = DateTime.timestamp();
-  final bytes = await repaintBoundary
-      .toImage(pixelRatio: flutterView.devicePixelRatio)
-      .then((image) => image.toByteData(format: ui.ImageByteFormat.png))
-      .then((byteData) => byteData!.buffer.asUint8List());
-  final finish3 = DateTime.timestamp();
-  print(
-      "Third render took ${finish3.millisecondsSinceEpoch - start3.millisecondsSinceEpoch} ms");
-  return bytes;
+  // final start3 = DateTime.timestamp();
+  final imgg =
+      await repaintBoundary.toImage(pixelRatio: flutterView.devicePixelRatio);
+  final bd = await imgg.toByteData(format: ui.ImageByteFormat.png);
+  final uint8List = bd!.buffer.asUint8List();
+
+  // final finish3 = DateTime.timestamp();
+  // print(
+  //     "Third render took ${finish3.millisecondsSinceEpoch - start3.millisecondsSinceEpoch} ms");
+  return uint8List;
 }

@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:card_studio/core/project_settings.dart';
-import 'package:card_studio/core/save_file.dart';
-import 'package:card_studio/page/card/group_member_list_item.dart';
-import 'package:card_studio/page/card/import_cards.dart';
-import 'package:card_studio/page/layout/layout_struct.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
+import 'package:homeprint_o_tool/page/card/group_member_list_item.dart';
+import 'package:homeprint_o_tool/page/card/import_cards.dart';
+import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 import '../../core/card.dart';
 
@@ -77,8 +78,8 @@ class GroupListItem extends StatelessWidget {
           }
           final directory = Directory(filePath);
           final entities = await directory.list().toList();
-          final extensions = [".png", ".jpg", ".jpeg"];
-          final paths =
+          final extensions = [".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG"];
+          final absolutePaths =
               entities.whereType<File>().map((e) => e.path).where((element) {
             for (var ext in extensions) {
               if (element.endsWith(ext)) {
@@ -91,7 +92,9 @@ class GroupListItem extends StatelessWidget {
           if (definedInstances.isNotEmpty) {
             firstInstance = definedInstances.first;
           }
-          final cards = importCards(paths, firstInstance);
+          final relativePaths =
+              absolutePaths.map((e) => relative(e, from: basePath)).toList();
+          final cards = importCards(relativePaths, firstInstance);
           if (cards.isEmpty) {
             messenger.showSnackBar(SnackBar(
               content: Text("Cannot import any card from the folder."),

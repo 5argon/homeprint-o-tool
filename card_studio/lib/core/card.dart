@@ -1,4 +1,4 @@
-import 'package:card_studio/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 

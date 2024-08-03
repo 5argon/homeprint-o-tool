@@ -1,4 +1,4 @@
-import 'package:card_studio/page/layout/back_strategy.dart';
+import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 
 class LayoutData {
   SizePhysical paperSize;
@@ -30,6 +30,8 @@ class LayoutData {
 
   BackStrategy backStrategy;
 
+  ExportRotation exportRotation;
+
   List<int> skips;
 
   LayoutData({
@@ -41,6 +43,7 @@ class LayoutData {
     required this.perCardCutGuideLength,
     required this.layoutStyle,
     required this.backStrategy,
+    required this.exportRotation,
     required this.skips,
   });
 }
@@ -56,6 +59,12 @@ enum LayoutStyle {
   foldingShort,
 }
 
+enum ExportRotation {
+  none,
+  rotate90SameWay,
+  rotate90OppositeWay,
+}
+
 class SizePhysical {
   late double _widthCm;
   late double _heightCm;
@@ -64,6 +73,18 @@ class SizePhysical {
   double get heightCm => _heightCm;
   double get widthInch => _widthCm / 2.54;
   double get heightInch => _heightCm / 2.54;
+
+  double width(PhysicalSizeType physicalSizeType) {
+    return physicalSizeType == PhysicalSizeType.centimeter
+        ? _widthCm
+        : widthInch;
+  }
+
+  double height(PhysicalSizeType physicalSizeType) {
+    return physicalSizeType == PhysicalSizeType.centimeter
+        ? _heightCm
+        : heightInch;
+  }
 
   SizePhysical(double width, double height, PhysicalSizeType physicalSizeType) {
     if (physicalSizeType == PhysicalSizeType.centimeter) {

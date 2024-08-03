@@ -1,5 +1,5 @@
-name: card_studio
-description: A new Flutter project.
+name: homeprint_o_tool
+description: A tool to arrange individual card images with bleed into double-sided uncut sheets.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -17,6 +17,7 @@ dependencies:
   uuid: ^3.0.7
   path: ^1.8.3
   widgets_to_image: any
+  image: ^4.1.7
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:card_studio/page/layout/back_strategy.dart';
+import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 
 import '../../core/card.dart';
 import '../include/include_data.dart';

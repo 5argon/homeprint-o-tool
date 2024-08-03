@@ -1,4 +1,4 @@
-import 'package:card_studio/core/card.dart';
+import 'package:homeprint_o_tool/core/card.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
@@ -15,6 +15,10 @@ final eligibleFrontSuffixes = [
   '-a',
   '-Front',
   '-front',
+  '_A',
+  '_a',
+  '_Front',
+  '_front',
   '-1',
 ];
 
@@ -23,6 +27,10 @@ final eligibleBackSuffixes = [
   '-b',
   '-Back',
   '-back',
+  '_B',
+  '_b',
+  '_Back',
+  '_back',
   '-2',
 ];
 
@@ -72,8 +80,9 @@ List<CardEach> importCards(
   final map = <String, CardEach>{};
   for (var path in paths) {
     final decoded = decodeCardName(path);
+    final relativePath = decoded.path;
     final decodedCardEachSingle = CardEachSingle(
-        path,
+        relativePath,
         Alignment.center,
         1.0,
         Rotation.none,

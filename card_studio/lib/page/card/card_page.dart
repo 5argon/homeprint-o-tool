@@ -1,5 +1,5 @@
-import 'package:card_studio/core/project_settings.dart';
-import 'package:card_studio/page/card/group_list_item.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/page/card/group_list_item.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/card.dart';

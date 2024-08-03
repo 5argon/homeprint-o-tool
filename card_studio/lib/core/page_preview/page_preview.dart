@@ -1,7 +1,7 @@
-import 'package:card_studio/core/page_preview/parallel_guide.dart';
-import 'package:card_studio/page/layout/layout_helper.dart';
-import 'package:card_studio/page/layout/layout_logic.dart';
-import 'package:card_studio/page/review/pagination.dart';
+import 'package:homeprint_o_tool/core/page_preview/parallel_guide.dart';
+import 'package:homeprint_o_tool/page/layout/layout_helper.dart';
+import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
+import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
 import '../../page/layout/layout_struct.dart';

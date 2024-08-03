@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:card_studio/page/layout/layout_struct.dart';
+import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 

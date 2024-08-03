@@ -1,4 +1,4 @@
-import 'package:card_studio/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
 
 import '../../core/page_preview/page_preview.dart';
 import '../../core/page_preview/page_preview_frame.dart';
@@ -9,11 +9,14 @@ import 'output_layout_control.dart';
 class LayoutPage extends StatefulWidget {
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
+  final Function(LayoutData ld) onLayoutDataChanged;
+  final PhysicalSizeType physicalSizeType = PhysicalSizeType.inch;
 
   const LayoutPage({
     super.key,
     required this.projectSettings,
     required this.layoutData,
+    required this.onLayoutDataChanged,
   });
 
   @override
@@ -71,7 +74,14 @@ class _LayoutPageState extends State<LayoutPage> {
             ),
           ),
         ),
-        Flexible(child: OutputLayoutControl())
+        Flexible(
+            child: OutputLayoutControl(
+          layoutData: widget.layoutData,
+          physicalSizeType: widget.physicalSizeType,
+          onLayoutDataChanged: (ld) {
+            widget.onLayoutDataChanged(ld);
+          },
+        ))
       ],
     );
   }
