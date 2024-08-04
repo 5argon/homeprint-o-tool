@@ -121,6 +121,11 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text("WIP"),
           );
 
+          Widget needProjectLoaded = Center(
+            child: Text(
+                "No project loaded. Use New or Load button on the sidebar to get started."),
+          );
+
           switch (snapshot.connectionState) {
             case ConnectionState.active:
             case ConnectionState.waiting:
@@ -133,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 case 2:
                   final baseDirectory = _baseDirectory;
                   if (baseDirectory == null) {
-                    return Text("Need base directory to render cards.");
+                    return needProjectLoaded;
                   }
                   var cardPage = CardPage(
                     basePath: baseDirectory,
@@ -335,24 +340,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Catalog",
-                          style: textTheme.titleMedium,
+                        child: Tooltip(
+                          message:
+                              "A project file defines relationship of individual card images relative to its location, independently of printer and paper dimension. Any changes using menu above the dividing line below can be saved back to the project file.",
+                          child: Text(
+                            "Project",
+                            style: textTheme.titleMedium,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          _previousFileName ?? "(No Loaded Project)",
-                          style: textTheme.bodySmall,
-                        ),
+                      LoadedProjectDisplay(
+                        loadedProjectFileName: _previousFileName,
                       ),
                       newButton,
                       loadButton,
                       saveButton,
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Settings")),
+                          label: Text("Project Settings")),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
                           label: Text("Instances")),
@@ -365,20 +371,34 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Export",
-                          style: textTheme.titleMedium,
+                        child: Tooltip(
+                          message:
+                              "All settings below the dividing line are for printing side. These are not saved into the project file.",
+                          child: Text(
+                            "Printing",
+                            style: textTheme.titleMedium,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Paper")),
+                          label: Tooltip(
+                              message:
+                                  "Setup paper size and printing layout. These are preserved even if you loaded into other project files.",
+                              child: Text("Printer"))),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Picks")),
+                          label: Tooltip(
+                              message:
+                                  "Pick cards to be printed. While it defaults to print one set of the entire project, you can change it to print only a subset, or print more copies of a certain cards.",
+                              child: Text("Picks"))),
                       NavigationDrawerDestination(
                           icon: Icon(Icons.widgets_outlined),
-                          label: Text("Review")),
+                          label: Tooltip(
+                              message:
+                                  "View how the final uncut sheet looks like, when all the cards you choose in Picks menu are laid out according to Printer settings.",
+                              child: Text("Review"))),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: OutlinedButton(
@@ -426,5 +446,27 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     });
+  }
+}
+
+class LoadedProjectDisplay extends StatelessWidget {
+  const LoadedProjectDisplay({
+    super.key,
+    required String? loadedProjectFileName,
+  }) : _previousFileName = loadedProjectFileName;
+
+  final String? _previousFileName;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        _previousFileName ?? "(No Loaded Project)",
+        style: textTheme.bodySmall,
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 }

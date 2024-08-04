@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/label_and_form.dart';
 import 'package:homeprint_o_tool/core/number_text_form_field.dart';
 import 'package:homeprint_o_tool/core/sliding_number_field.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
@@ -71,77 +72,70 @@ class _OutputLayoutControlState extends State<OutputLayoutControl> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Row(
+          LabelAndForm(
+            label: "Paper Size",
             children: [
-              Text("Paper Size"),
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              paperSizeDropdown,
-              SizedBox(width: 16),
-              SizedBox(
-                width: 120,
-                child: widthForm,
-              ),
-              SizedBox(width: 16),
-              SizedBox(
-                width: 120,
-                child: heightForm,
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Tooltip(
-                message:
-                    "Reserve edge area on the paper where printing head cannot reach.",
-                child: Text("Printer Margin"),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: 150,
-                child: SlidingNumberField(
-                    decoration: InputDecoration(
-                      labelText: "Top, Bottom Edge",
-                      suffixText: "cm",
-                    ),
-                    onChanged: (changeTo) {
-                      widget.layoutData.edgeCutGuideSize = SizePhysical(
-                        widget.layoutData.edgeCutGuideSize.widthCm,
-                        changeTo,
-                        PhysicalSizeType.centimeter,
-                      );
-                      widget.onLayoutDataChanged(widget.layoutData);
-                    },
-                    value: widget.layoutData.edgeCutGuideSize.heightCm,
-                    fixedPoint: 2),
-              ),
-              SizedBox(width: 16),
-              SizedBox(
-                width: 150,
-                child: SlidingNumberField(
-                    decoration: InputDecoration(
-                      labelText: "Left, Right Edge",
-                      suffixText: "cm",
-                    ),
-                    onChanged: (changeTo) {
-                      widget.layoutData.edgeCutGuideSize = SizePhysical(
-                        changeTo,
-                        widget.layoutData.edgeCutGuideSize.heightCm,
-                        PhysicalSizeType.centimeter,
-                      );
-                      widget.onLayoutDataChanged(widget.layoutData);
-                    },
-                    value: widget.layoutData.edgeCutGuideSize.widthCm,
-                    fixedPoint: 2),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  paperSizeDropdown,
+                  SizedBox(width: 16),
+                  SizedBox(
+                    width: 120,
+                    child: widthForm,
+                  ),
+                  SizedBox(width: 16),
+                  SizedBox(
+                    width: 120,
+                    child: heightForm,
+                  ),
+                ],
               ),
             ],
           ),
+          LabelAndForm(
+              label: "Printer Margin",
+              tooltip:
+                  "Reserve edge area on the paper where printing head cannot reach. This area is completely white, even the cutting guide will be placed next to this margin.",
+              children: [
+                SizedBox(
+                  width: 150,
+                  child: SlidingNumberField(
+                      decoration: InputDecoration(
+                        labelText: "Top, Bottom Edge",
+                        suffixText: "cm",
+                      ),
+                      onChanged: (changeTo) {
+                        widget.layoutData.edgeCutGuideSize = SizePhysical(
+                          widget.layoutData.edgeCutGuideSize.widthCm,
+                          changeTo,
+                          PhysicalSizeType.centimeter,
+                        );
+                        widget.onLayoutDataChanged(widget.layoutData);
+                      },
+                      value: widget.layoutData.edgeCutGuideSize.heightCm,
+                      fixedPoint: 2),
+                ),
+                SizedBox(width: 16),
+                SizedBox(
+                  width: 150,
+                  child: SlidingNumberField(
+                      decoration: InputDecoration(
+                        labelText: "Left, Right Edge",
+                        suffixText: "cm",
+                      ),
+                      onChanged: (changeTo) {
+                        widget.layoutData.edgeCutGuideSize = SizePhysical(
+                          changeTo,
+                          widget.layoutData.edgeCutGuideSize.heightCm,
+                          PhysicalSizeType.centimeter,
+                        );
+                        widget.onLayoutDataChanged(widget.layoutData);
+                      },
+                      value: widget.layoutData.edgeCutGuideSize.widthCm,
+                      fixedPoint: 2),
+                ),
+              ]),
           Row(
             children: [
               Tooltip(
