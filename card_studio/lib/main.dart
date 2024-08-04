@@ -4,6 +4,7 @@ import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 import 'package:homeprint_o_tool/page/review/review_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/page/sidebar/loaded_project_display.dart';
 import 'package:provider/provider.dart';
 
 import 'core/page_preview/render.dart';
@@ -95,6 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Includes _includes = [];
   Includes _skipIncludes = [];
   LayoutData _layoutData = defaultLayoutData;
+  bool _hasChanges = false;
 
   Future? fileLoadingFuture;
   Future? renderingFuture;
@@ -324,149 +326,126 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     return Builder(builder: (context) {
+      var sidebar = SizedBox(
+        width: 200,
+        child: NavigationDrawer(
+            onDestinationSelected: (i) => {
+                  setState(() {
+                    _selectedIndex = i;
+                  })
+                },
+            selectedIndex: _selectedIndex,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Tooltip(
+                  message:
+                      "A project file defines relationship of individual card images relative to its location, independently of printer and paper dimension. Any changes using menu above the dividing line below can be saved back to the project file.",
+                  child: Text(
+                    "Project",
+                    style: textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              LoadedProjectDisplay(
+                loadedProjectFileName: _previousFileName,
+                hasChanges: _hasChanges,
+              ),
+              newButton,
+              loadButton,
+              saveButton,
+              NavigationDrawerDestination(
+                  icon: Icon(Icons.widgets_outlined),
+                  label: Text("Project Settings")),
+              NavigationDrawerDestination(
+                  icon: Icon(Icons.widgets_outlined), label: Text("Instances")),
+              NavigationDrawerDestination(
+                  icon: Icon(Icons.widgets_outlined), label: Text("Cards")),
+              Divider(
+                indent: 20,
+                endIndent: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Tooltip(
+                  message:
+                      "All settings below the dividing line are for printing side. These are not saved into the project file.",
+                  child: Text(
+                    "Printing",
+                    style: textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              NavigationDrawerDestination(
+                  icon: Icon(Icons.widgets_outlined),
+                  label: Tooltip(
+                      message:
+                          "Setup paper size and printing layout. These are preserved even if you loaded into other project files.",
+                      child: Text("Printer"))),
+              NavigationDrawerDestination(
+                  icon: Icon(Icons.widgets_outlined),
+                  label: Tooltip(
+                      message:
+                          "Pick cards to be printed. While it defaults to print one set of the entire project, you can change it to print only a subset, or print more copies of a certain cards.",
+                      child: Text("Picks"))),
+              NavigationDrawerDestination(
+                  icon: Icon(Icons.widgets_outlined),
+                  label: Tooltip(
+                      message:
+                          "View how the final uncut sheet looks like, when all the cards you choose in Picks menu are laid out according to Printer settings.",
+                      child: Text("Review"))),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: OutlinedButton(
+                    onPressed: () async {
+                      final baseDirectory = _baseDirectory;
+                      if (baseDirectory != null) {
+                        final flutterView = View.of(context);
+                        final directory = await openExportDirectoryPicker();
+                        if (directory != null && context.mounted) {
+                          final renderingFuture = renderRender(
+                              context,
+                              directory,
+                              flutterView,
+                              _projectSettings,
+                              _layoutData,
+                              _includes,
+                              _skipIncludes,
+                              baseDirectory, (currentPage) {
+                            setState(() {
+                              exportingCurrentPage = currentPage;
+                            });
+                          }, (frontBack) {
+                            setState(() {
+                              exportingFrontBack = frontBack;
+                            });
+                          }, (totalPage) {
+                            setState(() {
+                              exportingTotalPage = totalPage;
+                            });
+                          });
+                          setState(() {
+                            this.renderingFuture = renderingFuture;
+                          });
+                        }
+                      }
+                    },
+                    child: Text("Export")),
+              ),
+            ]),
+      );
       return Scaffold(
         body: SafeArea(
           child: Row(
             children: [
-              SizedBox(
-                width: 200,
-                child: NavigationDrawer(
-                    onDestinationSelected: (i) => {
-                          setState(() {
-                            _selectedIndex = i;
-                          })
-                        },
-                    selectedIndex: _selectedIndex,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Tooltip(
-                          message:
-                              "A project file defines relationship of individual card images relative to its location, independently of printer and paper dimension. Any changes using menu above the dividing line below can be saved back to the project file.",
-                          child: Text(
-                            "Project",
-                            style: textTheme.titleMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      LoadedProjectDisplay(
-                        loadedProjectFileName: _previousFileName,
-                      ),
-                      newButton,
-                      loadButton,
-                      saveButton,
-                      NavigationDrawerDestination(
-                          icon: Icon(Icons.widgets_outlined),
-                          label: Text("Project Settings")),
-                      NavigationDrawerDestination(
-                          icon: Icon(Icons.widgets_outlined),
-                          label: Text("Instances")),
-                      NavigationDrawerDestination(
-                          icon: Icon(Icons.widgets_outlined),
-                          label: Text("Cards")),
-                      Divider(
-                        indent: 20,
-                        endIndent: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Tooltip(
-                          message:
-                              "All settings below the dividing line are for printing side. These are not saved into the project file.",
-                          child: Text(
-                            "Printing",
-                            style: textTheme.titleMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      NavigationDrawerDestination(
-                          icon: Icon(Icons.widgets_outlined),
-                          label: Tooltip(
-                              message:
-                                  "Setup paper size and printing layout. These are preserved even if you loaded into other project files.",
-                              child: Text("Printer"))),
-                      NavigationDrawerDestination(
-                          icon: Icon(Icons.widgets_outlined),
-                          label: Tooltip(
-                              message:
-                                  "Pick cards to be printed. While it defaults to print one set of the entire project, you can change it to print only a subset, or print more copies of a certain cards.",
-                              child: Text("Picks"))),
-                      NavigationDrawerDestination(
-                          icon: Icon(Icons.widgets_outlined),
-                          label: Tooltip(
-                              message:
-                                  "View how the final uncut sheet looks like, when all the cards you choose in Picks menu are laid out according to Printer settings.",
-                              child: Text("Review"))),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: OutlinedButton(
-                            onPressed: () async {
-                              final baseDirectory = _baseDirectory;
-                              if (baseDirectory != null) {
-                                final flutterView = View.of(context);
-                                final directory =
-                                    await openExportDirectoryPicker();
-                                if (directory != null && context.mounted) {
-                                  final renderingFuture = renderRender(
-                                      context,
-                                      directory,
-                                      flutterView,
-                                      _projectSettings,
-                                      _layoutData,
-                                      _includes,
-                                      _skipIncludes,
-                                      baseDirectory, (currentPage) {
-                                    setState(() {
-                                      exportingCurrentPage = currentPage;
-                                    });
-                                  }, (frontBack) {
-                                    setState(() {
-                                      exportingFrontBack = frontBack;
-                                    });
-                                  }, (totalPage) {
-                                    setState(() {
-                                      exportingTotalPage = totalPage;
-                                    });
-                                  });
-                                  setState(() {
-                                    this.renderingFuture = renderingFuture;
-                                  });
-                                }
-                              }
-                            },
-                            child: Text("Export")),
-                      ),
-                    ]),
-              ),
+              sidebar,
               Expanded(child: rendering),
             ],
           ),
         ),
       );
     });
-  }
-}
-
-class LoadedProjectDisplay extends StatelessWidget {
-  const LoadedProjectDisplay({
-    super.key,
-    required String? loadedProjectFileName,
-  }) : _previousFileName = loadedProjectFileName;
-
-  final String? _previousFileName;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        _previousFileName ?? "(No Loaded Project)",
-        style: textTheme.bodySmall,
-        textAlign: TextAlign.center,
-      ),
-    );
   }
 }
