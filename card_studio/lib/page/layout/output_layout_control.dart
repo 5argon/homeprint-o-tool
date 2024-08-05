@@ -147,7 +147,10 @@ class _OutputLayoutControlState extends State<OutputLayoutControl> {
           ),
           Row(
             children: [
-              Text("Per-Card Padding"),
+              Tooltip(
+                  message:
+                      "Normally available area left are divided to maximize amount of cards that could be fitted, which could result in uncomfortable amount of bleed to make a cut. This settings adds additional bleed area to the initial calculation, so you get more space for bleeds but lesser amount of cards per page.",
+                  child: Text("Per-Card Padding")),
             ],
           ),
         ],

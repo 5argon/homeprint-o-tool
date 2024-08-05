@@ -4,7 +4,7 @@ import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 import 'package:homeprint_o_tool/page/review/review_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:homeprint_o_tool/page/sidebar/loaded_project_display.dart';
+import 'package:homeprint_o_tool/page/sidebar/sidebar.dart';
 import 'package:provider/provider.dart';
 
 import 'core/page_preview/render.dart';
@@ -230,212 +230,133 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         future: renderingFuture);
 
-    final newButton = Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: OutlinedButton(
-          onPressed: () async {
-            final filePath = await FilePicker.platform.saveFile(
-              dialogTitle:
-                  "Where the file is saved will be set as project's base directory as well.",
-              initialDirectory: _baseDirectory,
-              fileName: _previousFileName,
-              allowedExtensions: ['json'],
-            );
-            if (filePath != null) {
-              final saveFile =
-                  SaveFile(_projectSettings, _definedInstances, _definedCards);
-              final saveResult = await saveFile.saveToFile(filePath);
-              // ignore: use_build_context_synchronously
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    "Created a new project. Base directory is now : ${saveResult.baseDirectory}"),
-              ));
-              setState(() {
-                _projectSettings = defaultProjectSettings;
-                _definedCards = defaultDefinedCards;
-                _definedInstances = [];
-                _baseDirectory = saveResult.baseDirectory;
-                _previousFileName = saveResult.fileName;
-                _includes = [];
-              });
-            }
-          },
-          child: Text("New"),
+    onNew() async {
+      final filePath = await FilePicker.platform.saveFile(
+        dialogTitle:
+            "Where the file is saved will be set as project's base directory as well.",
+        initialDirectory: _baseDirectory,
+        fileName: _previousFileName,
+        allowedExtensions: ['json'],
+      );
+      if (filePath != null) {
+        final saveFile =
+            SaveFile(_projectSettings, _definedInstances, _definedCards);
+        final saveResult = await saveFile.saveToFile(filePath);
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Created a new project. Base directory is now : ${saveResult.baseDirectory}"),
         ));
+        setState(() {
+          _projectSettings = defaultProjectSettings;
+          _definedCards = defaultDefinedCards;
+          _definedInstances = [];
+          _baseDirectory = saveResult.baseDirectory;
+          _previousFileName = saveResult.fileName;
+          _includes = [];
+        });
+      }
+    }
 
-    final loadButton = Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: OutlinedButton(
-          onPressed: () {
-            final fut = SaveFile.loadFromFilePicker().then((loadResult) {
-              if (loadResult != null) {
-                setState(() {
-                  _projectSettings = loadResult.saveFile.projectSettings;
-                  _definedCards = loadResult.saveFile.cardGroups;
-                  _definedInstances = loadResult.saveFile.instances;
-                  _baseDirectory = loadResult.basePath;
-                  _previousFileName = loadResult.fileName;
-                  // Overwrite inclues to all cards on load.
-                  Includes newIncludes = [];
-                  for (var i = 0; i < _definedCards.length; i++) {
-                    newIncludes.add(IncludeItem.cardGroup(_definedCards[i], 1));
-                  }
-                  _includes = newIncludes;
-                  _skipIncludes = [];
-                });
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                      "Loaded a project JSON. Base directory is now : ${loadResult.basePath}"),
-                ));
-              }
-            });
-            setState(() {
-              fileLoadingFuture = fut;
-            });
-          },
-          child: Text("Load")),
-    );
-
-    final saveButton = Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: OutlinedButton(
-          onPressed: () async {
-            final filePath = await FilePicker.platform.saveFile(
-              dialogTitle:
-                  "Where the file is saved will be set as project's base directory as well.",
-              initialDirectory: _baseDirectory,
-              fileName: _previousFileName,
-              allowedExtensions: ['json'],
-            );
-            if (filePath != null) {
-              final saveFile =
-                  SaveFile(_projectSettings, _definedInstances, _definedCards);
-              final saveResult = await saveFile.saveToFile(filePath);
-              // ignore: use_build_context_synchronously
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    "Save successful. Base directory is now : ${saveResult.baseDirectory}"),
-              ));
-              setState(() {
-                _baseDirectory = saveResult.baseDirectory;
-                _previousFileName = saveResult.fileName;
-              });
+    onLoad() {
+      final fut = SaveFile.loadFromFilePicker().then((loadResult) {
+        if (loadResult != null) {
+          setState(() {
+            _selectedIndex = 2;
+            _projectSettings = loadResult.saveFile.projectSettings;
+            _definedCards = loadResult.saveFile.cardGroups;
+            _definedInstances = loadResult.saveFile.instances;
+            _baseDirectory = loadResult.basePath;
+            _previousFileName = loadResult.fileName;
+            // Overwrite inclues to all cards on load.
+            Includes newIncludes = [];
+            for (var i = 0; i < _definedCards.length; i++) {
+              newIncludes.add(IncludeItem.cardGroup(_definedCards[i], 1));
             }
-          },
-          child: Text("Save")),
-    );
+            _includes = newIncludes;
+            _skipIncludes = [];
+          });
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                "Loaded a project JSON. Base directory is now : ${loadResult.basePath}"),
+          ));
+        }
+      });
+      setState(() {
+        fileLoadingFuture = fut;
+      });
+    }
+
+    onSave() async {
+      final filePath = await FilePicker.platform.saveFile(
+        dialogTitle:
+            "Where the file is saved will be set as project's base directory as well.",
+        initialDirectory: _baseDirectory,
+        fileName: _previousFileName,
+        allowedExtensions: ['json'],
+      );
+      if (filePath != null) {
+        final saveFile =
+            SaveFile(_projectSettings, _definedInstances, _definedCards);
+        final saveResult = await saveFile.saveToFile(filePath);
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Save successful. Base directory is now : ${saveResult.baseDirectory}"),
+        ));
+        setState(() {
+          _baseDirectory = saveResult.baseDirectory;
+          _previousFileName = saveResult.fileName;
+        });
+      }
+    }
+
+    onExport() async {
+      final baseDirectory = _baseDirectory;
+      if (baseDirectory != null) {
+        final flutterView = View.of(context);
+        final directory = await openExportDirectoryPicker();
+        if (directory != null && context.mounted) {
+          final renderingFuture = renderRender(
+              context,
+              directory,
+              flutterView,
+              _projectSettings,
+              _layoutData,
+              _includes,
+              _skipIncludes,
+              baseDirectory, (currentPage) {
+            setState(() {
+              exportingCurrentPage = currentPage;
+            });
+          }, (frontBack) {
+            setState(() {
+              exportingFrontBack = frontBack;
+            });
+          }, (totalPage) {
+            setState(() {
+              exportingTotalPage = totalPage;
+            });
+          });
+          setState(() {
+            this.renderingFuture = renderingFuture;
+          });
+        }
+      }
+    }
 
     return Builder(builder: (context) {
-      var sidebar = SizedBox(
-        width: 200,
-        child: NavigationDrawer(
-            onDestinationSelected: (i) => {
-                  setState(() {
-                    _selectedIndex = i;
-                  })
-                },
-            selectedIndex: _selectedIndex,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Tooltip(
-                  message:
-                      "A project file defines relationship of individual card images relative to its location, independently of printer and paper dimension. Any changes using menu above the dividing line below can be saved back to the project file.",
-                  child: Text(
-                    "Project",
-                    style: textTheme.titleMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              LoadedProjectDisplay(
-                loadedProjectFileName: _previousFileName,
-                hasChanges: _hasChanges,
-              ),
-              newButton,
-              loadButton,
-              saveButton,
-              NavigationDrawerDestination(
-                  icon: Icon(Icons.widgets_outlined),
-                  label: Text("Project Settings")),
-              NavigationDrawerDestination(
-                  icon: Icon(Icons.widgets_outlined), label: Text("Instances")),
-              NavigationDrawerDestination(
-                  icon: Icon(Icons.widgets_outlined), label: Text("Cards")),
-              Divider(
-                indent: 20,
-                endIndent: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Tooltip(
-                  message:
-                      "All settings below the dividing line are for printing side. These are not saved into the project file.",
-                  child: Text(
-                    "Printing",
-                    style: textTheme.titleMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              NavigationDrawerDestination(
-                  icon: Icon(Icons.widgets_outlined),
-                  label: Tooltip(
-                      message:
-                          "Setup paper size and printing layout. These are preserved even if you loaded into other project files.",
-                      child: Text("Printer"))),
-              NavigationDrawerDestination(
-                  icon: Icon(Icons.widgets_outlined),
-                  label: Tooltip(
-                      message:
-                          "Pick cards to be printed. While it defaults to print one set of the entire project, you can change it to print only a subset, or print more copies of a certain cards.",
-                      child: Text("Picks"))),
-              NavigationDrawerDestination(
-                  icon: Icon(Icons.widgets_outlined),
-                  label: Tooltip(
-                      message:
-                          "View how the final uncut sheet looks like, when all the cards you choose in Picks menu are laid out according to Printer settings.",
-                      child: Text("Review"))),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: OutlinedButton(
-                    onPressed: () async {
-                      final baseDirectory = _baseDirectory;
-                      if (baseDirectory != null) {
-                        final flutterView = View.of(context);
-                        final directory = await openExportDirectoryPicker();
-                        if (directory != null && context.mounted) {
-                          final renderingFuture = renderRender(
-                              context,
-                              directory,
-                              flutterView,
-                              _projectSettings,
-                              _layoutData,
-                              _includes,
-                              _skipIncludes,
-                              baseDirectory, (currentPage) {
-                            setState(() {
-                              exportingCurrentPage = currentPage;
-                            });
-                          }, (frontBack) {
-                            setState(() {
-                              exportingFrontBack = frontBack;
-                            });
-                          }, (totalPage) {
-                            setState(() {
-                              exportingTotalPage = totalPage;
-                            });
-                          });
-                          setState(() {
-                            this.renderingFuture = renderingFuture;
-                          });
-                        }
-                      }
-                    },
-                    child: Text("Export")),
-              ),
-            ]),
-      );
+      final sidebar = Sidebar(
+          selectedIndex: _selectedIndex,
+          onSelectedIndexChanged: (i) => setState(() {
+                _selectedIndex = i;
+              }),
+          previousFileName: _previousFileName,
+          hasChanges: _hasChanges,
+          onNew: onNew,
+          onLoad: onLoad,
+          onSave: onSave,
+          onExport: onExport);
       return Scaffold(
         body: SafeArea(
           child: Row(

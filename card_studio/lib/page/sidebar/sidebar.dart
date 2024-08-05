@@ -5,6 +5,8 @@ class Sidebar extends StatefulWidget {
   @override
   State<Sidebar> createState() => _SidebarState();
 
+  final int selectedIndex;
+  final Function(int) onSelectedIndexChanged;
   final Function() onNew;
   final Function() onLoad;
   final Function() onSave;
@@ -13,6 +15,8 @@ class Sidebar extends StatefulWidget {
   final bool hasChanges;
 
   Sidebar({
+    required this.selectedIndex,
+    required this.onSelectedIndexChanged,
     required this.previousFileName,
     required this.hasChanges,
     required this.onNew,
@@ -23,8 +27,6 @@ class Sidebar extends StatefulWidget {
 }
 
 class _SidebarState extends State<Sidebar> {
-  int _selectedIndex = 2;
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -50,9 +52,11 @@ class _SidebarState extends State<Sidebar> {
     final saveButton = Padding(
       padding: const EdgeInsets.all(8.0),
       child: OutlinedButton(
-          onPressed: () async {
-            widget.onSave();
-          },
+          onPressed: widget.previousFileName == null
+              ? null
+              : () async {
+                  widget.onSave();
+                },
           child: Text("Save")),
     );
 
@@ -60,11 +64,9 @@ class _SidebarState extends State<Sidebar> {
       width: 200,
       child: NavigationDrawer(
           onDestinationSelected: (i) => {
-                setState(() {
-                  _selectedIndex = i;
-                })
+                widget.onSelectedIndexChanged(i),
               },
-          selectedIndex: _selectedIndex,
+          selectedIndex: widget.selectedIndex,
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -87,11 +89,22 @@ class _SidebarState extends State<Sidebar> {
             saveButton,
             NavigationDrawerDestination(
                 icon: Icon(Icons.widgets_outlined),
-                label: Text("Project Settings")),
+                label: Tooltip(
+                    message:
+                        "These settings applies equally to all cards in the project, such as card's dimension.",
+                    child: Text("Master Settings"))),
             NavigationDrawerDestination(
-                icon: Icon(Icons.widgets_outlined), label: Text("Instances")),
+                icon: Icon(Icons.widgets_outlined),
+                label: Tooltip(
+                    message:
+                        "Define reusable instances of cards. This is mostly used to create a card back instances to assign to different fronts. Edits to the instances are reflected to everywhere they are used.",
+                    child: Text("Instances"))),
             NavigationDrawerDestination(
-                icon: Icon(Icons.widgets_outlined), label: Text("Cards")),
+                icon: Icon(Icons.widgets_outlined),
+                label: Tooltip(
+                    message:
+                        "Define mappings of front and back graphics to make a card, along with their content area. Outside of content area is considered bleed. Cards are then grouped for organization purpose and allow selective printing by groups.",
+                    child: Text("Cards"))),
             Divider(
               indent: 20,
               endIndent: 20,
