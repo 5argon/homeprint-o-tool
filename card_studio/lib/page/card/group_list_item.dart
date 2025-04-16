@@ -135,21 +135,35 @@ class GroupListItem extends StatelessWidget {
           order: i + 1));
     }
 
-    final head = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Row(
-        children: [
-          Expanded(child: groupName),
-          totalQuantity,
-          removeButton,
-        ],
-      ),
+    final head = Column(
+      children: [
+        Container(
+          width: double.infinity,
+          height: 24,
+          decoration: BoxDecoration(
+            color: Theme.of(context).splashColor,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12), // Adjust the radius as needed
+              topRight: Radius.circular(12),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 0),
+          child: Row(
+            children: [
+              Expanded(child: groupName),
+              totalQuantity,
+              removeButton,
+            ],
+          ),
+        ),
+      ],
     );
 
     final inside = Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        ...groupMembers,
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -160,6 +174,7 @@ class GroupListItem extends StatelessWidget {
             addFolderButton,
           ],
         ),
+        ...groupMembers,
       ]),
     );
 

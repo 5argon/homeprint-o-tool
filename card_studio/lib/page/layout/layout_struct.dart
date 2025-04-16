@@ -108,8 +108,17 @@ class SizePhysical {
   }
 
   SizePhysical.fromJson(Map<String, dynamic> json) {
-    _widthCm = json['width'];
-    _heightCm = json['height'];
+    // Also allow int from JSON if it was edited in manually somehow.
+    if (json['width'] is int) {
+      _widthCm = (json['width'] as int).toDouble();
+    } else {
+      _widthCm = json['width'];
+    }
+    if (json['height'] is int) {
+      _heightCm = (json['height'] as int).toDouble();
+    } else {
+      _heightCm = json['height'];
+    }
   }
 
   Map<String, dynamic> toJson() {

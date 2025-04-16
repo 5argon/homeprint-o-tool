@@ -8,6 +8,17 @@ import 'package:path/path.dart' as p;
 
 /// In the "Cards" tab, each card must be in a group.
 typedef DefinedCards = List<CardGroup>;
+
+// Force UI to update at all levels if UI receive the top level list.
+DefinedCards deepCopyDefinedCards(DefinedCards definedCards) {
+  final newList = <CardGroup>[];
+  for (var group in definedCards) {
+    final newGroup = group.copy();
+    newList.add(newGroup);
+  }
+  return newList;
+}
+
 typedef DefinedInstances = List<CardEachSingle>;
 
 typedef LoadResult = ({SaveFile saveFile, String basePath, String fileName});

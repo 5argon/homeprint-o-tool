@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 class CardGroup {
   String? name;
   late List<CardEach> cards;
+  String id = Uuid().v4();
   CardGroup(this.cards, this.name);
 
   List<CardEach> linearize() {
@@ -13,6 +14,14 @@ class CardGroup {
       result.addAll(card.linearize());
     }
     return result;
+  }
+
+  CardGroup copy() {
+    final newCards = <CardEach>[];
+    for (var card in cards) {
+      newCards.add(card.copy());
+    }
+    return CardGroup(newCards, name);
   }
 
   CardGroup.fromJson(
@@ -59,6 +68,10 @@ class CardEach {
 
   List<CardEach> linearize() {
     return List.filled(amount, this);
+  }
+
+  CardEach copy() {
+    return CardEach(front, back, amount, name);
   }
 
   CardEach.fromJson(Map<String, dynamic> json, List<CardEachSingle> instances) {

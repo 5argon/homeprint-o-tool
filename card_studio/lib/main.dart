@@ -54,13 +54,14 @@ var defaultLayoutData = LayoutData(
   pixelPerInch: 300,
   paperSize: SizePhysical(13, 19, PhysicalSizeType.inch),
   // paperSize: SizePhysical(19, 13, PhysicalSizeType.inch),
+  // paperSize: SizePhysical(29.7, 21, PhysicalSizeType.centimeter),
   // paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
   marginSize: SizePhysical(0.4, 0.4, PhysicalSizeType.centimeter),
-  edgeCutGuideSize: SizePhysical(0.1, 0.1, PhysicalSizeType.centimeter),
+  edgeCutGuideSize: SizePhysical(0.2, 0.2, PhysicalSizeType.centimeter),
   // edgeCutGuideSize: SizePhysical(0.1, 2.1, PhysicalSizeType.centimeter),
   // perCardPadding: SizePhysical(0.2, 0.2, PhysicalSizeType.centimeter),
-  perCardPadding: SizePhysical(0.4, 0.4, PhysicalSizeType.centimeter),
-  perCardCutGuideLength: ValuePhysical(0.3, PhysicalSizeType.centimeter),
+  perCardPadding: SizePhysical(0, 0, PhysicalSizeType.centimeter),
+  perCardCutGuideLength: ValuePhysical(0, PhysicalSizeType.centimeter),
   layoutStyle: LayoutStyle.duplex,
   backStrategy: BackStrategy.invertedRow,
   exportRotation: ExportRotation.rotate90OppositeWay,
@@ -98,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   LayoutData _layoutData = defaultLayoutData;
   bool _hasChanges = false;
 
-  Future? fileLoadingFuture;
+  Future? fullScreenDisableFuture;
   Future? renderingFuture;
   int exportingCurrentPage = 0;
   ExportingFrontBack exportingFrontBack = ExportingFrontBack.front;
@@ -111,8 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
-
     Widget visiblePage = FutureBuilder(
         builder: (context, snapshot) {
           Widget loadingPage = Center(
@@ -127,6 +126,11 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text(
                 "No project loaded. Use New or Load button on the sidebar to get started."),
           );
+
+          final baseDirectory = _baseDirectory;
+          if (baseDirectory == null) {
+            return needProjectLoaded;
+          }
 
           switch (snapshot.connectionState) {
             case ConnectionState.active:
@@ -208,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
               }
           }
         },
-        future: fileLoadingFuture);
+        future: fullScreenDisableFuture);
 
     Widget rendering = FutureBuilder(
         builder: (context, snapshot) {
@@ -231,17 +235,26 @@ class _MyHomePageState extends State<MyHomePage> {
         future: renderingFuture);
 
     onNew() async {
-      final filePath = await FilePicker.platform.saveFile(
+      final filePathFuture = FilePicker.platform.saveFile(
         dialogTitle:
             "Where the file is saved will be set as project's base directory as well.",
         initialDirectory: _baseDirectory,
         fileName: _previousFileName,
         allowedExtensions: ['json'],
       );
+      setState(() {
+        fullScreenDisableFuture = filePathFuture;
+      });
+      final filePath = await filePathFuture;
+
       if (filePath != null) {
+        // Allowed extensions not actually enforcing it. Append .json if it is not
+        // ending in that.
+        final filePathJson =
+            !filePath.endsWith(".json") ? "$filePath.json" : filePath;
         final saveFile =
             SaveFile(_projectSettings, _definedInstances, _definedCards);
-        final saveResult = await saveFile.saveToFile(filePath);
+        final saveResult = await saveFile.saveToFile(filePathJson);
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
@@ -283,7 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       });
       setState(() {
-        fileLoadingFuture = fut;
+        fullScreenDisableFuture = fut;
       });
     }
 
@@ -345,18 +358,25 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
+    final sidebarSelectedIndex = _baseDirectory == null
+        ? -1
+        : _selectedIndex; // Disable sidebar when no base directory.
+
     return Builder(builder: (context) {
       final sidebar = Sidebar(
-          selectedIndex: _selectedIndex,
-          onSelectedIndexChanged: (i) => setState(() {
-                _selectedIndex = i;
-              }),
-          previousFileName: _previousFileName,
-          hasChanges: _hasChanges,
-          onNew: onNew,
-          onLoad: onLoad,
-          onSave: onSave,
-          onExport: onExport);
+        selectedIndex: sidebarSelectedIndex,
+        onSelectedIndexChanged: (i) => setState(() {
+          _selectedIndex = i;
+        }),
+        baseDirectory: _baseDirectory,
+        previousFileName: _previousFileName,
+        hasChanges: _hasChanges,
+        onNew: onNew,
+        onLoad: onLoad,
+        onSave: onSave,
+        onExport: onExport,
+        fullScreenDisableFuture: fullScreenDisableFuture,
+      );
       return Scaffold(
         body: SafeArea(
           child: Row(
