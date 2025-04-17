@@ -40,8 +40,7 @@ class IncludePage extends StatelessWidget {
         projectSettings.cardSize,
         cardCountPerPage.rows,
         cardCountPerPage.columns);
-    final allCount = includes.fold(
-        0, (previousValue, element) => previousValue + element.count());
+    final allCount = countIncludes(includes);
 
     final modulo = allCount % pagination.perPage;
     final int lastPageCount;
@@ -96,10 +95,9 @@ class IncludePage extends StatelessWidget {
     );
 
     final count = includes.fold(0, (p, e) => p + e.count());
-    final extraCount = skipIncludes.fold(0, (p, e) => p + e.count());
     final tabs = DefaultTabController(
       initialIndex: 0,
-      length: 3,
+      length: 2,
       child: TabBar(
         tabs: [
           Tab(
@@ -107,10 +105,7 @@ class IncludePage extends StatelessWidget {
           ),
           Tab(
             text: "Picked ($count)",
-          ),
-          Tab(
-            text: "Extra ($extraCount)",
-          ),
+          )
         ],
       ),
     );

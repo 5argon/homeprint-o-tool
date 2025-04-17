@@ -79,23 +79,31 @@ class CardPage extends StatelessWidget {
         definedInstances: definedInstances,
         projectSettings: projectSettings,
         onCardGroupChange: (cardGroup) {
-          final newDefinedCards = deepCopyDefinedCards(definedCards);
+          final newDefinedCards = definedCards;
           newDefinedCards[i] = cardGroup;
           onDefinedCardsChange(newDefinedCards);
         },
         onDelete: () {
-          final newDefinedCards = deepCopyDefinedCards(definedCards);
+          final scaffoldMessenger = ScaffoldMessenger.of(context);
+          scaffoldMessenger.removeCurrentSnackBar();
+          String message;
+          if (cardGroup.name == null) {
+            message = 'Deleted a group.';
+          } else {
+            message = 'Deleted group : ${cardGroup.name}';
+          }
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(message),
+            ),
+          );
+          final newDefinedCards = definedCards;
           newDefinedCards.removeAt(i);
           onDefinedCardsChange(newDefinedCards);
         },
       );
       groups.add(gli);
     }
-
-    final collapseAllButton = ElevatedButton(
-      onPressed: null,
-      child: const Text('Collapse All'),
-    );
 
     final listViewScrollController = ScrollController();
     final listView = ListView.builder(
@@ -117,7 +125,7 @@ class CardPage extends StatelessWidget {
         );
 
         final newCardGroup = CardGroup([], "New Group");
-        final newDefinedCards = deepCopyDefinedCards(definedCards);
+        final newDefinedCards = definedCards;
         // Add as the first item then scroll to top.
         newDefinedCards.insert(0, newCardGroup);
         onDefinedCardsChange(newDefinedCards);
@@ -146,7 +154,6 @@ class CardPage extends StatelessWidget {
                 SizedBox(
                   width: 8,
                 ),
-                collapseAllButton,
               ],
             ),
           ),

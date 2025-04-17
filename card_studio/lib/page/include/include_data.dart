@@ -2,6 +2,11 @@ import '../../core/card.dart';
 
 typedef Includes = List<IncludeItem>;
 
+int countIncludes(Includes includes) {
+  return includes.fold(
+      0, (previousValue, element) => previousValue + element.count());
+}
+
 /// CardGroup, CardEach or a page break. Array of this became the output.
 class IncludeItem {
   CardGroup? cardGroup;

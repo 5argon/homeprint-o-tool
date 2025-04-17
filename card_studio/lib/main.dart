@@ -376,6 +376,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onSave: onSave,
         onExport: onExport,
         fullScreenDisableFuture: fullScreenDisableFuture,
+        includes: _includes,
       );
       return Scaffold(
         body: SafeArea(

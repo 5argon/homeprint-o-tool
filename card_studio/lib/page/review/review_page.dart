@@ -41,6 +41,15 @@ class _ReviewPageState extends State<ReviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final nothingToPreviewRender = Center(
+      child: Text(
+        "You have not picked any card yet.",
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
+    );
+    if (widget.includes.isEmpty) {
+      return nothingToPreviewRender;
+    }
     final cards = cardsAtPage(widget.includes, widget.skipIncludes,
         widget.layoutData, widget.projectSettings.cardSize, _page);
 
