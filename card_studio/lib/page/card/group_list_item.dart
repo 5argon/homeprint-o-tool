@@ -51,8 +51,25 @@ class GroupListItem extends StatelessWidget {
         onCardGroupChange(newCardGroup);
       },
     );
-    final totalQuantity = Text(
-        "Cards: ${cardGroup.count()} (Unique: ${cardGroup.uniqueCount()})");
+    final normalCount = cardGroup.count();
+    final uniqueCount = cardGroup.uniqueCount();
+
+    final totalQuantity = normalCount == uniqueCount
+        ? Row(
+            children: [
+              Icon(Icons.style, size: 16), // Card icon
+              SizedBox(width: 4), // Spacing between icon and text
+              Text("$uniqueCount"),
+            ],
+          )
+        : Row(
+            children: [
+              Icon(Icons.style, size: 16), // Card icon
+              SizedBox(width: 4), // Spacing between icon and text
+              Text("$uniqueCount ($normalCount)"),
+            ],
+          );
+
     final addButton = ElevatedButton(
       onPressed: () {
         final newCardGroup = cardGroup;

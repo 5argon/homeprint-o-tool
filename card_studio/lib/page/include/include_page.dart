@@ -54,28 +54,54 @@ class IncludePage extends StatelessWidget {
       lastPageCount = modulo;
     }
     final remaining = pagination.perPage - lastPageCount;
+
+    final lastPageText = [
+      TextSpan(
+        text: "Last Page : $lastPageCount / ${pagination.perPage} Cards",
+      ),
+    ];
+
+    if (remaining > 0) {
+      lastPageText.add(
+        TextSpan(
+          text: " ($remaining Card${remaining == 1 ? '' : 's'} Left)",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.error,
+          ),
+        ),
+      );
+    }
+
+    final lastPageDebugger = RichText(
+      text: TextSpan(
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).textTheme.bodyMedium?.color),
+        children: lastPageText,
+      ),
+    );
+
     final allCountText = Row(
       children: [
         Card(
-            elevation: 0,
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Text(
-                "Total ${pagination.totalPages} Pages",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            )),
+          elevation: 0,
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Text(
+              "Total ${pagination.totalPages} Page${pagination.totalPages > 1 ? 's' : ''}",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
         Card(
-            elevation: 0,
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Text(
-                "Last Page : $lastPageCount / ${pagination.perPage} Cards ($remaining Cards Left)",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            )),
+          elevation: 0,
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: lastPageDebugger,
+          ),
+        ),
       ],
     );
     final createGroupButton = ElevatedButton(
@@ -84,14 +110,14 @@ class IncludePage extends StatelessWidget {
         appended.addAll(definedCards.map((e) => IncludeItem.cardGroup(e, 1)));
         onIncludesChanged(appended);
       },
-      child: const Text('Add All Groups'),
+      child: const Text('Add Each Group Once'),
     );
     final clearButton = ElevatedButton(
       onPressed: () {
         onIncludesChanged([]);
         onSkipIncludesChanged([]);
       },
-      child: const Text('Clear'),
+      child: const Text('Clear Picks'),
     );
 
     final count = includes.fold(0, (p, e) => p + e.count());

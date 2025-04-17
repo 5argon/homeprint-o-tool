@@ -15,7 +15,7 @@ class Sidebar extends StatelessWidget {
           onPressed: () async {
             onNew();
           },
-          child: Text("New"),
+          child: Text("New JSON"),
         ));
 
     final loadButton = Padding(
@@ -24,7 +24,7 @@ class Sidebar extends StatelessWidget {
           onPressed: () {
             onLoad();
           },
-          child: Text("Load")),
+          child: Text("Load JSON")),
     );
 
     final saveButton = Padding(
@@ -40,24 +40,81 @@ class Sidebar extends StatelessWidget {
 
     final effectiveSelectedIndex = baseDirectory == null ? -1 : selectedIndex;
 
-    final sidebarChildren = <Widget>[
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
+    var projectLabel = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
           "Project",
           style: textTheme.titleMedium,
           textAlign: TextAlign.center,
         ),
+        IconButton(
+          icon: Icon(Icons.help_outline),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Project Section"),
+                  content: SizedBox(
+                    width: 400,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                            "A section for authoring the JSON printing specification file. Any changes you did in this section must be manually saved back into the file with the Save button. If you are on the consumer side that just wanted to print at home, you can ignore this section and start on the \"Printing\" section below."),
+                        SizedBox(height: 10), // Add spacing between paragraphs
+                        Text(
+                            "\"Master\" is to set constant values applying to all cards, most importantly the project's card size, because this app can only create an uncut sheet of cards of the same size. In \"Instances\", you can define a reusable card face that can be used as either card front or card back of any card, so they all link to one single image file and any changes to the graphic is updated throughout the project."),
+                        SizedBox(height: 10), // Add spacing between paragraphs
+                        Text(
+                            "\"Cards\" is the heart of the project where you first create a group of cards, then each individual card inside the group with their default quantity per one pick of the group. User can pick just a part of the project to print based on groups you defined, or any single card individually. Each card is defined by a relative path starting from the location of the JSON file. Hover on the JSON file name under the project label to see the full path."),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Close"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+      ],
+    );
+
+    final sidebarChildren = <Widget>[
+      newButton,
+      loadButton,
+    ];
+
+    final projectChildren = <Widget>[
+      Divider(
+        indent: 20,
+        endIndent: 20,
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: projectLabel,
       ),
       LoadedProjectDisplay(
         baseDirectory: baseDirectory,
         loadedProjectFileName: previousFileName,
         hasChanges: hasChanges,
       ),
-      newButton,
-      loadButton,
       saveButton,
     ];
+
+    // Only show the project section if a project is loaded.
+    if (baseDirectory != null) {
+      sidebarChildren.addAll(projectChildren);
+    }
 
     // Cannot review and cannot export if no includes.
     final noIncludes = includes.isEmpty;
