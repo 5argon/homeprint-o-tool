@@ -174,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (baseDirectory == null) {
                     return Text("Need base directory to render cards.");
                   }
-                  var includePage = IncludePage(
+                  var picksPage = PicksPage(
                     basePath: baseDirectory,
                     projectSettings: _projectSettings,
                     layoutData: _layoutData,
@@ -193,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                     },
                   );
-                  return includePage;
+                  return picksPage;
                 case 5:
                   final baseDirectory = _baseDirectory;
                   if (baseDirectory != null) {

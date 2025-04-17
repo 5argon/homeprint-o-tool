@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import '../../core/save_file.dart';
 import 'include_list_item.dart';
 
-class IncludePage extends StatelessWidget {
+class PicksPage extends StatelessWidget {
   final String basePath;
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
@@ -18,7 +18,7 @@ class IncludePage extends StatelessWidget {
   final Includes skipIncludes;
   final Function(Includes) onIncludesChanged;
   final Function(Includes) onSkipIncludesChanged;
-  IncludePage(
+  PicksPage(
       {super.key,
       required this.basePath,
       required this.projectSettings,
@@ -104,7 +104,7 @@ class IncludePage extends StatelessWidget {
         ),
       ],
     );
-    final createGroupButton = ElevatedButton(
+    final addEachGroupOnceButton = ElevatedButton(
       onPressed: () {
         final appended = includes.toList();
         appended.addAll(definedCards.map((e) => IncludeItem.cardGroup(e, 1)));
@@ -127,7 +127,7 @@ class IncludePage extends StatelessWidget {
       child: TabBar(
         tabs: [
           Tab(
-            text: "Catalog",
+            text: "Available",
           ),
           Tab(
             text: "Picked ($count)",
@@ -136,7 +136,7 @@ class IncludePage extends StatelessWidget {
       ),
     );
 
-    List<IncludeListItem> groups = [];
+    List<IncludeListItem> availableListItems = [];
     for (var i = 0; i < definedCards.length; i++) {
       final cardGroup = definedCards[i];
       final gli = IncludeListItem(
@@ -159,14 +159,18 @@ class IncludePage extends StatelessWidget {
           onIncludesChanged(newIncludes);
         },
       );
-      groups.add(gli);
+      availableListItems.add(gli);
     }
 
-    final listView = ListView(children: groups);
-    var buttonRow = Row(
+    final availableListView = ListView(children: availableListItems);
+    var topButtonRow = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(children: [createGroupButton, SizedBox(width: 8), clearButton]),
+        Row(children: [
+          addEachGroupOnceButton,
+          SizedBox(width: 8),
+          clearButton
+        ]),
         allCountText,
       ],
     );
@@ -176,10 +180,10 @@ class IncludePage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: buttonRow,
+            child: topButtonRow,
           ),
           tabs,
-          Expanded(child: listView),
+          Expanded(child: availableListView),
         ],
       ),
     );
