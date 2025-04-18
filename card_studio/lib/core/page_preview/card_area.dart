@@ -63,7 +63,7 @@ class CardArea extends StatelessWidget {
   final bool showVerticalInnerCutLine;
   final bool showHorizontalInnerCutLine;
   final bool back;
-  final BackStrategy backStrategy;
+  final BackArrangement backStrategy;
 
   Future<ImageDescriptor?> getDescriptor(File loadedFile) async {
     final bytes = await loadedFile.readAsBytes();
@@ -172,7 +172,7 @@ class CardArea extends StatelessWidget {
                       break;
                   }
                   if (back &&
-                      backStrategy == BackStrategy.invertedRow &&
+                      backStrategy == BackArrangement.invertedRow &&
                       card.rotation != Rotation.none) {
                     turns = turns + 2;
                   }

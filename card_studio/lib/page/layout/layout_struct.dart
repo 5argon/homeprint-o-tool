@@ -1,3 +1,4 @@
+import 'package:homeprint_o_tool/core/card.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 
 class LayoutData {
@@ -16,53 +17,26 @@ class LayoutData {
   /// Height refer to cut guide size of of vertical side edge.
   SizePhysical edgeCutGuideSize;
 
-  /// The layout maximizes amount of cards rows and column.
-  /// This setting will ensure it has at least this much white padding on each card,
-  /// while still trying to maximize amount of cards. (So you get reduced rows and columns.)
-  SizePhysical perCardPadding;
-
-  /// Print cut line in the white padding on each card.
-  /// Value must be no more than [perCardPadding].
-  ValuePhysical perCardCutGuideLength;
-
-  /// Defines how would you use the printed paper to make a double sided card.
-  LayoutStyle layoutStyle;
-
-  BackStrategy backStrategy;
-
-  ExportRotation exportRotation;
+  BackArrangement backArrangement;
 
   List<int> skips;
+  bool removeOneRow;
+  bool removeOneColumn;
+  Rotation frontPostRotation;
+  Rotation backPostRotation;
 
   LayoutData({
     required this.paperSize,
     required this.pixelPerInch,
     required this.marginSize,
     required this.edgeCutGuideSize,
-    required this.perCardPadding,
-    required this.perCardCutGuideLength,
-    required this.layoutStyle,
-    required this.backStrategy,
-    required this.exportRotation,
+    required this.backArrangement,
     required this.skips,
+    required this.removeOneRow,
+    required this.removeOneColumn,
+    required this.frontPostRotation,
+    required this.backPostRotation,
   });
-}
-
-enum LayoutStyle {
-  /// Print two times on the same paper on different side to get double sided card.
-  duplex,
-
-  /// Print once and fold after cutting to get double sided card. Folding line is on the longer side of the card.
-  foldingLong,
-
-  /// Print once and fold after cutting to get double sided card. Folding line is on the shorter side of the card.
-  foldingShort,
-}
-
-enum ExportRotation {
-  none,
-  rotate90SameWay,
-  rotate90OppositeWay,
 }
 
 enum PhysicalSizeType {

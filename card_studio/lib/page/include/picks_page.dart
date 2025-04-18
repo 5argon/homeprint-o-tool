@@ -43,6 +43,10 @@ class PicksPage extends StatelessWidget {
         cardCountPerPage.columns);
     final allCount = countIncludes(includes);
 
+    if (pagination.perPage == 0) {
+      return const Text("No cards available");
+    }
+
     final modulo = allCount % pagination.perPage;
     final int lastPageCount;
     if (modulo == 0) {

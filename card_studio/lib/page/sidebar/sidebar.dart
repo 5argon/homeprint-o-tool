@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/page/include/include_data.dart';
 import 'package:homeprint_o_tool/page/sidebar/loaded_project_display.dart';
+import 'package:homeprint_o_tool/core/form/help_button.dart';
 
 class Sidebar extends StatelessWidget {
   @override
@@ -40,6 +41,15 @@ class Sidebar extends StatelessWidget {
 
     final effectiveSelectedIndex = baseDirectory == null ? -1 : selectedIndex;
 
+    final sectionHelpButton = HelpButton(
+      title: "Project Section",
+      paragraphs: [
+        "A section for authoring the JSON printing specification file. Any changes you did in this section must be manually saved back into the file with the Save button. If you are on the consumer side that just wanted to print at home, you can ignore this section and start on the \"Printing\" section below.",
+        "\"Project\" is to set constant values applying to all cards, most importantly the project's card size, because this app can only create an uncut sheet of cards of the same size. In \"Instances\", you can define a reusable card face that can be used as either card front or card back of any card, so they all link to one single image file and any changes to the graphic is updated throughout the project.",
+        "\"Cards\" is the heart of the project where you first create a group of cards, then each individual card inside the group with their default quantity per one pick of the group. User can pick just a part of the project to print based on groups you defined, or any single card individually. Each card is defined by a relative path starting from the location of the JSON file. Hover on the JSON file name under the project label to see the full path.",
+      ],
+    );
+
     var projectLabel = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -48,44 +58,7 @@ class Sidebar extends StatelessWidget {
           style: textTheme.titleMedium,
           textAlign: TextAlign.center,
         ),
-        IconButton(
-          icon: Icon(Icons.help_outline),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text("Project Section"),
-                  content: SizedBox(
-                    width: 400,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                            "A section for authoring the JSON printing specification file. Any changes you did in this section must be manually saved back into the file with the Save button. If you are on the consumer side that just wanted to print at home, you can ignore this section and start on the \"Printing\" section below."),
-                        SizedBox(height: 10), // Add spacing between paragraphs
-                        Text(
-                            "\"Master\" is to set constant values applying to all cards, most importantly the project's card size, because this app can only create an uncut sheet of cards of the same size. In \"Instances\", you can define a reusable card face that can be used as either card front or card back of any card, so they all link to one single image file and any changes to the graphic is updated throughout the project."),
-                        SizedBox(height: 10), // Add spacing between paragraphs
-                        Text(
-                            "\"Cards\" is the heart of the project where you first create a group of cards, then each individual card inside the group with their default quantity per one pick of the group. User can pick just a part of the project to print based on groups you defined, or any single card individually. Each card is defined by a relative path starting from the location of the JSON file. Hover on the JSON file name under the project label to see the full path."),
-                      ],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text("Close"),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
+        sectionHelpButton,
       ],
     );
 
@@ -153,6 +126,12 @@ class Sidebar extends StatelessWidget {
           )
         : exportButtonInner;
 
+    final printingHelpButton =
+        HelpButton(title: "Printing Section", paragraphs: [
+      "Settings in this section are for the consumer side of the JSON file. It is recommended to set them up in the order from top to bottom.",
+      "\"Page\" determines how many cards can fit in a single page and how much room of error they have to cut out the bleed of each card. That is then used in \"Picks\" page. It let you select which and how many cards you want to print, in the unit of card groups that the author of JSON file had prepared, or individually. It can show which page a particular group or card you selected will be landed on. Finally, the \"Post-Processing\" page let you review the resulting uncut sheet image that will be saved, with an optional rotation or flipping of the image.",
+      "The settings are not saved into the JSON file when pressing the Save button above. Loading a different JSON or even closing and opening the app again will retain the settings. Each time this app reopens, they are reset to default values.",
+    ]);
     var printingLabel = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -161,51 +140,13 @@ class Sidebar extends StatelessWidget {
           style: textTheme.titleMedium,
           textAlign: TextAlign.center,
         ),
-        IconButton(
-          icon: Icon(Icons.help_outline),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text("Printing Section"),
-                  content: SizedBox(
-                    width: 400,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                            "Settings in this section are for the consumer side of the JSON file. It is recommended to set them up in the order from top to bottom."),
-                        SizedBox(height: 10), // Add spacing between paragraphs
-                        Text(
-                            "\"Printer\" page determines how many cards can fit in a single page and how much room of error they have to cut out the bleed of each card. That is then used in \"Picks\" page. It let you select which and how many cards you want to print, in the unit of card groups that the author of JSON file had prepared, or individually. It can show which page a particular group or card you selected will be landed on. Finally, the \"Post-Processing\" page let you review the resulting uncut sheet image that will be saved, with an optional rotation or flipping of the image."),
-                        SizedBox(height: 10), // Add spacing between paragraphs
-                        Text(
-                          "The settings are not saved into the JSON file when pressing the Save button above. Loading a different JSON or even closing and opening the app again will retain the settings. Each time this app reopens, they are reset to default values.",
-                        ),
-                      ],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text("Close"),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
+        printingHelpButton
       ],
     );
 
     final addedSidebarWhenProjectLoaded = <Widget>[
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: Text("Master Settings")),
+          icon: Icon(Icons.widgets_outlined), label: Text("Project")),
       NavigationDrawerDestination(
           icon: Icon(Icons.widgets_outlined), label: Text("Instances")),
       NavigationDrawerDestination(
@@ -219,7 +160,7 @@ class Sidebar extends StatelessWidget {
         child: printingLabel,
       ),
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: Text("Printer")),
+          icon: Icon(Icons.widgets_outlined), label: Text("Page")),
       NavigationDrawerDestination(
           icon: Icon(Icons.widgets_outlined), label: picksLabelWithCardCount),
       NavigationDrawerDestination(

@@ -10,7 +10,6 @@ class LayoutPage extends StatefulWidget {
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
   final Function(LayoutData ld) onLayoutDataChanged;
-  final PhysicalSizeType physicalSizeType = PhysicalSizeType.inch;
 
   const LayoutPage({
     super.key,
@@ -77,7 +76,6 @@ class _LayoutPageState extends State<LayoutPage> {
         Flexible(
             child: OutputLayoutControl(
           layoutData: widget.layoutData,
-          physicalSizeType: widget.physicalSizeType,
           onLayoutDataChanged: (ld) {
             widget.onLayoutDataChanged(ld);
           },

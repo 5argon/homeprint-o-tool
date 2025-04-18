@@ -6,23 +6,15 @@ import 'card.dart';
 class ProjectSettings extends ChangeNotifier {
   late SizePhysical cardSize;
 
-  /// Individual card can override this settings.
-  late SynthesizedBleed synthesizedBleed;
-
   late Alignment defaultContentCenterOffset;
   late double defaultContentExpand;
   late Rotation defaultRotation;
 
-  ProjectSettings(
-      this.cardSize,
-      this.synthesizedBleed,
-      this.defaultContentCenterOffset,
-      this.defaultContentExpand,
-      this.defaultRotation);
+  ProjectSettings(this.cardSize, this.defaultContentCenterOffset,
+      this.defaultContentExpand, this.defaultRotation);
 
   ProjectSettings.fromJson(Map<String, dynamic> json) {
     cardSize = SizePhysical.fromJson(json['cardSize']);
-    synthesizedBleed = SynthesizedBleed.values.byName(json['synthesizedBleed']);
     final defaultContentCenterOffsetJson = json['defaultContentCenterOffset'];
     if (defaultContentCenterOffsetJson != null) {
       defaultContentCenterOffset =
@@ -47,15 +39,9 @@ class ProjectSettings extends ChangeNotifier {
   Map<String, dynamic> toJson() {
     return {
       'cardSize': cardSize.toJson(),
-      'synthesizedBleed': synthesizedBleed.name,
       'defaultContentCenterOffset': alignmentToJson(defaultContentCenterOffset),
       'defaultContentExpand': defaultContentExpand,
       'defaultRotation': defaultRotation.name,
     };
   }
-}
-
-enum SynthesizedBleed {
-  mirror,
-  none,
 }

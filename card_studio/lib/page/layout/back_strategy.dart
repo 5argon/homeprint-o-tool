@@ -1,1 +1,1 @@
-enum BackStrategy { exact, invertedRow }
+enum BackArrangement { exact, invertedRow }

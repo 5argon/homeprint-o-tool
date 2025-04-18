@@ -1,6 +1,7 @@
 import 'package:homeprint_o_tool/core/card.dart';
 import 'package:homeprint_o_tool/page/include/picks_page.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
+import 'package:homeprint_o_tool/page/project/project_page.dart';
 import 'package:homeprint_o_tool/page/review/review_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -53,24 +54,18 @@ class MyHomePage extends StatefulWidget {
 var defaultLayoutData = LayoutData(
   pixelPerInch: 300,
   paperSize: SizePhysical(13, 19, PhysicalSizeType.inch),
-  // paperSize: SizePhysical(19, 13, PhysicalSizeType.inch),
-  // paperSize: SizePhysical(29.7, 21, PhysicalSizeType.centimeter),
-  // paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
   marginSize: SizePhysical(0.4, 0.4, PhysicalSizeType.centimeter),
   edgeCutGuideSize: SizePhysical(0.2, 0.2, PhysicalSizeType.centimeter),
-  // edgeCutGuideSize: SizePhysical(0.1, 2.1, PhysicalSizeType.centimeter),
-  // perCardPadding: SizePhysical(0.2, 0.2, PhysicalSizeType.centimeter),
-  perCardPadding: SizePhysical(0, 0, PhysicalSizeType.centimeter),
-  perCardCutGuideLength: ValuePhysical(0, PhysicalSizeType.centimeter),
-  layoutStyle: LayoutStyle.duplex,
-  backStrategy: BackStrategy.invertedRow,
-  exportRotation: ExportRotation.rotate90OppositeWay,
+  backArrangement: BackArrangement.invertedRow,
   skips: [],
+  removeOneColumn: false,
+  removeOneRow: false,
+  frontPostRotation: Rotation.none,
+  backPostRotation: Rotation.none,
 );
 
 var defaultProjectSettings = ProjectSettings(
     SizePhysical(6.15, 8.8, PhysicalSizeType.centimeter),
-    SynthesizedBleed.mirror,
     Alignment.center,
     1.0,
     Rotation.none);
@@ -141,6 +136,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 return Text('Error: ${snapshot.error}');
               }
               switch (_selectedIndex) {
+                case 0:
+                  var projectSettingsPage = ProjectPage(
+                    projectSettings: _projectSettings,
+                    onProjectSettingsChanged: (projectSettings) {
+                      setState(() {
+                        _projectSettings = projectSettings;
+                      });
+                    },
+                  );
+                  return projectSettingsPage;
                 case 2:
                   final baseDirectory = _baseDirectory;
                   if (baseDirectory == null) {

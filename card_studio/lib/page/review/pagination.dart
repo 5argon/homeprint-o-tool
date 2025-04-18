@@ -72,9 +72,9 @@ CardsAtPage cardsAtPage(Includes includes, Includes skipIncludes,
   final skipCardsBack = allSkips.map((e) => e.back).toList();
   return CardsAtPage(
     distributeRowCol(page, cardCountRowCol.rows, cardCountRowCol.columns,
-        frontCards, skipCardsFront, BackStrategy.exact, validSkips),
+        frontCards, skipCardsFront, BackArrangement.exact, validSkips),
     distributeRowCol(page, cardCountRowCol.rows, cardCountRowCol.columns,
-        backCards, skipCardsBack, BackStrategy.invertedRow, validSkips),
+        backCards, skipCardsBack, BackArrangement.invertedRow, validSkips),
     pagination,
   );
 }
@@ -86,7 +86,7 @@ RowColCards distributeRowCol(
     int cols,
     List<CardEachSingle?> cards,
     List<CardEachSingle?> skipCards,
-    BackStrategy backStrategy,
+    BackArrangement backStrategy,
     List<int> skips) {
   RowColCards allRows = [];
   final previousSkips = skips.length * (page - 1);
@@ -99,7 +99,7 @@ RowColCards distributeRowCol(
       allRows.add(List.filled(cols, null));
     }
     final int target;
-    if (backStrategy == BackStrategy.invertedRow) {
+    if (backStrategy == BackArrangement.invertedRow) {
       target = cols - 1 - (v % cols);
     } else {
       target = v % cols;

@@ -152,7 +152,7 @@ class PagePreview extends StatelessWidget {
           showHorizontalInnerCutLine: !hideInnerCutLine,
           showVerticalInnerCutLine: !hideInnerCutLine,
           back: back,
-          backStrategy: layoutData.backStrategy,
+          backStrategy: layoutData.backArrangement,
         );
         Widget entireCardArea =
             Expanded(flex: cardFlexHorizontal, child: cardArea);
