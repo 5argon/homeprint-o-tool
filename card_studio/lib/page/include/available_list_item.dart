@@ -8,7 +8,7 @@ import 'count_number_in_circle.dart';
 import 'include_data.dart';
 import 'include_member_list_item.dart';
 
-class IncludeListItem extends StatelessWidget {
+class AvailableListItem extends StatelessWidget {
   final String basePath;
   final CardGroup cardGroup;
   final SizePhysical cardSize;
@@ -19,7 +19,7 @@ class IncludeListItem extends StatelessWidget {
   final Function(int quantity) onAddGroup;
   final Function(int index, int quantity) onAddIndividual;
 
-  IncludeListItem({
+  AvailableListItem({
     super.key,
     required this.basePath,
     required this.cardGroup,

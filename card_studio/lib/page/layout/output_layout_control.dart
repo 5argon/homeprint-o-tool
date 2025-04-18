@@ -40,7 +40,7 @@ class _OutputLayoutControlState extends State<OutputLayoutControl> {
         widget.physicalSizeType == PhysicalSizeType.inch ? "inch" : "cm";
     var widthForm = NumberTextFormField(
         fixedPoint: 2,
-        value: widget.layoutData.paperSize.width(widget.physicalSizeType),
+        value: widget.layoutData.paperSize.widthInUnit(widget.physicalSizeType),
         decoration: InputDecoration(
           labelText: "Width",
           suffixText: sizeSuffix,
@@ -48,21 +48,22 @@ class _OutputLayoutControlState extends State<OutputLayoutControl> {
         onChanged: (value) {
           widget.layoutData.paperSize = SizePhysical(
             value,
-            widget.layoutData.paperSize.height(widget.physicalSizeType),
+            widget.layoutData.paperSize.heightInUnit(widget.physicalSizeType),
             widget.physicalSizeType,
           );
           widget.onLayoutDataChanged(widget.layoutData);
         });
     var heightForm = NumberTextFormField(
         fixedPoint: 2,
-        value: widget.layoutData.paperSize.height(widget.physicalSizeType),
+        value:
+            widget.layoutData.paperSize.heightInUnit(widget.physicalSizeType),
         decoration: InputDecoration(
           labelText: "Height",
           suffixText: sizeSuffix,
         ),
         onChanged: (value) {
           widget.layoutData.paperSize = SizePhysical(
-            widget.layoutData.paperSize.width(widget.physicalSizeType),
+            widget.layoutData.paperSize.widthInUnit(widget.physicalSizeType),
             value,
             widget.physicalSizeType,
           );

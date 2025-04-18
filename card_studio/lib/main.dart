@@ -1,5 +1,5 @@
 import 'package:homeprint_o_tool/core/card.dart';
-import 'package:homeprint_o_tool/page/include/include_page.dart';
+import 'package:homeprint_o_tool/page/include/picks_page.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 import 'package:homeprint_o_tool/page/review/review_page.dart';
 import 'package:file_picker/file_picker.dart';

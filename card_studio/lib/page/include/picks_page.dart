@@ -1,12 +1,13 @@
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/include/include_data.dart';
+import 'package:homeprint_o_tool/page/include/picked_list.dart';
 import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
+import 'available_list.dart';
 
 import '../../core/save_file.dart';
-import 'include_list_item.dart';
 
 class PicksPage extends StatelessWidget {
   final String basePath;
@@ -121,48 +122,43 @@ class PicksPage extends StatelessWidget {
     );
 
     final count = includes.fold(0, (p, e) => p + e.count());
-    final tabs = DefaultTabController(
-      initialIndex: 0,
-      length: 2,
-      child: TabBar(
-        tabs: [
-          Tab(
-            text: "Available",
-          ),
-          Tab(
-            text: "Picked ($count)",
-          )
-        ],
-      ),
+
+    final availableList = AvailableList(
+      basePath: basePath,
+      projectSettings: projectSettings,
+      definedCards: definedCards,
+      definedInstances: definedInstances,
+      includes: includes,
+      skipIncludes: skipIncludes,
+      onIncludesChanged: onIncludesChanged,
     );
 
-    List<IncludeListItem> availableListItems = [];
-    for (var i = 0; i < definedCards.length; i++) {
-      final cardGroup = definedCards[i];
-      final gli = IncludeListItem(
-        basePath: basePath,
-        cardGroup: cardGroup,
-        cardSize: projectSettings.cardSize,
-        definedInstances: definedInstances,
-        projectSettings: projectSettings,
-        includes: includes,
-        skipIncludes: skipIncludes,
-        onAddGroup: (quantity) {
-          final newIncludes = includes.toList();
-          newIncludes.add(IncludeItem.cardGroup(cardGroup, quantity));
-          onIncludesChanged(newIncludes);
-        },
-        onAddIndividual: (index, quantity) {
-          final newIncludes = includes.toList();
-          newIncludes
-              .add(IncludeItem.cardEach(cardGroup.cards[index], quantity));
-          onIncludesChanged(newIncludes);
-        },
-      );
-      availableListItems.add(gli);
-    }
+    final pickedList =
+        PickedList(includes: includes, onIncludesChanged: onIncludesChanged);
 
-    final availableListView = ListView(children: availableListItems);
+    final tabController = Expanded(
+        child: DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          TabBar(
+            tabs: [
+              Tab(text: "Available"),
+              Tab(text: "Picked ($count Cards)"),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                availableList,
+                pickedList,
+              ],
+            ),
+          ),
+        ],
+      ),
+    ));
+
     var topButtonRow = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -182,8 +178,7 @@ class PicksPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: topButtonRow,
           ),
-          tabs,
-          Expanded(child: availableListView),
+          tabController,
         ],
       ),
     );

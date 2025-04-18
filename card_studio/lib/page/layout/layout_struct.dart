@@ -65,82 +65,125 @@ enum ExportRotation {
   rotate90OppositeWay,
 }
 
-class SizePhysical {
-  late double _widthCm;
-  late double _heightCm;
-
-  @override
-  operator ==(Object other) {
-    if (other is SizePhysical) {
-      return _widthCm == other._widthCm && _heightCm == other._heightCm;
-    }
-    return false;
-  }
-
-  @override
-  int get hashCode => Object.hash(_widthCm, _heightCm);
-
-  double get widthCm => _widthCm;
-  double get heightCm => _heightCm;
-  double get widthInch => _widthCm / 2.54;
-  double get heightInch => _heightCm / 2.54;
-
-  double width(PhysicalSizeType physicalSizeType) {
-    return physicalSizeType == PhysicalSizeType.centimeter
-        ? _widthCm
-        : widthInch;
-  }
-
-  double height(PhysicalSizeType physicalSizeType) {
-    return physicalSizeType == PhysicalSizeType.centimeter
-        ? _heightCm
-        : heightInch;
-  }
-
-  SizePhysical(double width, double height, PhysicalSizeType physicalSizeType) {
-    if (physicalSizeType == PhysicalSizeType.centimeter) {
-      _widthCm = width;
-      _heightCm = height;
-    } else {
-      _widthCm = width * 2.54;
-      _heightCm = height * 2.54;
-    }
-  }
-
-  SizePhysical.fromJson(Map<String, dynamic> json) {
-    // Also allow int from JSON if it was edited in manually somehow.
-    if (json['width'] is int) {
-      _widthCm = (json['width'] as int).toDouble();
-    } else {
-      _widthCm = json['width'];
-    }
-    if (json['height'] is int) {
-      _heightCm = (json['height'] as int).toDouble();
-    } else {
-      _heightCm = json['height'];
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    return {'width': _widthCm, 'height': _heightCm};
-  }
-}
-
 enum PhysicalSizeType {
   inch,
   centimeter,
 }
 
-class ValuePhysical {
-  late double _valueCm;
-  double get valueCm => _valueCm;
-  double get valueInch => _valueCm / 2.54;
+class SizePhysical {
+  late double _width;
+  late double _height;
+  late PhysicalSizeType _unit;
 
-  ValuePhysical(double value, PhysicalSizeType physicalSizeType) {
-    if (physicalSizeType == PhysicalSizeType.centimeter) {
-      _valueCm = value;
-    } else {
-      _valueCm = value * 2.54;
+  @override
+  operator ==(Object other) {
+    if (other is SizePhysical) {
+      return _width == other._width &&
+          _height == other._height &&
+          _unit == other._unit;
     }
+    return false;
+  }
+
+  @override
+  int get hashCode => Object.hash(_width, _height, _unit);
+
+  double get width => _width;
+  double get height => _height;
+  PhysicalSizeType get unit => _unit;
+
+  double get widthCm =>
+      _unit == PhysicalSizeType.centimeter ? _width : _width * 2.54;
+  double get heightCm =>
+      _unit == PhysicalSizeType.centimeter ? _height : _height * 2.54;
+  double get widthInch =>
+      _unit == PhysicalSizeType.inch ? _width : _width / 2.54;
+  double get heightInch =>
+      _unit == PhysicalSizeType.inch ? _height : _height / 2.54;
+
+  double widthInUnit(PhysicalSizeType unit) {
+    if (unit == PhysicalSizeType.centimeter) {
+      return widthCm;
+    } else {
+      return widthInch;
+    }
+  }
+
+  double heightInUnit(PhysicalSizeType unit) {
+    if (unit == PhysicalSizeType.centimeter) {
+      return heightCm;
+    } else {
+      return heightInch;
+    }
+  }
+
+  SizePhysical(double width, double height, PhysicalSizeType unit) {
+    _width = width;
+    _height = height;
+    _unit = unit;
+  }
+
+  SizePhysical.fromJson(Map<String, dynamic> json) {
+    _unit = json['unit'] == 'in'
+        ? PhysicalSizeType.inch
+        : PhysicalSizeType.centimeter;
+
+    // Also allow int from JSON if it was edited in manually somehow.
+    if (json['width'] is int) {
+      _width = (json['width'] as int).toDouble();
+    } else {
+      _width = json['width'];
+    }
+    if (json['height'] is int) {
+      _height = (json['height'] as int).toDouble();
+    } else {
+      _height = json['height'];
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'width': _width,
+      'height': _height,
+      'unit': _unit == PhysicalSizeType.inch ? 'in' : 'cm',
+    };
+  }
+}
+
+class ValuePhysical {
+  late double _value;
+  late PhysicalSizeType _unit;
+
+  double get value => _value;
+  PhysicalSizeType get unit => _unit;
+
+  double get valueCm =>
+      _unit == PhysicalSizeType.centimeter ? _value : _value * 2.54;
+  double get valueInch =>
+      _unit == PhysicalSizeType.inch ? _value : _value / 2.54;
+
+  ValuePhysical(double value, PhysicalSizeType unit) {
+    _value = value;
+    _unit = unit;
+  }
+
+  ValuePhysical.fromJson(Map<String, dynamic> json) {
+    _unit = json['unit'] == 'inch'
+        ? PhysicalSizeType.inch
+        : PhysicalSizeType.centimeter;
+
+    // Also allow int from JSON if it was edited in manually somehow.
+    if (json['value'] is int) {
+      _value = (json['value'] as int).toDouble();
+    } else {
+      _value = json['value'];
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'value': _value,
+      'unit': _unit == PhysicalSizeType.inch ? 'inch' : 'centimeter',
+    };
   }
 }
