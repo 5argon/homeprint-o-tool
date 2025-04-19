@@ -6,7 +6,7 @@ import 'layout_struct.dart';
 import 'package:flutter/material.dart';
 import 'layout_page_form.dart';
 
-class LayoutPage extends StatefulWidget {
+class LayoutPage extends StatelessWidget {
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
   final Function(LayoutData ld) onLayoutDataChanged;
@@ -19,22 +19,16 @@ class LayoutPage extends StatefulWidget {
   });
 
   @override
-  State<LayoutPage> createState() => _LayoutPageState();
-}
-
-class _LayoutPageState extends State<LayoutPage> {
-  bool _previewCuttingLine = true;
-  @override
   Widget build(BuildContext context) {
     var lrPreviewPadding = 8.0;
     var layoutPreview = PagePreviewFrame(
       child: PagePreview(
-        layoutData: widget.layoutData,
+        layoutData: layoutData,
         cards: [],
         layout: true,
-        previewCutLine: _previewCuttingLine,
+        previewCutLine: true,
         baseDirectory: null,
-        projectSettings: widget.projectSettings,
+        projectSettings: projectSettings,
         hideInnerCutLine: true,
         back: false,
       ),
@@ -75,9 +69,10 @@ class _LayoutPageState extends State<LayoutPage> {
         ),
         Flexible(
             child: LayoutPageForm(
-          layoutData: widget.layoutData,
+          projectSettings: projectSettings,
+          layoutData: layoutData,
           onLayoutDataChanged: (ld) {
-            widget.onLayoutDataChanged(ld);
+            onLayoutDataChanged(ld);
           },
         ))
       ],

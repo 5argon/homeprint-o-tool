@@ -4,9 +4,9 @@ import 'package:homeprint_o_tool/core/form/help_button.dart';
 class LabelAndForm extends StatelessWidget {
   final String label;
   final List<Widget> children;
-  final String? tooltip;
+  final String? help;
 
-  LabelAndForm({required this.label, required this.children, this.tooltip});
+  LabelAndForm({required this.label, required this.children, this.help});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class LabelAndForm extends StatelessWidget {
       style: textTheme.headlineSmall,
     );
     final Row labelWithHelp;
-    final helpContent = tooltip;
+    final helpContent = help;
     if (helpContent != null) {
       final helpButton = HelpButton(
         title: label,

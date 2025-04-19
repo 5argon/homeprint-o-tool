@@ -53,9 +53,9 @@ class MyHomePage extends StatefulWidget {
 
 var defaultLayoutData = LayoutData(
   pixelPerInch: 300,
-  paperSize: SizePhysical(13, 19, PhysicalSizeType.inch),
-  marginSize: SizePhysical(0.4, 0.4, PhysicalSizeType.centimeter),
-  edgeCutGuideSize: SizePhysical(0.2, 0.2, PhysicalSizeType.centimeter),
+  paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
+  marginSize: SizePhysical(0.25, 0.25, PhysicalSizeType.inch),
+  edgeCutGuideSize: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
   backArrangement: BackArrangement.invertedRow,
   skips: [],
   removeOneColumn: false,

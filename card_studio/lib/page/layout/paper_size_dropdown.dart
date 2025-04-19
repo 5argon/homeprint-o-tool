@@ -16,27 +16,27 @@ class PaperSizeDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<DropdownMenuItem<SizePhysical>> paperSizeDropdownItems = [
       DropdownMenuItem(
-        value: SizePhysical(11.7, 16.5, PhysicalSizeType.inch),
+        value: SizePhysical(42, 29.7, PhysicalSizeType.centimeter),
         child: Text("A3 (Vertical)"),
       ),
       DropdownMenuItem(
-        value: SizePhysical(16.5, 11.7, PhysicalSizeType.inch),
+        value: SizePhysical(29.7, 42, PhysicalSizeType.centimeter),
         child: Text("A3 (Horizontal)"),
       ),
       DropdownMenuItem(
-        value: SizePhysical(8.3, 11.7, PhysicalSizeType.inch),
+        value: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
         child: Text("A4 (Vertical)"),
       ),
       DropdownMenuItem(
-        value: SizePhysical(11.7, 8.3, PhysicalSizeType.inch),
+        value: SizePhysical(29.7, 21, PhysicalSizeType.centimeter),
         child: Text("A4 (Horizontal)"),
       ),
       DropdownMenuItem(
-        value: SizePhysical(5.8, 8.3, PhysicalSizeType.inch),
+        value: SizePhysical(21, 14.8, PhysicalSizeType.centimeter),
         child: Text("A5 (Vertical)"),
       ),
       DropdownMenuItem(
-        value: SizePhysical(8.3, 5.8, PhysicalSizeType.inch),
+        value: SizePhysical(14.8, 21, PhysicalSizeType.centimeter),
         child: Text("A5 (Horizontal)"),
       ),
       DropdownMenuItem(

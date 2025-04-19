@@ -17,6 +17,20 @@ import 'page_preview.dart';
 
 enum ExportingFrontBack { front, back }
 
+class ExportSettings {
+  final String prefix;
+  final String template;
+  final String frontSuffix;
+  final String backSuffix;
+
+  ExportSettings({
+    required this.prefix,
+    required this.template,
+    required this.frontSuffix,
+    required this.backSuffix,
+  });
+}
+
 Future renderRender(
   BuildContext context,
   ui.FlutterView flutterView,
@@ -29,21 +43,23 @@ Future renderRender(
   void Function(ExportingFrontBack) onFrontBackUpdate,
   void Function(int) onTotalPageUpdate,
 ) async {
-  // Open the export directory picker and get the combined result
-  String? result = await openExportDirectoryPicker(context);
-  if (result == null) {
-    return; // User canceled
+  final bool frontSideOnly = frontSideOnlyIncludes(includeItems);
+  ExportSettings? settings = await openPreExportDialog(context, frontSideOnly);
+  if (settings == null) {
+    return;
   }
-
-  // Split the result into directory and file prefix
-  final parts = result.split('|');
-  final exportDirectory = parts[0];
-  final filePrefix = parts[1];
+  String? directory = await FilePicker.platform.getDirectoryPath(
+    dialogTitle: 'Please select an output directory.',
+  );
+  if (directory == null) {
+    return;
+  }
 
   final cardCountRowCol =
       calculateCardCountPerPage(layoutData, projectSettings.cardSize);
   final pagination = calculatePagination(includeItems, layoutData,
       projectSettings.cardSize, cardCountRowCol.rows, cardCountRowCol.columns);
+
   final pixelWidth = layoutData.paperSize.widthInch * layoutData.pixelPerInch;
   final pixelHeight = layoutData.paperSize.heightInch * layoutData.pixelPerInch;
   onTotalPageUpdate(pagination.totalPages);
@@ -62,9 +78,11 @@ Future renderRender(
       flutterView,
       pixelWidth,
       pixelHeight,
-      exportDirectory,
-      filePrefix,
-      "A",
+      directory,
+      settings.prefix,
+      settings.template,
+      settings.frontSuffix,
+      settings.backSuffix,
       i,
     );
     onFrontBackUpdate(ExportingFrontBack.back);
@@ -77,9 +95,11 @@ Future renderRender(
       flutterView,
       pixelWidth,
       pixelHeight,
-      exportDirectory,
-      filePrefix,
-      "B",
+      directory,
+      settings.prefix,
+      settings.template,
+      settings.frontSuffix,
+      settings.backSuffix,
       i,
     );
   }
@@ -95,8 +115,10 @@ Future<void> renderOneSide(
     double pixelWidth,
     double pixelHeight,
     String directory,
-    String fileName,
-    String frontBackSuffix,
+    String prefix,
+    String template,
+    String frontSuffix,
+    String backSuffix,
     int pageNumber) async {
   var toRender = PagePreview(
     layoutData: layoutData,
@@ -108,29 +130,90 @@ Future<void> renderOneSide(
     hideInnerCutLine: true,
     back: back,
   );
+
+  // Replace placeholders in the template
+  final fileName = template
+      .replaceAll("{prefix}", "export")
+      .replaceAll("{page}", (pageNumber + 1).toString())
+      .replaceAll("{side}", back ? backSuffix : frontSuffix);
+
   final imageUint = await createImageBytesFromWidget(
       flutterView, toRender, pixelWidth, pixelHeight);
-  await savePng(
-      imageUint, directory, "${fileName}_${pageNumber + 1}_$frontBackSuffix");
+  await savePng(imageUint, directory, fileName);
 }
 
-Future<String?> openExportDirectoryPicker(BuildContext context) async {
-  // Show a dialog to ask for the file name prefix
-  String? filePrefix = await showDialog<String>(
+Future<ExportSettings?> openPreExportDialog(
+    BuildContext context, bool frontSideOnly) async {
+  String tempPrefix = "export";
+  String tempTemplate = "{prefix}_{page}_{side}";
+  String tempFrontSuffix = "A";
+  String tempBackSuffix = "B";
+
+  final Widget noBacksideText = Container(
+    padding: EdgeInsets.all(10),
+    margin: EdgeInsets.only(bottom: 10),
+    decoration: BoxDecoration(
+      color: Colors.yellow[100],
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.yellow[700]!),
+    ),
+    child: Row(
+      children: [
+        Icon(Icons.info, color: Colors.yellow[700]),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            "Every card you picked has only a front side. Exporting only the front side of each page.",
+            style: TextStyle(color: Colors.black87),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  return await showDialog<ExportSettings>(
     context: context,
     builder: (BuildContext context) {
-      String tempPrefix = "";
       return AlertDialog(
-        title: Text('Enter File Name Prefix'),
+        title: Text('Export Settings'),
         content: SizedBox(
           width: 400,
-          child: TextField(
-            controller: TextEditingController(text: "export"),
-            onChanged: (value) {
-              tempPrefix = value;
-            },
-            decoration:
-                InputDecoration(hintText: "Enter prefix (e.g., 'export')"),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (frontSideOnly) noBacksideText,
+              TextField(
+                controller: TextEditingController(text: tempTemplate),
+                decoration: InputDecoration(
+                  labelText: "File Name Template",
+                  helperText: "Use {prefix}, {page}, {side} as placeholders.",
+                ),
+                onChanged: (value) {
+                  tempTemplate = value;
+                },
+              ),
+              TextField(
+                controller: TextEditingController(text: tempPrefix),
+                decoration: InputDecoration(labelText: "File Name Prefix"),
+                onChanged: (value) {
+                  tempPrefix = value;
+                },
+              ),
+              TextField(
+                controller: TextEditingController(text: tempFrontSuffix),
+                decoration: InputDecoration(labelText: "Front Side Suffix"),
+                onChanged: (value) {
+                  tempFrontSuffix = value;
+                },
+              ),
+              TextField(
+                controller: TextEditingController(text: tempBackSuffix),
+                decoration: InputDecoration(labelText: "Back Side Suffix"),
+                onChanged: (value) {
+                  tempBackSuffix = value;
+                },
+              ),
+            ],
           ),
         ),
         actions: [
@@ -142,7 +225,14 @@ Future<String?> openExportDirectoryPicker(BuildContext context) async {
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(tempPrefix); // Confirm
+              Navigator.of(context).pop(
+                ExportSettings(
+                  prefix: tempPrefix,
+                  template: tempTemplate,
+                  frontSuffix: tempFrontSuffix,
+                  backSuffix: tempBackSuffix,
+                ),
+              ); // Confirm
             },
             child: Text('OK'),
           ),
@@ -150,19 +240,6 @@ Future<String?> openExportDirectoryPicker(BuildContext context) async {
       );
     },
   );
-
-  // If the user cancels or doesn't enter a prefix, return null
-  if (filePrefix == null || filePrefix.isEmpty) {
-    return null;
-  }
-
-  // Proceed to directory selection
-  String? directory = await FilePicker.platform.getDirectoryPath(
-    dialogTitle: 'Please select an output directory.',
-  );
-
-  // Return the directory and prefix combined as a single string
-  return directory != null ? "$directory|$filePrefix" : null;
 }
 
 Future savePng(Uint8List imageData, String directory, String fileName) async {

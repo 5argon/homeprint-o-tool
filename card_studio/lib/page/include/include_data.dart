@@ -7,6 +7,26 @@ int countIncludes(Includes includes) {
       0, (previousValue, element) => previousValue + element.count());
 }
 
+bool frontSideOnlyIncludes(Includes includes) {
+  for (var i = 0; i < includes.length; i++) {
+    final cardGroup = includes[i].cardGroup;
+    final cardEach = includes[i].cardEach;
+    if (cardGroup != null) {
+      for (var j = 0; j < cardGroup.cards.length; j++) {
+        final card = cardGroup.cards[j];
+        if (card.back != null) {
+          return false;
+        }
+      }
+    } else if (cardEach != null) {
+      if (cardEach.back != null) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 /// CardGroup, CardEach or a page break. Array of this became the output.
 class IncludeItem {
   CardGroup? cardGroup;
