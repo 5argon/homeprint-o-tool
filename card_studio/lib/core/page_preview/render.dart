@@ -19,7 +19,6 @@ enum ExportingFrontBack { front, back }
 
 Future renderRender(
   BuildContext context,
-  String directory,
   ui.FlutterView flutterView,
   ProjectSettings projectSettings,
   LayoutData layoutData,
@@ -30,6 +29,17 @@ Future renderRender(
   void Function(ExportingFrontBack) onFrontBackUpdate,
   void Function(int) onTotalPageUpdate,
 ) async {
+  // Open the export directory picker and get the combined result
+  String? result = await openExportDirectoryPicker(context);
+  if (result == null) {
+    return; // User canceled
+  }
+
+  // Split the result into directory and file prefix
+  final parts = result.split('|');
+  final exportDirectory = parts[0];
+  final filePrefix = parts[1];
+
   final cardCountRowCol =
       calculateCardCountPerPage(layoutData, projectSettings.cardSize);
   final pagination = calculatePagination(includeItems, layoutData,
@@ -41,7 +51,6 @@ Future renderRender(
     onCurrentPageUpdate(i + 1);
     final cards = cardsAtPage(includeItems, skipIncludeItems, layoutData,
         projectSettings.cardSize, i + 1);
-    const filePrefix = "export";
     onFrontBackUpdate(ExportingFrontBack.front);
 
     await renderOneSide(
@@ -53,7 +62,7 @@ Future renderRender(
       flutterView,
       pixelWidth,
       pixelHeight,
-      directory,
+      exportDirectory,
       filePrefix,
       "A",
       i,
@@ -68,7 +77,7 @@ Future renderRender(
       flutterView,
       pixelWidth,
       pixelHeight,
-      directory,
+      exportDirectory,
       filePrefix,
       "B",
       i,
@@ -105,11 +114,55 @@ Future<void> renderOneSide(
       imageUint, directory, "${fileName}_${pageNumber + 1}_$frontBackSuffix");
 }
 
-Future<String?> openExportDirectoryPicker() async {
+Future<String?> openExportDirectoryPicker(BuildContext context) async {
+  // Show a dialog to ask for the file name prefix
+  String? filePrefix = await showDialog<String>(
+    context: context,
+    builder: (BuildContext context) {
+      String tempPrefix = "";
+      return AlertDialog(
+        title: Text('Enter File Name Prefix'),
+        content: SizedBox(
+          width: 400,
+          child: TextField(
+            controller: TextEditingController(text: "export"),
+            onChanged: (value) {
+              tempPrefix = value;
+            },
+            decoration:
+                InputDecoration(hintText: "Enter prefix (e.g., 'export')"),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(null); // Cancel
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(tempPrefix); // Confirm
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+
+  // If the user cancels or doesn't enter a prefix, return null
+  if (filePrefix == null || filePrefix.isEmpty) {
+    return null;
+  }
+
+  // Proceed to directory selection
   String? directory = await FilePicker.platform.getDirectoryPath(
     dialogTitle: 'Please select an output directory.',
   );
-  return directory;
+
+  // Return the directory and prefix combined as a single string
+  return directory != null ? "$directory|$filePrefix" : null;
 }
 
 Future savePng(Uint8List imageData, String directory, String fileName) async {

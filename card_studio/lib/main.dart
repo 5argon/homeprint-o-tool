@@ -333,11 +333,9 @@ class _MyHomePageState extends State<MyHomePage> {
       final baseDirectory = _baseDirectory;
       if (baseDirectory != null) {
         final flutterView = View.of(context);
-        final directory = await openExportDirectoryPicker();
-        if (directory != null && context.mounted) {
+        if (context.mounted) {
           final renderingFuture = renderRender(
               context,
-              directory,
               flutterView,
               _projectSettings,
               _layoutData,
