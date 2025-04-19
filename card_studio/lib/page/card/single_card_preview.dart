@@ -45,7 +45,7 @@ class SingleCardPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardEachSingle = this.cardEachSingle;
     if (cardEachSingle == null) {
-      return Text("None");
+      return Container();
     }
     return FutureBuilder(
       builder: (context, snapshot) {

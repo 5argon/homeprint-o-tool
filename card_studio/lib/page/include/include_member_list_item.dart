@@ -36,11 +36,14 @@ class IncludeMemberListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final addButton = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: ElevatedButton(
-        onPressed: () {
-          onAddIncludeItem(1);
-        },
-        child: Icon(Icons.add),
+      child: Tooltip(
+        message: "Pick one copy of this card.",
+        child: ElevatedButton(
+          onPressed: () {
+            onAddIncludeItem(1);
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
     final countNumberInCircle = CountNumberInCircle(value: outerCount);
@@ -62,6 +65,10 @@ class IncludeMemberListItem extends StatelessWidget {
     final amount = cardEach.amount;
     final cardsCount = Text(
       "x ${amount.toString()} ${amount > 1 ? "Cards" : "Card"}",
+    );
+    final cardIcon = Icon(
+      Icons.credit_card,
+      size: 20,
     );
     return Card(
       child: Padding(
@@ -99,6 +106,8 @@ class IncludeMemberListItem extends StatelessWidget {
                 children: [
                   Row(
                     children: [
+                      cardIcon,
+                      SizedBox(width: 8),
                       Expanded(child: cardNameBox),
                       SizedBox(width: 16),
                       countNumberInCircle,

@@ -54,6 +54,11 @@ class GroupListItem extends StatelessWidget {
     final normalCount = cardGroup.count();
     final uniqueCount = cardGroup.uniqueCount();
 
+    final groupIcon = Icon(
+      Icons.folder,
+      size: 32,
+    );
+
     final totalQuantity = normalCount == uniqueCount
         ? Row(
             children: [
@@ -168,7 +173,10 @@ class GroupListItem extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              groupIcon,
+              SizedBox(width: 8),
               Expanded(child: groupName),
               totalQuantity,
               removeButton,

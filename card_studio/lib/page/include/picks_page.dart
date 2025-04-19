@@ -115,14 +115,14 @@ class PicksPage extends StatelessWidget {
         appended.addAll(definedCards.map((e) => IncludeItem.cardGroup(e, 1)));
         onIncludesChanged(appended);
       },
-      child: const Text('Add Each Group Once'),
+      child: const Text('Pick Each Group Once'),
     );
     final clearButton = ElevatedButton(
       onPressed: () {
         onIncludesChanged([]);
         onSkipIncludesChanged([]);
       },
-      child: const Text('Clear Picks'),
+      child: const Text('Clear Picked Cards'),
     );
 
     final count = includes.fold(0, (p, e) => p + e.count());

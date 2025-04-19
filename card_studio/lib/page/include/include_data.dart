@@ -32,6 +32,10 @@ class IncludeItem {
   CardGroup? cardGroup;
   CardEach? cardEach;
 
+  bool isGroup() {
+    return cardGroup != null;
+  }
+
   /// Copies of group or individual card. If individual card also has amount,
   /// it will be multiplied with this.
   int amount;

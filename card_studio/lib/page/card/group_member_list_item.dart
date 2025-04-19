@@ -69,6 +69,10 @@ class GroupMemberListItem extends StatelessWidget {
       },
       icon: Icon(Icons.delete),
     );
+    final cardIcon = Icon(
+      Icons.credit_card,
+      size: 32,
+    );
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -105,6 +109,8 @@ class GroupMemberListItem extends StatelessWidget {
                 children: [
                   Row(
                     children: [
+                      cardIcon,
+                      SizedBox(width: 8),
                       Expanded(child: cardNameBox),
                       SizedBox(width: 16),
                       SizedBox(

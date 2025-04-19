@@ -30,6 +30,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     Widget instanceMark;
     final cardEachSingle = this.cardEachSingle;
     final editButton = IconButton(
+        tooltip: "Browse for image file",
         onPressed: () async {
           final path = await pickRelativePath(basePath);
           if (path == null) return;
@@ -46,17 +47,56 @@ class GroupMemberListItemOneSide extends StatelessWidget {
               false);
           onCardEachSingleChange(newCard);
         },
-        icon: Icon(Icons.edit));
-    final sp1 = IconButton(
-        onPressed: () async {
-          onCardEachSingleChange(definedInstances[0]);
-        },
-        icon: Icon(Icons.ac_unit));
-    final sp2 = IconButton(
-        onPressed: () async {
-          onCardEachSingleChange(definedInstances[1]);
-        },
-        icon: Icon(Icons.ac_unit));
+        icon: Icon(Icons.folder));
+
+    Stack createInstanceIconWithNumber(int number) {
+      return Stack(
+        children: [
+          Icon(Icons.link),
+          Positioned(
+            right: 0,
+            bottom: -4,
+            child: Container(
+              padding: EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  number.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    final instanceOneAvailable = definedInstances.isNotEmpty;
+    final instanceTwoAvailable = definedInstances.length > 1;
+    final instanceOneButton = IconButton(
+        tooltip: "Quick assign Instance #1 to this card.",
+        onPressed: instanceOneAvailable
+            ? () async {
+                onCardEachSingleChange(definedInstances[0]);
+              }
+            : null,
+        icon: createInstanceIconWithNumber(1));
+
+    final instanceTwoButton = IconButton(
+        tooltip: "Quick assign Instance #2 to this card.",
+        onPressed: instanceTwoAvailable
+            ? () async {
+                onCardEachSingleChange(definedInstances[1]);
+              }
+            : null,
+        icon: createInstanceIconWithNumber(2));
     if (cardEachSingle != null && cardEachSingle.isInstance) {
       instanceMark = Row(
         children: [
@@ -78,8 +118,12 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       child: Row(
         children: [
           showEditButton ? editButton : Container(),
-          showEditButton && isBack ? sp1 : Container(),
-          showEditButton && isBack ? sp2 : Container(),
+          showEditButton && isBack && instanceOneAvailable
+              ? instanceOneButton
+              : Container(),
+          showEditButton && isBack && instanceTwoAvailable
+              ? instanceTwoButton
+              : Container(),
           SizedBox(width: 4),
           Expanded(
             child: Column(
@@ -110,7 +154,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
 // Open dialog to pick JPG or PNG file, path returned is relative to baseDirectory
 Future<String?> pickRelativePath(String basePath) async {
   final pickResult = await FilePicker.platform.pickFiles(
-    dialogTitle: "Choose an image file.",
+    dialogTitle: "Choose an image file to link its relative path to this card.",
     allowedExtensions: ['png', 'jpg'],
   );
   if (pickResult == null) return null;

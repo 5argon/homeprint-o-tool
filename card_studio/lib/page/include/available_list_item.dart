@@ -34,13 +34,17 @@ class AvailableListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardCount = cardGroup.count();
     final addButton = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: ElevatedButton(
-        onPressed: () {
-          onAddGroup(1);
-        },
-        child: Icon(Icons.add),
+      child: Tooltip(
+        message: "Pick all $cardCount cards in this group.",
+        child: ElevatedButton(
+          onPressed: () {
+            onAddGroup(1);
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
     final groupName = Text(cardGroup.name ?? "");
@@ -82,10 +86,16 @@ class AvailableListItem extends StatelessWidget {
           order: i + 1));
     }
 
+    final groupIcon = Icon(
+      Icons.folder,
+      size: 32,
+    );
     final head = Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
         children: [
+          groupIcon,
+          SizedBox(width: 8),
           Expanded(child: groupName),
           countNumberInCircle,
           totalQuantityDisplay,
