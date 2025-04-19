@@ -129,7 +129,7 @@ class Sidebar extends StatelessWidget {
     final printingHelpButton =
         HelpButton(title: "Printing Section", paragraphs: [
       "Settings in this section are for the consumer side of the JSON file. It is recommended to set them up in the order from top to bottom.",
-      "\"Page\" determines how many cards can fit in a single page and how much room of error they have to cut out the bleed of each card. That is then used in \"Picks\" page. It let you select which and how many cards you want to print, in the unit of card groups that the author of JSON file had prepared, or individually. It can show which page a particular group or card you selected will be landed on. Finally, the \"Post-Processing\" page let you review the resulting uncut sheet image that will be saved, with an optional rotation or flipping of the image.",
+      "\"Layout\" determines how many cards can fit in a single page and how much room of error they have to cut out the bleed of each card. That is then used in \"Picks\" page. It let you select which and how many cards you want to print, in the unit of card groups that the author of JSON file had prepared, or individually. It can show which page a particular group or card you selected will be landed on. Finally, the \"Post-Processing\" page let you review the resulting uncut sheet image that will be saved, with an optional rotation or flipping of the image.",
       "The settings are not saved into the JSON file when pressing the Save button above. Loading a different JSON or even closing and opening the app again will retain the settings. Each time this app reopens, they are reset to default values.",
     ]);
     var printingLabel = Row(
@@ -160,11 +160,11 @@ class Sidebar extends StatelessWidget {
         child: printingLabel,
       ),
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: Text("Page")),
+          icon: Icon(Icons.widgets_outlined), label: Text("Layout")),
       NavigationDrawerDestination(
           icon: Icon(Icons.widgets_outlined), label: picksLabelWithCardCount),
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: Text("Post-Processing")),
+          icon: Icon(Icons.widgets_outlined), label: Text("Review")),
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: exportButton,

@@ -11,5 +11,17 @@ import 'layout_struct.dart';
       (2 * (ld.marginSize.heightCm + ld.edgeCutGuideSize.heightCm));
   int horizontalCards = cardSpaceHorizontal ~/ cardSize.widthCm;
   int verticalCards = cardSpaceVertical ~/ cardSize.heightCm;
+  if (ld.removeOneRow) {
+    verticalCards--;
+    if (verticalCards < 0) {
+      verticalCards = 0;
+    }
+  }
+  if (ld.removeOneColumn) {
+    horizontalCards--;
+    if (horizontalCards < 0) {
+      horizontalCards = 0;
+    }
+  }
   return (rows: verticalCards, columns: horizontalCards);
 }

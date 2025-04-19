@@ -4,7 +4,7 @@ import '../../core/page_preview/page_preview.dart';
 import '../../core/page_preview/page_preview_frame.dart';
 import 'layout_struct.dart';
 import 'package:flutter/material.dart';
-import 'output_layout_control.dart';
+import 'layout_page_form.dart';
 
 class LayoutPage extends StatefulWidget {
   final ProjectSettings projectSettings;
@@ -63,7 +63,7 @@ class _LayoutPageState extends State<LayoutPage> {
             borderRadius: const BorderRadius.all(Radius.circular(4)),
           ),
           child: SizedBox(
-            height: 500,
+            height: 450,
             child: Row(
               children: [
                 Expanded(
@@ -74,7 +74,7 @@ class _LayoutPageState extends State<LayoutPage> {
           ),
         ),
         Flexible(
-            child: OutputLayoutControl(
+            child: LayoutPageForm(
           layoutData: widget.layoutData,
           onLayoutDataChanged: (ld) {
             widget.onLayoutDataChanged(ld);

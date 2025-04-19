@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/form/help_button.dart';
 
 class LabelAndForm extends StatelessWidget {
   final String label;
   final List<Widget> children;
-  String? tooltip;
+  final String? tooltip;
 
   LabelAndForm({required this.label, required this.children, this.tooltip});
 
@@ -14,15 +15,30 @@ class LabelAndForm extends StatelessWidget {
       label,
       style: textTheme.headlineSmall,
     );
-    final tooltipWrapped = tooltip == null
-        ? text
-        : Tooltip(
-            message: tooltip,
-            child: text,
-          );
+    final Row labelWithHelp;
+    final helpContent = tooltip;
+    if (helpContent != null) {
+      final helpButton = HelpButton(
+        title: label,
+        paragraphs: [helpContent],
+      );
+      labelWithHelp = Row(
+        children: [
+          text,
+          SizedBox(width: 8),
+          helpButton,
+        ],
+      );
+    } else {
+      labelWithHelp = Row(
+        children: [
+          text,
+        ],
+      );
+    }
     return Column(
       children: [
-        Row(children: [tooltipWrapped]),
+        Row(children: [labelWithHelp]),
         Row(
           children: children,
         ),
