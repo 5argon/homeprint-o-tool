@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:path/path.dart' as p;
 import '../../core/card.dart';
+import 'edit_card_face_dialog.dart';
 
 class GroupMemberListItemOneSide extends StatelessWidget {
   final CardEachSingle? cardEachSingle;
@@ -32,24 +33,21 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     Widget instanceMark;
     final cardEachSingle = this.cardEachSingle;
     final editButton = IconButton(
-        tooltip: "Change this card face",
-        onPressed: () async {
-          final path = await pickRelativePath(basePath);
-          if (path == null) return;
-          final newCard = CardEachSingle(
-              path,
-              Alignment.center,
-              1,
-              Rotation.none,
-              PerCardSynthesizedBleed.mirror,
-              null,
-              true,
-              true,
-              true,
-              false);
-          onCardEachSingleChange(newCard);
-        },
-        icon: Icon(Icons.edit_square));
+      tooltip: "Change this card face",
+      onPressed: () async {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return EditCardFaceDialog(
+              basePath: basePath,
+              definedInstances: definedInstances,
+              onCardEachSingleChange: onCardEachSingleChange,
+            );
+          },
+        );
+      },
+      icon: Icon(Icons.edit_square),
+    );
 
     final trashButton = IconButton(
         tooltip: "Remove",
@@ -89,10 +87,12 @@ class GroupMemberListItemOneSide extends StatelessWidget {
 
     final instanceOneAvailable = definedInstances.isNotEmpty;
     final instanceTwoAvailable = definedInstances.length > 1;
-    final isCurrentlyInstanceOne =
-        cardEachSingle != null && cardEachSingle == definedInstances[0];
-    final isCurrentlyInstanceTwo =
-        cardEachSingle != null && cardEachSingle == definedInstances[1];
+    final isCurrentlyInstanceOne = cardEachSingle != null &&
+        definedInstances.isNotEmpty &&
+        cardEachSingle == definedInstances[0];
+    final isCurrentlyInstanceTwo = cardEachSingle != null &&
+        definedInstances.length > 1 &&
+        cardEachSingle == definedInstances[1];
     final instanceOneButton = IconButton(
         tooltip: "Quick assign Instance #1 to this card.",
         onPressed: instanceOneAvailable
