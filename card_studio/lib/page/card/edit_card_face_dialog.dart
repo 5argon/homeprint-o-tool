@@ -5,25 +5,67 @@ import 'package:file_picker/file_picker.dart';
 
 import '../../core/save_file.dart';
 
-class EditCardFaceDialog extends StatelessWidget {
+class EditCardFaceDialog extends StatefulWidget {
   final String basePath;
   final DefinedInstances definedInstances;
   final Function(CardEachSingle? card) onCardEachSingleChange;
+  final CardEachSingle? initialCard; // New parameter for initial value
 
   const EditCardFaceDialog({
     super.key,
     required this.basePath,
     required this.definedInstances,
     required this.onCardEachSingleChange,
+    this.initialCard, // Optional initial value
   });
 
   @override
-  Widget build(BuildContext context) {
-    CardEachSingle? selectedInstance;
+  _EditCardFaceDialogState createState() => _EditCardFaceDialogState();
+}
 
-    final List<DropdownMenuItem<CardEachSingle>> dropdownItems = [];
-    for (var i = 0; i < definedInstances.length; i++) {
-      final instance = definedInstances[i];
+class _EditCardFaceDialogState extends State<EditCardFaceDialog>
+    with SingleTickerProviderStateMixin {
+  CardEachSingle? selectedInstance;
+  late TabController _tabController;
+  String? initialFilePath;
+  String? tempFilePath; // Temporary file path for the File tab
+  late TextEditingController
+      filePathController; // Controller for the text field
+
+  @override
+  void initState() {
+    super.initState();
+    // Determine initial tab and values
+    if (widget.initialCard != null) {
+      if (widget.initialCard!.relativeFilePath.isNotEmpty) {
+        _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
+        initialFilePath = widget.initialCard!.relativeFilePath;
+        tempFilePath = initialFilePath; // Initialize tempFilePath
+      } else {
+        _tabController = TabController(length: 2, vsync: this, initialIndex: 1);
+        selectedInstance = widget.initialCard;
+      }
+    } else {
+      _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
+    }
+
+    // Initialize the text controller with the initial file path
+    filePathController = TextEditingController(text: tempFilePath);
+  }
+
+  @override
+  void dispose() {
+    filePathController
+        .dispose(); // Dispose the controller when the widget is destroyed
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final List<DropdownMenuItem<CardEachSingle>> dropdownItems =
+        widget.definedInstances.asMap().entries.map((entry) {
+      final int index = entry.key + 1; // 1-based index
+      final CardEachSingle instance = entry.value;
       final String instanceName = instance.name ?? "";
       final String displayInstanceName;
       if (instanceName.isNotEmpty) {
@@ -31,54 +73,56 @@ class EditCardFaceDialog extends StatelessWidget {
       } else if (instance.relativeFilePath.isNotEmpty) {
         displayInstanceName = p.basename(instance.relativeFilePath);
       } else {
-        displayInstanceName = "#${i + 1} Unnamed Instance";
+        displayInstanceName = "#$index: Unnamed Instance";
       }
-      final newDropdownMenuItem = DropdownMenuItem<CardEachSingle>(
+      return DropdownMenuItem<CardEachSingle>(
         value: instance,
         child: Text(displayInstanceName),
       );
-      dropdownItems.add(newDropdownMenuItem);
-    }
+    }).toList();
 
-    final noInstanceDisplay = Text("You have not defined any instance yet.");
-
-    var relativeFilePathTab = Column(
-      children: [
-        ElevatedButton(
-          onPressed: () async {
-            final path = await pickRelativePath(basePath);
-            if (path == null) return;
-            final newCard = CardEachSingle(
-              path,
-              Alignment.center,
-              1,
-              Rotation.none,
-              PerCardSynthesizedBleed.mirror,
-              null,
-              true,
-              true,
-              true,
-              false,
-            );
-            onCardEachSingleChange(newCard);
-            Navigator.of(context).pop();
-          },
-          child: Text("Select File"),
-        ),
-      ],
+    var relativeFilePathTab = Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min, // Center vertically
+        crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
+        children: [
+          Text(
+            tempFilePath ??
+                "(No file selected)", // Display the file path or a placeholder
+            style: TextStyle(fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 8), // Add spacing between the text and the button
+          ElevatedButton(
+            onPressed: () async {
+              final path = await pickRelativePath(widget.basePath);
+              if (path != null) {
+                setState(() {
+                  tempFilePath = path; // Update tempFilePath
+                });
+              }
+            },
+            child: Text("Browse File"),
+          ),
+        ],
+      ),
     );
 
-    var instancesTab = definedInstances.isEmpty
-        ? noInstanceDisplay
-        : DropdownButton<CardEachSingle>(
-            isExpanded: true,
-            value: selectedInstance,
-            hint: Text("Select an Instance"),
-            items: dropdownItems,
-            onChanged: (CardEachSingle? value) {
-              selectedInstance = value;
-            },
-          );
+    var instancesTab = Center(
+      child: widget.definedInstances.isEmpty
+          ? Text("You have not defined any instance yet.")
+          : DropdownButton<CardEachSingle>(
+              isExpanded: true,
+              value: selectedInstance,
+              hint: Text("Select an Instance"),
+              items: dropdownItems,
+              onChanged: (CardEachSingle? value) {
+                setState(() {
+                  selectedInstance = value;
+                });
+              },
+            ),
+    );
 
     return AlertDialog(
       title: Text("Edit Card Face"),
@@ -90,6 +134,7 @@ class EditCardFaceDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TabBar(
+                controller: _tabController,
                 tabs: [
                   Tab(text: "File"),
                   Tab(text: "Instances"),
@@ -98,6 +143,7 @@ class EditCardFaceDialog extends StatelessWidget {
               SizedBox(
                 height: 200, // Adjust height as needed
                 child: TabBarView(
+                  controller: _tabController,
                   children: [
                     // Tab 1: Relative File Path
                     relativeFilePathTab,
@@ -117,8 +163,23 @@ class EditCardFaceDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            if (selectedInstance != null) {
-              onCardEachSingleChange(selectedInstance);
+            if (_tabController.index == 0 && tempFilePath != null) {
+              // Commit changes only when OK is pressed
+              final newCard = CardEachSingle(
+                tempFilePath!,
+                Alignment.center,
+                1,
+                Rotation.none,
+                PerCardSynthesizedBleed.mirror,
+                null,
+                true,
+                true,
+                true,
+                false,
+              );
+              widget.onCardEachSingleChange(newCard);
+            } else if (_tabController.index == 1 && selectedInstance != null) {
+              widget.onCardEachSingleChange(selectedInstance);
             }
             Navigator.of(context).pop();
           },

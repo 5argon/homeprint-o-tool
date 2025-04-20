@@ -83,7 +83,7 @@ class PickedOneCard extends StatelessWidget {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: false,
-                          showCardSideLabel: true,
+                          instanceSetupMode: false,
                           cardEachSingle: cardEach.front,
                           definedInstances: definedInstances,
                           instance: cardEach.front?.isInstance ?? false,
@@ -96,7 +96,7 @@ class PickedOneCard extends StatelessWidget {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: true,
-                          showCardSideLabel: true,
+                          instanceSetupMode: false,
                           cardEachSingle: cardEach.back,
                           definedInstances: definedInstances,
                           instance: cardEach.back?.isInstance ?? false,

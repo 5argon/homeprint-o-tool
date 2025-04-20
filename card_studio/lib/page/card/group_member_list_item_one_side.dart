@@ -14,7 +14,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
   final bool showEditButton;
   final String basePath;
   final Function(CardEachSingle? card) onCardEachSingleChange;
-  final bool showCardSideLabel;
+  final bool instanceSetupMode;
 
   GroupMemberListItemOneSide({
     super.key,
@@ -25,7 +25,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     required this.showEditButton,
     required this.basePath,
     required this.onCardEachSingleChange,
-    required this.showCardSideLabel,
+    required this.instanceSetupMode,
   });
 
   @override
@@ -42,6 +42,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
               basePath: basePath,
               definedInstances: definedInstances,
               onCardEachSingleChange: onCardEachSingleChange,
+              initialCard: cardEachSingle,
             );
           },
         );
@@ -161,9 +162,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       child: Row(
         children: [
           showEditButton ? editButton : Container(),
-          showEditButton && isBack && cardEachSingle != null
-              ? trashButton
-              : Container(), // Add trash button here
+          showEditButton && cardEachSingle != null ? trashButton : Container(),
           showEditButton &&
                   isBack &&
                   instanceOneAvailable &&
@@ -181,7 +180,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                showCardSideLabel
+                !instanceSetupMode
                     ? Text(isBack ? "Back" : "Front",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,

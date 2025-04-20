@@ -155,7 +155,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: false,
-                          showCardSideLabel: true,
+                          instanceSetupMode: false,
                           cardEachSingle: widget.cardEach.front,
                           definedInstances: widget.definedInstances,
                           instance: widget.cardEach.front?.isInstance ?? false,
@@ -172,7 +172,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: true,
-                          showCardSideLabel: true,
+                          instanceSetupMode: false,
                           cardEachSingle: widget.cardEach.back,
                           definedInstances: widget.definedInstances,
                           instance: widget.cardEach.back?.isInstance ?? false,

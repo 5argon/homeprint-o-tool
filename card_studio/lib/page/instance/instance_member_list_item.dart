@@ -123,13 +123,16 @@ class _InstanceMemberListItemState extends State<InstanceMemberListItem> {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: false,
-                          showCardSideLabel: false,
+                          instanceSetupMode: true,
                           cardEachSingle: widget.instanceCardEachSingle,
                           definedInstances: widget.definedInstances,
                           instance: widget.instanceCardEachSingle.isInstance,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {
+                            // Instance is only one side of a card,
+                            // so we can't allow it to disappear on removing
+                            // like normal double sided cards.
                             if (card == null) {
                               return;
                             }
