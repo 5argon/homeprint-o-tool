@@ -39,9 +39,9 @@ class GroupMemberListItem extends StatelessWidget {
       ),
     );
     final cardNameBox = TextFormField(
-      initialValue: cardEach.name ?? "",
+      controller: TextEditingController(text: cardEach.name ?? ""),
       decoration: InputDecoration(
-        labelText: "Card name",
+        labelText: "Card Name",
       ),
       onChanged: (value) {
         final newCardEach = cardEach;

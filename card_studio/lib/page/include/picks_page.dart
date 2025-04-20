@@ -69,7 +69,7 @@ class PicksPage extends StatelessWidget {
 
     final pageHelp = HelpButton(title: "Picks Page", paragraphs: [
       "The Available tab shows all card groups that the project has defined. You can \"pick\" either a group which picks each card inside equal to their quantity, or a single copy of any individual card inside the group.",
-      "Each pick appends to the list in \"Picked\" tab sequentially, and cards flow from one page to the next in that order, so the order that you click these picking buttons matters in the final layout. You can still rearrange picked group or card later in that tab.",
+      "Each pick appends to the list in \"Picked\" tab sequentially, and cards flow from one page to the next in that order, so the order that you click these picking buttons matters in the final layout.",
     ]);
 
     if (remaining > 0) {

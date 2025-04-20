@@ -78,13 +78,13 @@ class GroupListItem extends StatelessWidget {
     final addButton = ElevatedButton(
       onPressed: () {
         final newCardGroup = cardGroup;
-        newCardGroup.cards.add(CardEach(null, null, 1, ""));
+        newCardGroup.cards.insert(0, CardEach(null, null, 1, ""));
         onCardGroupChange(newCardGroup);
       },
       child: const Text('Create New Card'),
     );
     final messenger = ScaffoldMessenger.of(context);
-    final addFolderButton = ElevatedButton(
+    final createGroupButton = ElevatedButton(
       onPressed: () async {
         final filePath = await FilePicker.platform.getDirectoryPath(
           dialogTitle: "Import every files in the selected folder.",
@@ -134,6 +134,90 @@ class GroupListItem extends StatelessWidget {
         }
       },
       child: const Text('Import From Folder'),
+    );
+    final autoNameCardsButton = ElevatedButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            final regexController = TextEditingController();
+            return AlertDialog(
+              title: const Text('Auto Name Cards'),
+              content: SizedBox(
+                width: 400,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                        'Enter a Regex with single group (parentheses) to use that group\'s match result as a card name. Input to the Regex is the front side\'s file path without the extension.'),
+                    TextField(
+                      controller: regexController,
+                      decoration: const InputDecoration(
+                        labelText: 'Regex',
+                        hintText: r'Example: .*\/(.*)\.\w+$',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final regexPattern = regexController.text;
+                    if (regexPattern.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please enter a valid Regex.'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    try {
+                      final regex = RegExp(regexPattern);
+                      final newCardGroup = cardGroup;
+                      for (var card in newCardGroup.cards) {
+                        final frontFilePathNoExtension = card
+                                .front?.relativeFilePath
+                                .replaceAll(RegExp(r'\.[a-zA-Z0-9]+$'), '') ??
+                            '';
+                        final match =
+                            regex.firstMatch(frontFilePathNoExtension);
+                        if (match != null) {
+                          card.name = match.groupCount > 0
+                              ? match.group(1) ?? ''
+                              : match.group(0) ?? '';
+                        }
+                      }
+                      onCardGroupChange(newCardGroup);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Card names updated successfully.'),
+                        ),
+                      );
+                      Navigator.of(context).pop();
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Invalid Regex pattern.'),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Apply'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: const Text('Auto Name Cards'),
     );
     final List<GroupMemberListItem> groupMembers = [];
     for (var i = 0; i < cardGroup.cards.length; i++) {
@@ -196,7 +280,11 @@ class GroupListItem extends StatelessWidget {
             SizedBox(
               width: 8,
             ),
-            addFolderButton,
+            createGroupButton,
+            SizedBox(
+              width: 8,
+            ),
+            autoNameCardsButton,
           ],
         ),
         ...groupMembers,
