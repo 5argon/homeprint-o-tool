@@ -73,11 +73,20 @@ class InstancePage extends StatelessWidget {
       instanceItems.add(item);
     }
 
-    final listView = ListView.builder(
-      itemCount: instanceItems.length,
-      itemBuilder: (context, index) {
-        return instanceItems[index];
+    final listView = ReorderableListView(
+      onReorder: (oldIndex, newIndex) {
+        if (newIndex > oldIndex) {
+          newIndex -= 1;
+        }
+        final instance = instanceItems.removeAt(oldIndex);
+        instanceItems.insert(newIndex, instance);
+
+        final newDefinedInstances = List.of(definedInstances);
+        final movedInstance = newDefinedInstances.removeAt(oldIndex);
+        newDefinedInstances.insert(newIndex, movedInstance);
+        onDefinedInstancesChange(newDefinedInstances);
       },
+      children: instanceItems,
     );
 
     return Padding(
