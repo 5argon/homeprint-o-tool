@@ -32,7 +32,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     Widget instanceMark;
     final cardEachSingle = this.cardEachSingle;
     final editButton = IconButton(
-        tooltip: "Select a new image file",
+        tooltip: "Change this card face",
         onPressed: () async {
           final path = await pickRelativePath(basePath);
           if (path == null) return;
@@ -52,7 +52,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         icon: Icon(Icons.edit_square));
 
     final trashButton = IconButton(
-        tooltip: "Remove Card Back",
+        tooltip: "Remove",
         onPressed: () {
           onCardEachSingleChange(null); // Assuming an empty card
         },
@@ -89,6 +89,10 @@ class GroupMemberListItemOneSide extends StatelessWidget {
 
     final instanceOneAvailable = definedInstances.isNotEmpty;
     final instanceTwoAvailable = definedInstances.length > 1;
+    final isCurrentlyInstanceOne =
+        cardEachSingle != null && cardEachSingle == definedInstances[0];
+    final isCurrentlyInstanceTwo =
+        cardEachSingle != null && cardEachSingle == definedInstances[1];
     final instanceOneButton = IconButton(
         tooltip: "Quick assign Instance #1 to this card.",
         onPressed: instanceOneAvailable
@@ -160,10 +164,16 @@ class GroupMemberListItemOneSide extends StatelessWidget {
           showEditButton && isBack && cardEachSingle != null
               ? trashButton
               : Container(), // Add trash button here
-          showEditButton && isBack && instanceOneAvailable
+          showEditButton &&
+                  isBack &&
+                  instanceOneAvailable &&
+                  !isCurrentlyInstanceOne
               ? instanceOneButton
               : Container(),
-          showEditButton && isBack && instanceTwoAvailable
+          showEditButton &&
+                  isBack &&
+                  instanceTwoAvailable &&
+                  !isCurrentlyInstanceTwo
               ? instanceTwoButton
               : Container(),
           SizedBox(width: 4),

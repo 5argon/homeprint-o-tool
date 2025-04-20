@@ -142,7 +142,7 @@ class GroupListItem extends StatelessWidget {
           builder: (BuildContext context) {
             final regexController = TextEditingController();
             return AlertDialog(
-              title: const Text('Auto Name Cards'),
+              title: const Text('Auto-Name Cards'),
               content: SizedBox(
                 width: 400,
                 child: Column(
@@ -220,7 +220,7 @@ class GroupListItem extends StatelessWidget {
           },
         );
       },
-      child: const Text('Auto Name Cards'),
+      child: const Text('Auto-Name Cards'),
     );
     final List<GroupMemberListItem> groupMembers = [];
     for (var i = 0; i < cardGroup.cards.length; i++) {
