@@ -29,8 +29,12 @@ class SingleCardPreview extends StatelessWidget {
     if (cardEachSingle != null) {
       final joinedPath = p.join(basePath, cardEachSingle.relativeFilePath);
       final file = File(joinedPath);
-      descriptorFuture = getDescriptor(file);
       this.file = file;
+      if (file.existsSync()) {
+        descriptorFuture = getDescriptor(file);
+      } else {
+        descriptorFuture = null;
+      }
     }
   }
 
@@ -47,6 +51,16 @@ class SingleCardPreview extends StatelessWidget {
     if (cardEachSingle == null) {
       return Container();
     }
+
+    // Check if descriptorFuture is null (file does not exist)
+    if (descriptorFuture == null) {
+      return Center(
+        child: Placeholder(
+          color: Colors.red,
+        ),
+      );
+    }
+
     return FutureBuilder(
       builder: (context, snapshot) {
         final snapshotData = snapshot.data;

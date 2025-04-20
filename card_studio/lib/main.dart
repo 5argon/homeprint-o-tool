@@ -1,5 +1,6 @@
 import 'package:homeprint_o_tool/core/card.dart';
 import 'package:homeprint_o_tool/page/include/picks_page.dart';
+import 'package:homeprint_o_tool/page/instance/instance_page.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 import 'package:homeprint_o_tool/page/project/project_page.dart';
 import 'package:homeprint_o_tool/page/review/review_page.dart';
@@ -146,6 +147,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   );
                   return projectSettingsPage;
+                case 1:
+                  {
+                    var instancePage = InstancePage(
+                      basePath: baseDirectory,
+                      projectSettings: _projectSettings,
+                      definedInstances: _definedInstances,
+                      onDefinedInstancesChange: (definedInstances) {
+                        setState(() {
+                          _definedInstances = definedInstances;
+                        });
+                      },
+                    );
+                    return instancePage;
+                  }
                 case 2:
                   final baseDirectory = _baseDirectory;
                   if (baseDirectory == null) {

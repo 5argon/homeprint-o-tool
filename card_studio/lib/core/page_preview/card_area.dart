@@ -33,8 +33,10 @@ class CardArea extends StatelessWidget {
     final baseDirectory = this.baseDirectory;
     if (card != null && baseDirectory != null) {
       final f = File(p.join(baseDirectory, card.relativeFilePath));
-      _getDescriptorFuture = getDescriptor(f);
-      fileObject = f;
+      if (f.existsSync()) {
+        _getDescriptorFuture = getDescriptor(f);
+        fileObject = f;
+      }
     } else {
       _getDescriptorFuture = Future.value();
     }
@@ -74,6 +76,11 @@ class CardArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_getDescriptorFuture == null) {
+      return Placeholder(
+        color: Colors.red,
+      );
+    }
     Widget imageWidget = Container();
     if (card != null && baseDirectory != null) {
       // final renderChild =

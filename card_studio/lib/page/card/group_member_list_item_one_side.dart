@@ -113,6 +113,24 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     } else {
       instanceMark = Container();
     }
+    final Text relativeFilePathText;
+    if (cardEachSingle == null) {
+      relativeFilePathText = Text(
+        "(None)",
+        style: TextStyle(fontSize: 12),
+      );
+    } else if (cardEachSingle.relativeFilePath.isEmpty) {
+      relativeFilePathText = Text(
+        "(Please Assign)",
+        style: TextStyle(fontSize: 12),
+      );
+    } else {
+      relativeFilePathText = Text(
+        cardEachSingle.relativeFilePath,
+        style: TextStyle(fontSize: 12),
+      );
+    }
+
     final padding = Padding(
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
       child: Row(
@@ -136,9 +154,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
                 Row(
                   children: [
                     instanceMark,
-                    Expanded(
-                        child: Text(
-                            cardEachSingle?.relativeFilePath ?? "(Empty)")),
+                    Expanded(child: relativeFilePathText),
                   ],
                 ),
               ],
