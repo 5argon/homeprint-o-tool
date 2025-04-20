@@ -123,12 +123,16 @@ class _InstanceMemberListItemState extends State<InstanceMemberListItem> {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: false,
+                          showCardSideLabel: false,
                           cardEachSingle: widget.instanceCardEachSingle,
                           definedInstances: widget.definedInstances,
                           instance: widget.instanceCardEachSingle.isInstance,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {
+                            if (card == null) {
+                              return;
+                            }
                             widget.onInstanceCardChange(card);
                           },
                         ),

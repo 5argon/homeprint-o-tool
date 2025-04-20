@@ -12,7 +12,8 @@ class GroupMemberListItemOneSide extends StatelessWidget {
   final bool instance;
   final bool showEditButton;
   final String basePath;
-  final Function(CardEachSingle card) onCardEachSingleChange;
+  final Function(CardEachSingle? card) onCardEachSingleChange;
+  final bool showCardSideLabel;
 
   GroupMemberListItemOneSide({
     super.key,
@@ -23,6 +24,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     required this.showEditButton,
     required this.basePath,
     required this.onCardEachSingleChange,
+    required this.showCardSideLabel,
   });
 
   @override
@@ -48,6 +50,13 @@ class GroupMemberListItemOneSide extends StatelessWidget {
           onCardEachSingleChange(newCard);
         },
         icon: Icon(Icons.edit_square));
+
+    final trashButton = IconButton(
+        tooltip: "Remove Card Back",
+        onPressed: () {
+          onCardEachSingleChange(null); // Assuming an empty card
+        },
+        icon: Icon(Icons.delete));
 
     Stack createInstanceIconWithNumber(int number) {
       return Stack(
@@ -98,13 +107,25 @@ class GroupMemberListItemOneSide extends StatelessWidget {
             : null,
         icon: createInstanceIconWithNumber(2));
     if (cardEachSingle != null && cardEachSingle.isInstance) {
+      // Find index of this instance in definedInstances.
+      final index =
+          definedInstances.indexWhere((element) => element == cardEachSingle);
+      final instanceText = index == -1 ? "Instance" : "Instance #${index + 1}";
       instanceMark = Row(
         children: [
           Container(
-            color: Colors.red,
+            color: Theme.of(context).colorScheme.primary,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-              child: Text("Instance"),
+              // Text white on primary
+              child: Text(
+                instanceText,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
           SizedBox(width: 4),
@@ -121,7 +142,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       );
     } else if (cardEachSingle.relativeFilePath.isEmpty) {
       relativeFilePathText = Text(
-        "(Please Assign)",
+        "(Unassigned)",
         style: TextStyle(fontSize: 12),
       );
     } else {
@@ -136,6 +157,9 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       child: Row(
         children: [
           showEditButton ? editButton : Container(),
+          showEditButton && isBack && cardEachSingle != null
+              ? trashButton
+              : Container(), // Add trash button here
           showEditButton && isBack && instanceOneAvailable
               ? instanceOneButton
               : Container(),
@@ -147,10 +171,12 @@ class GroupMemberListItemOneSide extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(isBack ? "Back" : "Front",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline)),
+                showCardSideLabel
+                    ? Text(isBack ? "Back" : "Front",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline))
+                    : Container(),
                 Row(
                   children: [
                     instanceMark,
