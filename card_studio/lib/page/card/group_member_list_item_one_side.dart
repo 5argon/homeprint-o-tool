@@ -30,7 +30,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     Widget instanceMark;
     final cardEachSingle = this.cardEachSingle;
     final editButton = IconButton(
-        tooltip: "Browse for image file",
+        tooltip: "Select a new image file",
         onPressed: () async {
           final path = await pickRelativePath(basePath);
           if (path == null) return;
@@ -47,7 +47,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
               false);
           onCardEachSingleChange(newCard);
         },
-        icon: Icon(Icons.folder));
+        icon: Icon(Icons.edit_square));
 
     Stack createInstanceIconWithNumber(int number) {
       return Stack(

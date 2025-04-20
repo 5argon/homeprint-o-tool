@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../../core/card.dart';
 import 'count_number_in_circle.dart';
 import 'include_data.dart';
-import 'include_member_list_item.dart';
+import 'available_one_card.dart';
 
 class AvailableListItem extends StatelessWidget {
   final String basePath;
@@ -69,10 +69,10 @@ class AvailableListItem extends StatelessWidget {
     final individualNumberInCircle =
         CountNumberInCircle(value: individualAddCount, plus: true);
 
-    final List<IncludeMemberListItem> groupMembers = [];
+    final List<AvailabeOneCard> groupMembers = [];
     for (var i = 0; i < cardGroup.cards.length; i++) {
       final card = cardGroup.cards[i];
-      groupMembers.add(IncludeMemberListItem(
+      groupMembers.add(AvailabeOneCard(
           basePath: basePath,
           cardEach: card,
           cardSize: cardSize,

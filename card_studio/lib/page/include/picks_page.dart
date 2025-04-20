@@ -137,8 +137,14 @@ class PicksPage extends StatelessWidget {
       onIncludesChanged: onIncludesChanged,
     );
 
-    final pickedList =
-        PickedList(includes: includes, onIncludesChanged: onIncludesChanged);
+    final pickedList = PickedList(
+      includes: includes,
+      onIncludesChanged: onIncludesChanged,
+      basePath: basePath,
+      cardSize: projectSettings.cardSize,
+      definedInstances: definedInstances,
+      projectSettings: projectSettings,
+    );
 
     final tabController = Expanded(
         child: DefaultTabController(
