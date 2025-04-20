@@ -26,13 +26,14 @@ class CardPage extends StatelessWidget {
           "Sort all groups and also cards inside based on name alphabetically.",
       child: ElevatedButton(
         onPressed: () {
+          ScaffoldMessenger.of(context).removeCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content:
                   Text('All groups and cards has been sorted alphabetically.'),
             ),
           );
-          final newDefinedCards = deepCopyDefinedCards(definedCards);
+          final newDefinedCards = definedCards;
           newDefinedCards.sort((a, b) {
             final aName = a.name;
             final bName = b.name;

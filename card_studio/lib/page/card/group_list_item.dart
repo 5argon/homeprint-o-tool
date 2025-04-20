@@ -182,7 +182,8 @@ class GroupListItem extends StatelessWidget {
                     try {
                       final regex = RegExp(regexPattern);
                       final newCardGroup = cardGroup;
-                      for (var card in newCardGroup.cards) {
+                      for (var i = 0; i < cardGroup.cards.length; i++) {
+                        final card = cardGroup.cards[i];
                         final frontFilePathNoExtension = card
                                 .front?.relativeFilePath
                                 .replaceAll(RegExp(r'\.[a-zA-Z0-9]+$'), '') ??
@@ -190,9 +191,11 @@ class GroupListItem extends StatelessWidget {
                         final match =
                             regex.firstMatch(frontFilePathNoExtension);
                         if (match != null) {
-                          card.name = match.groupCount > 0
+                          final newCard = card.copy();
+                          newCard.name = match.groupCount > 0
                               ? match.group(1) ?? ''
                               : match.group(0) ?? '';
+                          newCardGroup.cards[i] = newCard;
                         }
                       }
                       onCardGroupChange(newCardGroup);

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/card.dart';
 
-class GroupMemberListItem extends StatelessWidget {
+class GroupMemberListItem extends StatefulWidget {
   final String basePath;
   final CardEach cardEach;
   final SizePhysical cardSize;
@@ -30,42 +30,70 @@ class GroupMemberListItem extends StatelessWidget {
   });
 
   @override
+  State<GroupMemberListItem> createState() => _GroupMemberListItemState();
+}
+
+class _GroupMemberListItemState extends State<GroupMemberListItem> {
+  late TextEditingController _cardNameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _cardNameController =
+        TextEditingController(text: widget.cardEach.name ?? "");
+  }
+
+  @override
+  void didUpdateWidget(covariant GroupMemberListItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.cardEach.name != widget.cardEach.name) {
+      _cardNameController.text = widget.cardEach.name ?? "";
+    }
+  }
+
+  @override
+  void dispose() {
+    _cardNameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final numberLabel = SizedBox(
       width: 50,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-        child: Text("#$order"),
+        child: Text("#${widget.order}"),
       ),
     );
     final cardNameBox = TextFormField(
-      controller: TextEditingController(text: cardEach.name ?? ""),
+      controller: _cardNameController,
       decoration: InputDecoration(
         labelText: "Card Name",
       ),
       onChanged: (value) {
-        final newCardEach = cardEach;
+        final newCardEach = widget.cardEach;
         newCardEach.name = value;
-        onCardEachChange(newCardEach);
+        widget.onCardEachChange(newCardEach);
       },
     );
     final quantityBox = TextFormField(
-      initialValue: cardEach.amount.toString(),
+      initialValue: widget.cardEach.amount.toString(),
       decoration: InputDecoration(
         labelText: "Copies",
       ),
       onChanged: (value) {
-        final newCardEach = cardEach;
+        final newCardEach = widget.cardEach;
         final tryParsed = int.tryParse(value);
         if (tryParsed != null) {
           newCardEach.amount = tryParsed;
-          onCardEachChange(newCardEach);
+          widget.onCardEachChange(newCardEach);
         }
       },
     );
     final removeButton = IconButton(
       onPressed: () {
-        onDelete();
+        widget.onDelete();
       },
       icon: Icon(Icons.delete),
     );
@@ -82,26 +110,26 @@ class GroupMemberListItem extends StatelessWidget {
                 width: 100,
                 height: 100,
                 child: SingleCardPreview(
-                  basePath: basePath,
-                  cardSize: cardSize,
-                  bleedFactor:
-                      cardEach.front?.effectiveContentExpand(projectSettings) ??
-                          1.0,
-                  instance: cardEach.front?.isInstance ?? false,
-                  cardEachSingle: cardEach.front,
+                  basePath: widget.basePath,
+                  cardSize: widget.cardSize,
+                  bleedFactor: widget.cardEach.front
+                          ?.effectiveContentExpand(widget.projectSettings) ??
+                      1.0,
+                  instance: widget.cardEach.front?.isInstance ?? false,
+                  cardEachSingle: widget.cardEach.front,
                 )),
             SizedBox(width: 4),
             SizedBox(
                 width: 100,
                 height: 100,
                 child: SingleCardPreview(
-                  basePath: basePath,
-                  cardSize: cardSize,
-                  bleedFactor:
-                      cardEach.back?.effectiveContentExpand(projectSettings) ??
-                          1.0,
-                  instance: cardEach.back?.isInstance ?? false,
-                  cardEachSingle: cardEach.back,
+                  basePath: widget.basePath,
+                  cardSize: widget.cardSize,
+                  bleedFactor: widget.cardEach.back
+                          ?.effectiveContentExpand(widget.projectSettings) ??
+                      1.0,
+                  instance: widget.cardEach.back?.isInstance ?? false,
+                  cardEachSingle: widget.cardEach.back,
                 )),
             SizedBox(width: 16),
             Expanded(
@@ -127,15 +155,15 @@ class GroupMemberListItem extends StatelessWidget {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: false,
-                          cardEachSingle: cardEach.front,
-                          definedInstances: definedInstances,
-                          instance: cardEach.front?.isInstance ?? false,
-                          basePath: basePath,
+                          cardEachSingle: widget.cardEach.front,
+                          definedInstances: widget.definedInstances,
+                          instance: widget.cardEach.front?.isInstance ?? false,
+                          basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {
-                            final newCardEach = cardEach;
+                            final newCardEach = widget.cardEach;
                             newCardEach.front = card;
-                            onCardEachChange(newCardEach);
+                            widget.onCardEachChange(newCardEach);
                           },
                         ),
                       ),
@@ -143,15 +171,15 @@ class GroupMemberListItem extends StatelessWidget {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: true,
-                          cardEachSingle: cardEach.back,
-                          definedInstances: definedInstances,
-                          instance: cardEach.back?.isInstance ?? false,
-                          basePath: basePath,
+                          cardEachSingle: widget.cardEach.back,
+                          definedInstances: widget.definedInstances,
+                          instance: widget.cardEach.back?.isInstance ?? false,
+                          basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {
-                            final newCardEach = cardEach;
+                            final newCardEach = widget.cardEach;
                             newCardEach.back = card;
-                            onCardEachChange(newCardEach);
+                            widget.onCardEachChange(newCardEach);
                           },
                         ),
                       )
