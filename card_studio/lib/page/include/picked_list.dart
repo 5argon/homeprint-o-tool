@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
-import '../../core/card.dart';
 import '../../core/project_settings.dart';
 import '../../core/save_file.dart';
+import '../layout/layout_logic.dart';
 import '../layout/layout_struct.dart';
+import '../review/pagination.dart';
 import 'picked_list_item.dart';
 import 'include_data.dart';
+
+class IncludePosition {
+  final int pageFrom;
+  final int pageTo;
+  final int indexInPageFrom;
+  final int indexInPageTo;
+  final int pageSize;
+
+  IncludePosition({
+    required this.pageFrom,
+    required this.pageTo,
+    required this.indexInPageFrom,
+    required this.indexInPageTo,
+    required this.pageSize,
+  });
+}
 
 class PickedList extends StatelessWidget {
   final Includes includes;
@@ -13,6 +30,7 @@ class PickedList extends StatelessWidget {
   final SizePhysical cardSize;
   final DefinedInstances definedInstances;
   final ProjectSettings projectSettings;
+  final LayoutData layoutData;
 
   const PickedList({
     Key? key,
@@ -22,6 +40,7 @@ class PickedList extends StatelessWidget {
     required this.cardSize,
     required this.definedInstances,
     required this.projectSettings,
+    required this.layoutData,
   }) : super(key: key);
 
   @override
@@ -38,10 +57,34 @@ class PickedList extends StatelessWidget {
       );
     }
 
+    final cardCountRowCol = calculateCardCountPerPage(layoutData, cardSize);
+    final pagination = calculatePagination(includes, layoutData, cardSize,
+        cardCountRowCol.rows, cardCountRowCol.columns);
+
+    final List<IncludePosition> includePositions = [];
+    final int pageSize = pagination.perPage;
+    int runningCard = 0;
+    for (var i = 0; i < includes.length; i++) {
+      final int cardAmount = includes[i].linearize().length;
+      final int pageFrom = runningCard ~/ pageSize;
+      final int indexInPageFrom = runningCard % pageSize;
+      runningCard += (cardAmount - 1);
+      final int pageTo = runningCard ~/ pageSize;
+      final int indexInPageTo = runningCard % pageSize;
+      includePositions.add(IncludePosition(
+          pageFrom: pageFrom,
+          pageTo: pageTo,
+          indexInPageFrom: indexInPageFrom,
+          indexInPageTo: indexInPageTo,
+          pageSize: pageSize));
+      runningCard += 1;
+    }
+
     return ListView.builder(
       itemCount: includes.length,
       itemBuilder: (context, index) {
         final item = includes[index];
+        final includePosition = includePositions[index];
         return PickedListItem(
           includeItem: item,
           onRemove: () {
@@ -54,6 +97,7 @@ class PickedList extends StatelessWidget {
           definedInstances: definedInstances,
           projectSettings: projectSettings,
           includes: includes,
+          includePosition: includePosition,
         );
       },
     );

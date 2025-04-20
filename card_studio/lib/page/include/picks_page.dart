@@ -1,3 +1,4 @@
+import 'package:homeprint_o_tool/core/form/help_button.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/include/include_data.dart';
 import 'package:homeprint_o_tool/page/include/picked_list.dart';
@@ -65,6 +66,11 @@ class PicksPage extends StatelessWidget {
         text: "Last Page : $lastPageCount / ${pagination.perPage} Cards",
       ),
     ];
+
+    final pageHelp = HelpButton(title: "Picks Page", paragraphs: [
+      "The Available tab shows all card groups that the project has defined. You can \"pick\" either a group which picks each card inside equal to their quantity, or a single copy of any individual card inside the group.",
+      "Each pick appends to the list in \"Picked\" tab sequentially, and cards flow from one page to the next in that order, so the order that you click these picking buttons matters in the final layout. You can still rearrange picked group or card later in that tab.",
+    ]);
 
     if (remaining > 0) {
       lastPageText.add(
@@ -144,6 +150,7 @@ class PicksPage extends StatelessWidget {
       cardSize: projectSettings.cardSize,
       definedInstances: definedInstances,
       projectSettings: projectSettings,
+      layoutData: layoutData,
     );
 
     final tabController = Expanded(
@@ -177,7 +184,11 @@ class PicksPage extends StatelessWidget {
           SizedBox(width: 8),
           clearButton
         ]),
-        allCountText,
+        Row(children: [
+          allCountText,
+          SizedBox(width: 8),
+          pageHelp,
+        ]),
       ],
     );
     return Padding(
