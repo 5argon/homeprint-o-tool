@@ -73,7 +73,7 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
       } else if (instance.relativeFilePath.isNotEmpty) {
         displayInstanceName = p.basename(instance.relativeFilePath);
       } else {
-        displayInstanceName = "#$index: Unnamed Instance";
+        displayInstanceName = "#$index: Unnamed Linked Card Face";
       }
       return DropdownMenuItem<CardEachSingle>(
         value: instance,
@@ -110,11 +110,11 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
 
     var instancesTab = Center(
       child: widget.definedInstances.isEmpty
-          ? Text("You have not defined any instance yet.")
+          ? Text("You have not defined any linked card face yet.")
           : DropdownButton<CardEachSingle>(
               isExpanded: true,
               value: selectedInstance,
-              hint: Text("Select an Instance"),
+              hint: Text("Select a linked card face"),
               items: dropdownItems,
               onChanged: (CardEachSingle? value) {
                 setState(() {
@@ -129,7 +129,7 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
       content: SizedBox(
         width: 400,
         child: DefaultTabController(
-          length: 2, // Two tabs: "Relative File Path" and "Instances"
+          length: 2,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -137,7 +137,7 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
                 controller: _tabController,
                 tabs: [
                   Tab(text: "File"),
-                  Tab(text: "Instances"),
+                  Tab(text: "Linked Card Face"),
                 ],
               ),
               SizedBox(

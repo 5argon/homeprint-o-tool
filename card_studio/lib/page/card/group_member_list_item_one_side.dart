@@ -95,7 +95,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         definedInstances.length > 1 &&
         cardEachSingle == definedInstances[1];
     final instanceOneButton = IconButton(
-        tooltip: "Quick assign Instance #1 to this card.",
+        tooltip: "Quick assign this card face to the linked card face #1.",
         onPressed: instanceOneAvailable
             ? () async {
                 onCardEachSingleChange(definedInstances[0]);
@@ -104,7 +104,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         icon: createInstanceIconWithNumber(1));
 
     final instanceTwoButton = IconButton(
-        tooltip: "Quick assign Instance #2 to this card.",
+        tooltip: "Quick assign this card face to the linked card face #2.",
         onPressed: instanceTwoAvailable
             ? () async {
                 onCardEachSingleChange(definedInstances[1]);
@@ -115,7 +115,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       // Find index of this instance in definedInstances.
       final index =
           definedInstances.indexWhere((element) => element == cardEachSingle);
-      final instanceText = index == -1 ? "Instance" : "Instance #${index + 1}";
+      final instanceText = index == -1 ? "Linked" : "Linked #${index + 1}";
       instanceMark = Row(
         children: [
           Container(
@@ -181,7 +181,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 !instanceSetupMode
-                    ? Text(isBack ? "Back" : "Front",
+                    ? Text(isBack ? "Back Face" : "Front Face",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline))

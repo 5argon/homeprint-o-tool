@@ -37,7 +37,7 @@ class InstancePage extends StatelessWidget {
         newDefinedInstances.add(newCard);
         onDefinedInstancesChange(newDefinedInstances);
       },
-      child: const Text('Create New Instance'),
+      child: const Text('Create Linked Card Face'),
     );
 
     List<InstanceMemberListItem> instanceItems = [];

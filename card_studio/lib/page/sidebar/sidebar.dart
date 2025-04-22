@@ -12,31 +12,34 @@ class Sidebar extends StatelessWidget {
 
     final newButton = Padding(
         padding: const EdgeInsets.all(8.0),
-        child: OutlinedButton(
+        child: OutlinedButton.icon(
           onPressed: () async {
             onNew();
           },
-          child: Text("New JSON"),
+          icon: Icon(Icons.add), // Add icon for "New JSON"
+          label: Text("New JSON"),
         ));
 
     final loadButton = Padding(
       padding: const EdgeInsets.all(8.0),
-      child: OutlinedButton(
+      child: OutlinedButton.icon(
           onPressed: () {
             onLoad();
           },
-          child: Text("Load JSON")),
+          icon: Icon(Icons.folder_open), // Folder open icon for "Load JSON"
+          label: Text("Load JSON")),
     );
 
     final saveButton = Padding(
       padding: const EdgeInsets.all(8.0),
-      child: OutlinedButton(
+      child: OutlinedButton.icon(
           onPressed: previousFileName == null
               ? null
               : () async {
                   onSave();
                 },
-          child: Text("Save")),
+          icon: Icon(Icons.save), // Save icon for "Save"
+          label: Text("Save")),
     );
 
     final effectiveSelectedIndex = baseDirectory == null ? -1 : selectedIndex;
@@ -112,13 +115,14 @@ class Sidebar extends StatelessWidget {
       ],
     );
 
-    final exportButtonInner = OutlinedButton(
+    final exportButtonInner = OutlinedButton.icon(
         onPressed: noIncludes
             ? null
             : () {
                 onExport();
               },
-        child: Text("Export"));
+        icon: Icon(Icons.upload), // Upload icon for "Export"
+        label: Text("Export"));
     final exportButton = noIncludes
         ? Tooltip(
             message: "You have not picked any card yet.",
@@ -146,11 +150,13 @@ class Sidebar extends StatelessWidget {
 
     final addedSidebarWhenProjectLoaded = <Widget>[
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: Text("Project")),
+          icon: Icon(Icons.settings),
+          label: Text("Project Settings")), // Settings icon
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: Text("Instances")),
+          icon: Icon(Icons.link), label: Text("Linked Card Face")), // Link icon
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: Text("Cards")),
+          icon: Icon(Icons.style),
+          label: Text("Cards")), // Style icon for cards
       Divider(
         indent: 20,
         endIndent: 20,
@@ -160,11 +166,14 @@ class Sidebar extends StatelessWidget {
         child: printingLabel,
       ),
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: Text("Layout")),
+          icon: Icon(Icons.grid_on),
+          label: Text("Layout")), // Grid icon for layout
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: picksLabelWithCardCount),
+          icon: Icon(Icons.checklist),
+          label: picksLabelWithCardCount), // Checklist icon for picks
       NavigationDrawerDestination(
-          icon: Icon(Icons.widgets_outlined), label: Text("Review")),
+          icon: Icon(Icons.preview),
+          label: Text("Review")), // Preview icon for review
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: exportButton,
@@ -176,7 +185,7 @@ class Sidebar extends StatelessWidget {
     }
 
     final sidebar = SizedBox(
-      width: 200,
+      width: 220,
       child: NavigationDrawer(
           onDestinationSelected: (i) => {
                 onSelectedIndexChanged(i),

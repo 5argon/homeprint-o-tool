@@ -70,7 +70,7 @@ class _InstanceMemberListItemState extends State<InstanceMemberListItem> {
     final cardNameBox = TextFormField(
       controller: _cardNameController,
       decoration: InputDecoration(
-        labelText: "Instance Name",
+        labelText: "Name",
       ),
       onChanged: (value) {
         final newCardEach = widget.instanceCardEachSingle;

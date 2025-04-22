@@ -26,6 +26,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme =
+        ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 0, 70, 56));
     return ChangeNotifierProvider(
       create: (BuildContext context) {},
       child: MaterialApp(
@@ -33,8 +35,7 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.system,
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme:
-              ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 0, 70, 56)),
+          colorScheme: colorScheme,
           brightness: Brightness.light,
         ),
         darkTheme: ThemeData(
