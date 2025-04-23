@@ -11,7 +11,7 @@ class PickedListItem extends StatelessWidget {
   final VoidCallback onRemove;
   final String basePath;
   final SizePhysical cardSize;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;
   final Includes includes;
   final IncludePosition includePosition;

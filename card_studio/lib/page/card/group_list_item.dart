@@ -16,7 +16,7 @@ class GroupListItem extends StatelessWidget {
   final String basePath;
   final CardGroup cardGroup;
   final SizePhysical cardSize;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;
   final Function(CardGroup cardGroup) onCardGroupChange;
   final Function() onDelete;
@@ -34,6 +34,8 @@ class GroupListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final integrityCheckResult =
+        cardGroup.checkIntegrity(basePath, definedInstances);
     final removeButton = IconButton(
       onPressed: () {
         onDelete();
@@ -244,19 +246,39 @@ class GroupListItem extends StatelessWidget {
           order: i + 1));
     }
 
+    var itemHeader = Container(
+      width: double.infinity,
+      height: 24,
+      decoration: BoxDecoration(
+        color: Theme.of(context).splashColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12), // Adjust the radius as needed
+          topRight: Radius.circular(12),
+        ),
+      ),
+      child: Row(
+        children: [
+          if (integrityCheckResult.missingFileCount > 0) ...[
+            SizedBox(width: 4),
+            Icon(
+              Icons.warning,
+              color: Theme.of(context).colorScheme.error,
+              size: 15,
+            ),
+            SizedBox(width: 4),
+            Text(
+              "${integrityCheckResult.missingFileCount} missing files",
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.error, fontSize: 12),
+            ),
+          ],
+        ],
+      ),
+    );
+
     final head = Column(
       children: [
-        Container(
-          width: double.infinity,
-          height: 24,
-          decoration: BoxDecoration(
-            color: Theme.of(context).splashColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12), // Adjust the radius as needed
-              topRight: Radius.circular(12),
-            ),
-          ),
-        ),
+        itemHeader,
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 0),
           child: Row(

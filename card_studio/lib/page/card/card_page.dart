@@ -9,7 +9,7 @@ class CardPage extends StatelessWidget {
   final String basePath;
   final ProjectSettings projectSettings;
   final DefinedCards definedCards;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final Function(DefinedCards definedCards) onDefinedCardsChange;
   CardPage(
       {super.key,

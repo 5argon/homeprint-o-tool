@@ -11,7 +11,7 @@ class InstanceMemberListItem extends StatefulWidget {
   final String basePath;
   final CardEachSingle instanceCardEachSingle;
   final SizePhysical cardSize;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;
   final int order;
   final Function(CardEachSingle card) onInstanceCardChange;
@@ -134,9 +134,11 @@ class _InstanceMemberListItemState extends State<InstanceMemberListItem> {
                             // so we can't allow it to disappear on removing
                             // like normal double sided cards.
                             if (card == null) {
-                              return;
+                              widget
+                                  .onInstanceCardChange(CardEachSingle.empty());
+                            } else {
+                              widget.onInstanceCardChange(card);
                             }
-                            widget.onInstanceCardChange(card);
                           },
                         ),
                       ),

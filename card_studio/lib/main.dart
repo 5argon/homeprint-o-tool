@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // These three are defined by project.
   ProjectSettings _projectSettings = defaultProjectSettings;
   DefinedCards _definedCards = defaultDefinedCards;
-  DefinedInstances _definedInstances = [];
+  LinkedCardFaces _definedInstances = [];
 
   /// Not stored in the save file.
   Includes _includes = [];

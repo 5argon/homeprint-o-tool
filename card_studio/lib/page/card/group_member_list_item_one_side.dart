@@ -8,7 +8,7 @@ import 'edit_card_face_dialog.dart';
 
 class GroupMemberListItemOneSide extends StatelessWidget {
   final CardEachSingle? cardEachSingle;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final bool isBack;
   final bool instance;
   final bool showEditButton;

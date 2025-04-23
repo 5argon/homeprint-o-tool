@@ -12,7 +12,7 @@ class AvailableListItem extends StatelessWidget {
   final String basePath;
   final CardGroup cardGroup;
   final SizePhysical cardSize;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;
   final Includes includes;
   final Includes skipIncludes;

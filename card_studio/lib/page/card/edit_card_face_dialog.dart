@@ -7,7 +7,7 @@ import '../../core/save_file.dart';
 
 class EditCardFaceDialog extends StatefulWidget {
   final String basePath;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final Function(CardEachSingle? card) onCardEachSingleChange;
   final CardEachSingle? initialCard; // New parameter for initial value
 

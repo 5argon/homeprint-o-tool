@@ -8,7 +8,7 @@ class AvailableList extends StatelessWidget {
   final String basePath;
   final ProjectSettings projectSettings;
   final DefinedCards definedCards;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final Includes includes;
   final Includes skipIncludes;
   final Function(Includes) onIncludesChanged;

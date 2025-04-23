@@ -12,7 +12,7 @@ class AvailabeOneCard extends StatelessWidget {
   final String basePath;
   final CardEach cardEach;
   final SizePhysical cardSize;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;
   final int outerCount;
   final Includes includes;

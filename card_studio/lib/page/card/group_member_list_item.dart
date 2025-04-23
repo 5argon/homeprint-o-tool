@@ -11,7 +11,7 @@ class GroupMemberListItem extends StatefulWidget {
   final String basePath;
   final CardEach cardEach;
   final SizePhysical cardSize;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;
   final int order;
   final Function(CardEach card) onCardEachChange;

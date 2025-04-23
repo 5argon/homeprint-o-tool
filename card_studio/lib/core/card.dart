@@ -1,6 +1,17 @@
+import 'dart:io';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:uuid/uuid.dart';
+import 'package:path/path.dart' as p;
+
+class CardGroupCheckIntegrityResult {
+  int missingFileCount;
+
+  CardGroupCheckIntegrityResult(
+    this.missingFileCount,
+  );
+}
 
 class CardGroup {
   String? name;
@@ -14,6 +25,27 @@ class CardGroup {
       result.addAll(card.linearize());
     }
     return result;
+  }
+
+  CardGroupCheckIntegrityResult checkIntegrity(
+      String baseDirectory, LinkedCardFaces linkedCardFaces) {
+    var missingFileCount = 0;
+    for (var card in cards) {
+      final front = card.front;
+      final back = card.back;
+      if (front != null) {
+        if (front.isImageMissing(baseDirectory)) {
+          missingFileCount++;
+        }
+      }
+      if (back != null) {
+        print(back.isImageMissing(baseDirectory));
+        if (back.isImageMissing(baseDirectory)) {
+          missingFileCount++;
+        }
+      }
+    }
+    return CardGroupCheckIntegrityResult(missingFileCount);
   }
 
   CardGroup copy() {
@@ -180,6 +212,24 @@ class CardEachSingle {
       this.useDefaultRotation,
       this.isInstance)
       : uuid = Uuid().v4();
+
+  CardEachSingle.empty()
+      : relativeFilePath = "",
+        contentCenterOffset = Alignment.center,
+        contentExpand = 1.0,
+        rotation = Rotation.none,
+        synthesizedBleed = PerCardSynthesizedBleed.projectSettings,
+        name = null,
+        useDefaultContentCenterOffset = true,
+        useDefaultContentExpand = true,
+        useDefaultRotation = true,
+        uuid = Uuid().v4(),
+        isInstance = false;
+
+  bool isImageMissing(String baseDirectory) {
+    final f = File(p.join(baseDirectory, relativeFilePath));
+    return !f.existsSync();
+  }
 
   double effectiveContentExpand(ProjectSettings projectSettings) {
     if (useDefaultContentExpand) {

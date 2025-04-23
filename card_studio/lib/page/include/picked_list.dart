@@ -28,7 +28,7 @@ class PickedList extends StatelessWidget {
   final Function(Includes) onIncludesChanged;
   final String basePath;
   final SizePhysical cardSize;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
 

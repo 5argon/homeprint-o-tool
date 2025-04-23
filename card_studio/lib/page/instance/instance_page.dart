@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/card.dart';
+import 'package:homeprint_o_tool/core/form/help_button.dart';
 
 import '../../core/project_settings.dart';
 import '../../core/save_file.dart';
@@ -8,8 +9,8 @@ import 'instance_member_list_item.dart';
 class InstancePage extends StatelessWidget {
   final String basePath;
   final ProjectSettings projectSettings;
-  final DefinedInstances definedInstances;
-  final Function(DefinedInstances definedInstances) onDefinedInstancesChange;
+  final LinkedCardFaces definedInstances;
+  final Function(LinkedCardFaces definedInstances) onDefinedInstancesChange;
 
   InstancePage({
     super.key,
@@ -21,23 +22,33 @@ class InstancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final createInstanceButton = ElevatedButton(
+    final createLinkedCardFaceButton = ElevatedButton(
       onPressed: () {
         final scaffoldMessenger = ScaffoldMessenger.of(context);
         scaffoldMessenger.removeCurrentSnackBar();
         scaffoldMessenger.showSnackBar(
           const SnackBar(
-            content: Text('Created a new instance.'),
+            content: Text('Created a new linked card face.'),
           ),
         );
 
-        final newCard = CardEachSingle("", Alignment.center, 1, Rotation.none,
-            PerCardSynthesizedBleed.mirror, null, true, true, true, true);
+        final newCard = CardEachSingle.empty();
         final newDefinedInstances = definedInstances;
         newDefinedInstances.add(newCard);
         onDefinedInstancesChange(newDefinedInstances);
       },
       child: const Text('Create Linked Card Face'),
+    );
+    final topRow = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        createLinkedCardFaceButton,
+        HelpButton(title: "Linked Card Face", paragraphs: [
+          "Normally a card in Cards page consists of 2 faces : The front and back face. Linked card face is a standalone card faces, neither front nor back face, and cannot be printed on its own. Any card's face can link to these linked card faces instead of having its own independent face. Doing so it is possible to update many card faces in the project at once by altering the linked card face.",
+          "This feature is mainly used for card backs that are the same throughout the project. You can correct content area or edit a single source image for the change to propagate to all cards that are linked.",
+          "If you have linked a face here to something already, deleting it will cause the link to be broken and rendered an error instead."
+        ]),
+      ],
     );
 
     List<InstanceMemberListItem> instanceItems = [];
@@ -95,11 +106,7 @@ class InstancePage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              children: [
-                createInstanceButton,
-              ],
-            ),
+            child: topRow,
           ),
           Expanded(child: listView),
         ],

@@ -19,13 +19,13 @@ DefinedCards deepCopyDefinedCards(DefinedCards definedCards) {
   return newList;
 }
 
-typedef DefinedInstances = List<CardEachSingle>;
+typedef LinkedCardFaces = List<CardEachSingle>;
 
 typedef LoadResult = ({SaveFile saveFile, String basePath, String fileName});
 
 class SaveFile {
   ProjectSettings projectSettings;
-  DefinedInstances instances;
+  LinkedCardFaces instances;
   DefinedCards cardGroups;
 
   /// Opens a dialog to choose JSON file. Return `null` if cancel out of dialog.

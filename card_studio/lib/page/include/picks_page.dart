@@ -15,7 +15,7 @@ class PicksPage extends StatelessWidget {
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
   final DefinedCards definedCards;
-  final DefinedInstances definedInstances;
+  final LinkedCardFaces definedInstances;
   final Includes includes;
   final Includes skipIncludes;
   final Function(Includes) onIncludesChanged;
