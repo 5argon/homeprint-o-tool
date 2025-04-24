@@ -9,14 +9,14 @@ class CardPage extends StatelessWidget {
   final String basePath;
   final ProjectSettings projectSettings;
   final DefinedCards definedCards;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final Function(DefinedCards definedCards) onDefinedCardsChange;
   CardPage(
       {super.key,
       required this.basePath,
       required this.projectSettings,
       required this.definedCards,
-      required this.definedInstances,
+      required this.linkedCardFaces,
       required this.onDefinedCardsChange});
 
   @override
@@ -77,7 +77,7 @@ class CardPage extends StatelessWidget {
         basePath: basePath,
         cardGroup: cardGroup,
         cardSize: projectSettings.cardSize,
-        definedInstances: definedInstances,
+        definedInstances: linkedCardFaces,
         projectSettings: projectSettings,
         onCardGroupChange: (cardGroup) {
           final newDefinedCards = definedCards;

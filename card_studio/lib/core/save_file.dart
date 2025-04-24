@@ -25,7 +25,7 @@ typedef LoadResult = ({SaveFile saveFile, String basePath, String fileName});
 
 class SaveFile {
   ProjectSettings projectSettings;
-  LinkedCardFaces instances;
+  LinkedCardFaces linkedCardFaces;
   DefinedCards cardGroups;
 
   /// Opens a dialog to choose JSON file. Return `null` if cancel out of dialog.
@@ -66,24 +66,30 @@ class SaveFile {
 
   factory SaveFile.fromJson(Map<String, dynamic> json) {
     final projectSettings = ProjectSettings.fromJson(json['projectSettings']);
-    var instances = <CardEachSingle>[];
+    var linkedCardFaces = <CardEachSingle>[];
     final instancesJson = json['instances'];
     if (instancesJson != null) {
-      instances = List<CardEachSingle>.from(instancesJson.map(
+      linkedCardFaces = List<CardEachSingle>.from(instancesJson.map(
           (instance) => CardEachSingle.fromJson(instance, isInstance: true)));
     }
+    final linkedCardFacesJson = json['linkedCardFaces'];
+    if (linkedCardFacesJson != null) {
+      linkedCardFaces = List<CardEachSingle>.from(linkedCardFacesJson.map(
+          (linkedCardFace) =>
+              CardEachSingle.fromJson(linkedCardFace, isInstance: true)));
+    }
     final cardGroups = List<CardGroup>.from(json['cardGroups']
-        .map((instance) => CardGroup.fromJson(instance, instances)));
-    return SaveFile(projectSettings, instances, cardGroups);
+        .map((instance) => CardGroup.fromJson(instance, linkedCardFaces)));
+    return SaveFile(projectSettings, linkedCardFaces, cardGroups);
   }
 
-  SaveFile(this.projectSettings, this.instances, this.cardGroups);
+  SaveFile(this.projectSettings, this.linkedCardFaces, this.cardGroups);
 
   Map<String, dynamic> toJson() {
     return {
       'projectSettings': projectSettings.toJson(),
-      'instances': instances.map((e) => e.toJson()).toList(),
-      'cardGroups': cardGroups.map((e) => e.toJson(instances)).toList(),
+      'linkedCardFaces': linkedCardFaces.map((e) => e.toJson()).toList(),
+      'cardGroups': cardGroups.map((e) => e.toJson(linkedCardFaces)).toList(),
     };
   }
 }

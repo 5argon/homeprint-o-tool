@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/card.dart';
 
-class InstanceMemberListItem extends StatefulWidget {
+class LinkedCardFaceListItem extends StatefulWidget {
   final String basePath;
   final CardEachSingle instanceCardEachSingle;
   final SizePhysical cardSize;
@@ -17,7 +17,7 @@ class InstanceMemberListItem extends StatefulWidget {
   final Function(CardEachSingle card) onInstanceCardChange;
   final Function() onDelete;
 
-  InstanceMemberListItem({
+  LinkedCardFaceListItem({
     super.key,
     required this.basePath,
     required this.instanceCardEachSingle,
@@ -30,10 +30,10 @@ class InstanceMemberListItem extends StatefulWidget {
   });
 
   @override
-  State<InstanceMemberListItem> createState() => _InstanceMemberListItemState();
+  State<LinkedCardFaceListItem> createState() => _LinkedCardFaceListItemState();
 }
 
-class _InstanceMemberListItemState extends State<InstanceMemberListItem> {
+class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
   late TextEditingController _cardNameController;
 
   @override
@@ -44,7 +44,7 @@ class _InstanceMemberListItemState extends State<InstanceMemberListItem> {
   }
 
   @override
-  void didUpdateWidget(covariant InstanceMemberListItem oldWidget) {
+  void didUpdateWidget(covariant LinkedCardFaceListItem oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.instanceCardEachSingle.name !=
         widget.instanceCardEachSingle.name) {

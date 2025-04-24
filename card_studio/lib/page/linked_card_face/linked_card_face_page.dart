@@ -4,20 +4,20 @@ import 'package:homeprint_o_tool/core/form/help_button.dart';
 
 import '../../core/project_settings.dart';
 import '../../core/save_file.dart';
-import 'instance_member_list_item.dart';
+import 'linked_card_face_list_item.dart';
 
-class InstancePage extends StatelessWidget {
+class LinkedCardFacePage extends StatelessWidget {
   final String basePath;
   final ProjectSettings projectSettings;
-  final LinkedCardFaces definedInstances;
-  final Function(LinkedCardFaces definedInstances) onDefinedInstancesChange;
+  final LinkedCardFaces linkCardFaces;
+  final Function(LinkedCardFaces linkedCardFaces) onLinkedCardFacesChange;
 
-  InstancePage({
+  LinkedCardFacePage({
     super.key,
     required this.basePath,
     required this.projectSettings,
-    required this.definedInstances,
-    required this.onDefinedInstancesChange,
+    required this.linkCardFaces,
+    required this.onLinkedCardFacesChange,
   });
 
   @override
@@ -33,9 +33,9 @@ class InstancePage extends StatelessWidget {
         );
 
         final newCard = CardEachSingle.empty();
-        final newDefinedInstances = definedInstances;
+        final newDefinedInstances = linkCardFaces;
         newDefinedInstances.add(newCard);
-        onDefinedInstancesChange(newDefinedInstances);
+        onLinkedCardFacesChange(newDefinedInstances);
       },
       child: const Text('Create Linked Card Face'),
     );
@@ -51,34 +51,34 @@ class InstancePage extends StatelessWidget {
       ],
     );
 
-    List<InstanceMemberListItem> instanceItems = [];
-    for (var i = 0; i < definedInstances.length; i++) {
-      final instance = definedInstances[i];
-      final item = InstanceMemberListItem(
+    List<LinkedCardFaceListItem> instanceItems = [];
+    for (var i = 0; i < linkCardFaces.length; i++) {
+      final instance = linkCardFaces[i];
+      final item = LinkedCardFaceListItem(
         key: Key(instance.uuid),
         basePath: basePath,
         projectSettings: projectSettings,
-        definedInstances: definedInstances,
+        definedInstances: linkCardFaces,
         order: i + 1,
         instanceCardEachSingle: instance,
         cardSize: projectSettings.cardSize,
         onInstanceCardChange: (card) {
-          final newDefinedInstances = definedInstances;
+          final newDefinedInstances = linkCardFaces;
           newDefinedInstances[i] = card;
-          onDefinedInstancesChange(newDefinedInstances);
+          onLinkedCardFacesChange(newDefinedInstances);
         },
         onDelete: () {
           final scaffoldMessenger = ScaffoldMessenger.of(context);
           scaffoldMessenger.removeCurrentSnackBar();
-          String message = 'Deleted instance: ${instance.name}';
+          String message = 'Deleted linked card face : ${instance.name}';
           scaffoldMessenger.showSnackBar(
             SnackBar(
               content: Text(message),
             ),
           );
-          final newDefinedInstances = definedInstances;
+          final newDefinedInstances = linkCardFaces;
           newDefinedInstances.removeAt(i);
-          onDefinedInstancesChange(newDefinedInstances);
+          onLinkedCardFacesChange(newDefinedInstances);
         },
       );
       instanceItems.add(item);
@@ -92,10 +92,10 @@ class InstancePage extends StatelessWidget {
         final instance = instanceItems.removeAt(oldIndex);
         instanceItems.insert(newIndex, instance);
 
-        final newDefinedInstances = List.of(definedInstances);
+        final newDefinedInstances = List.of(linkCardFaces);
         final movedInstance = newDefinedInstances.removeAt(oldIndex);
         newDefinedInstances.insert(newIndex, movedInstance);
-        onDefinedInstancesChange(newDefinedInstances);
+        onLinkedCardFacesChange(newDefinedInstances);
       },
       children: instanceItems,
     );

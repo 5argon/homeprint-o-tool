@@ -1,6 +1,6 @@
 import 'package:homeprint_o_tool/core/card.dart';
 import 'package:homeprint_o_tool/page/include/picks_page.dart';
-import 'package:homeprint_o_tool/page/instance/instance_page.dart';
+import 'package:homeprint_o_tool/page/linked_card_face/linked_card_face_page.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 import 'package:homeprint_o_tool/page/project/project_page.dart';
 import 'package:homeprint_o_tool/page/review/review_page.dart';
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // These three are defined by project.
   ProjectSettings _projectSettings = defaultProjectSettings;
   DefinedCards _definedCards = defaultDefinedCards;
-  LinkedCardFaces _definedInstances = [];
+  LinkedCardFaces _linkedCardFaces = [];
 
   /// Not stored in the save file.
   Includes _includes = [];
@@ -150,17 +150,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   return projectSettingsPage;
                 case 1:
                   {
-                    var instancePage = InstancePage(
+                    var linkedCardFacePage = LinkedCardFacePage(
                       basePath: baseDirectory,
                       projectSettings: _projectSettings,
-                      definedInstances: _definedInstances,
-                      onDefinedInstancesChange: (definedInstances) {
+                      linkCardFaces: _linkedCardFaces,
+                      onLinkedCardFacesChange: (linkedCardFaces) {
                         setState(() {
-                          _definedInstances = definedInstances;
+                          _linkedCardFaces = linkedCardFaces;
                         });
                       },
                     );
-                    return instancePage;
+                    return linkedCardFacePage;
                   }
                 case 2:
                   final baseDirectory = _baseDirectory;
@@ -171,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     basePath: baseDirectory,
                     projectSettings: _projectSettings,
                     definedCards: _definedCards,
-                    definedInstances: _definedInstances,
+                    linkedCardFaces: _linkedCardFaces,
                     onDefinedCardsChange: (definedCards) {
                       setState(() {
                         _definedCards = definedCards;
@@ -200,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     projectSettings: _projectSettings,
                     layoutData: _layoutData,
                     definedCards: _definedCards,
-                    definedInstances: _definedInstances,
+                    linkedCardFaces: _linkedCardFaces,
                     includes: _includes,
                     skipIncludes: _skipIncludes,
                     onIncludesChanged: (p0) {
@@ -274,7 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
         final filePathJson =
             !filePath.endsWith(".json") ? "$filePath.json" : filePath;
         final saveFile =
-            SaveFile(_projectSettings, _definedInstances, _definedCards);
+            SaveFile(_projectSettings, _linkedCardFaces, _definedCards);
         final saveResult = await saveFile.saveToFile(filePathJson);
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -284,7 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           _projectSettings = defaultProjectSettings;
           _definedCards = defaultDefinedCards;
-          _definedInstances = [];
+          _linkedCardFaces = [];
           _baseDirectory = saveResult.baseDirectory;
           _previousFileName = saveResult.fileName;
           _includes = [];
@@ -299,7 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _selectedIndex = 2;
             _projectSettings = loadResult.saveFile.projectSettings;
             _definedCards = loadResult.saveFile.cardGroups;
-            _definedInstances = loadResult.saveFile.instances;
+            _linkedCardFaces = loadResult.saveFile.linkedCardFaces;
             _baseDirectory = loadResult.basePath;
             _previousFileName = loadResult.fileName;
             // Overwrite inclues to all cards on load.
@@ -331,7 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
       if (filePath != null) {
         final saveFile =
-            SaveFile(_projectSettings, _definedInstances, _definedCards);
+            SaveFile(_projectSettings, _linkedCardFaces, _definedCards);
         final saveResult = await saveFile.saveToFile(filePath);
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

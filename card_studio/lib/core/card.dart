@@ -86,7 +86,6 @@ class CardGroup {
   }
 }
 
-/// Represent a card, which consists of front side and back side.
 class CardEach {
   CardEachSingle? front;
   CardEachSingle? back;
