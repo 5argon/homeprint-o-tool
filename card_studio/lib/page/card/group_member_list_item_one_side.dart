@@ -94,7 +94,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     final isCurrentlyLinkedCardFaceTwo = cardEachSingle != null &&
         linkedCardFaces.length > 1 &&
         cardEachSingle == linkedCardFaces[1];
-    final instanceOneButton = IconButton(
+    final linkedCardFaceOneButton = IconButton(
         tooltip: "Quick assign this card face to the linked card face #1.",
         onPressed: linkedCardFaceOneAvailable
             ? () async {
@@ -112,10 +112,9 @@ class GroupMemberListItemOneSide extends StatelessWidget {
             : null,
         icon: createLinkIconWithNumber(2));
     if (cardEachSingle != null && cardEachSingle.isLinkedCardFace) {
-      // Find index of this instance in definedInstances.
       final index =
           linkedCardFaces.indexWhere((element) => element == cardEachSingle);
-      final instanceText = index == -1 ? "Linked" : "Linked #${index + 1}";
+      final linkedText = index == -1 ? "Linked" : "Linked #${index + 1}";
       linkedIndicator = Row(
         children: [
           Container(
@@ -124,7 +123,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 4),
               // Text white on primary
               child: Text(
-                instanceText,
+                linkedText,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 12,
@@ -167,7 +166,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
                   isBack &&
                   linkedCardFaceOneAvailable &&
                   !isCurrentlyLinkedCardFaceOne
-              ? instanceOneButton
+              ? linkedCardFaceOneButton
               : Container(),
           showEditButton &&
                   isBack &&

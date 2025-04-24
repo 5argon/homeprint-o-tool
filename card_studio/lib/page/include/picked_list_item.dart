@@ -11,7 +11,7 @@ class PickedListItem extends StatelessWidget {
   final VoidCallback onRemove;
   final String basePath;
   final SizePhysical cardSize;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final ProjectSettings projectSettings;
   final Includes includes;
   final IncludePosition includePosition;
@@ -22,7 +22,7 @@ class PickedListItem extends StatelessWidget {
     required this.onRemove,
     required this.basePath,
     required this.cardSize,
-    required this.definedInstances,
+    required this.linkedCardFaces,
     required this.projectSettings,
     required this.includes,
     required this.includePosition,
@@ -66,7 +66,7 @@ class PickedListItem extends StatelessWidget {
         basePath: basePath,
         cardEach: ce,
         cardSize: cardSize,
-        definedInstances: definedInstances,
+        linkedCardFaces: linkedCardFaces,
         projectSettings: projectSettings,
       ));
       pageFromToRender = Row(children: [

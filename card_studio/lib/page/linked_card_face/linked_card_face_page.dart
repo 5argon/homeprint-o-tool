@@ -33,9 +33,9 @@ class LinkedCardFacePage extends StatelessWidget {
         );
 
         final newCard = CardFace.empty();
-        final newDefinedInstances = linkCardFaces;
-        newDefinedInstances.add(newCard);
-        onLinkedCardFacesChange(newDefinedInstances);
+        final newLinkedCardFaces = linkCardFaces;
+        newLinkedCardFaces.add(newCard);
+        onLinkedCardFacesChange(newLinkedCardFaces);
       },
       child: const Text('Create Linked Card Face'),
     );
@@ -51,37 +51,37 @@ class LinkedCardFacePage extends StatelessWidget {
       ],
     );
 
-    List<LinkedCardFaceListItem> instanceItems = [];
+    List<LinkedCardFaceListItem> listItem = [];
     for (var i = 0; i < linkCardFaces.length; i++) {
-      final instance = linkCardFaces[i];
+      final linkedCardFace = linkCardFaces[i];
       final item = LinkedCardFaceListItem(
-        key: Key(instance.uuid),
+        key: Key(linkedCardFace.uuid),
         basePath: basePath,
         projectSettings: projectSettings,
-        definedInstances: linkCardFaces,
+        linkedCardFaces: linkCardFaces,
         order: i + 1,
-        instanceCardEachSingle: instance,
+        linkedCardFace: linkedCardFace,
         cardSize: projectSettings.cardSize,
-        onInstanceCardChange: (card) {
-          final newDefinedInstances = linkCardFaces;
-          newDefinedInstances[i] = card;
-          onLinkedCardFacesChange(newDefinedInstances);
+        onLinkedCardFaceChange: (card) {
+          final newLikedCardFaces = linkCardFaces;
+          newLikedCardFaces[i] = card;
+          onLinkedCardFacesChange(newLikedCardFaces);
         },
         onDelete: () {
           final scaffoldMessenger = ScaffoldMessenger.of(context);
           scaffoldMessenger.removeCurrentSnackBar();
-          String message = 'Deleted linked card face : ${instance.name}';
+          String message = 'Deleted linked card face : ${linkedCardFace.name}';
           scaffoldMessenger.showSnackBar(
             SnackBar(
               content: Text(message),
             ),
           );
-          final newDefinedInstances = linkCardFaces;
-          newDefinedInstances.removeAt(i);
-          onLinkedCardFacesChange(newDefinedInstances);
+          final newLinkedCardFaces = linkCardFaces;
+          newLinkedCardFaces.removeAt(i);
+          onLinkedCardFacesChange(newLinkedCardFaces);
         },
       );
-      instanceItems.add(item);
+      listItem.add(item);
     }
 
     final listView = ReorderableListView(
@@ -89,15 +89,15 @@ class LinkedCardFacePage extends StatelessWidget {
         if (newIndex > oldIndex) {
           newIndex -= 1;
         }
-        final instance = instanceItems.removeAt(oldIndex);
-        instanceItems.insert(newIndex, instance);
+        final removedLinkedCardFace = listItem.removeAt(oldIndex);
+        listItem.insert(newIndex, removedLinkedCardFace);
 
-        final newDefinedInstances = List.of(linkCardFaces);
-        final movedInstance = newDefinedInstances.removeAt(oldIndex);
-        newDefinedInstances.insert(newIndex, movedInstance);
-        onLinkedCardFacesChange(newDefinedInstances);
+        final newLinkedCardFaces = List.of(linkCardFaces);
+        final movedLinkedCardFace = newLinkedCardFaces.removeAt(oldIndex);
+        newLinkedCardFaces.insert(newIndex, movedLinkedCardFace);
+        onLinkedCardFacesChange(newLinkedCardFaces);
       },
-      children: instanceItems,
+      children: listItem,
     );
 
     return Padding(

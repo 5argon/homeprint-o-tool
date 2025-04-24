@@ -12,7 +12,7 @@ class AvailabeOneCard extends StatelessWidget {
   final String basePath;
   final DuplexCard cardEach;
   final SizePhysical cardSize;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final ProjectSettings projectSettings;
   final int outerCount;
   final Includes includes;
@@ -24,7 +24,7 @@ class AvailabeOneCard extends StatelessWidget {
       required this.basePath,
       required this.cardEach,
       required this.cardSize,
-      required this.definedInstances,
+      required this.linkedCardFaces,
       required this.projectSettings,
       required this.outerCount,
       required this.onAddIncludeItem,
@@ -83,7 +83,7 @@ class AvailabeOneCard extends StatelessWidget {
       basePath: basePath,
       cardEach: cardEach,
       cardSize: cardSize,
-      definedInstances: definedInstances,
+      linkedCardFaces: linkedCardFaces,
       projectSettings: projectSettings,
       extraRender: extraRenderChildren,
     );

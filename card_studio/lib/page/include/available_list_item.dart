@@ -12,7 +12,7 @@ class AvailableListItem extends StatelessWidget {
   final String basePath;
   final CardGroup cardGroup;
   final SizePhysical cardSize;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final ProjectSettings projectSettings;
   final Includes includes;
   final Includes skipIncludes;
@@ -24,7 +24,7 @@ class AvailableListItem extends StatelessWidget {
     required this.basePath,
     required this.cardGroup,
     required this.cardSize,
-    required this.definedInstances,
+    required this.linkedCardFaces,
     required this.projectSettings,
     required this.includes,
     required this.skipIncludes,
@@ -76,7 +76,7 @@ class AvailableListItem extends StatelessWidget {
           basePath: basePath,
           cardEach: card,
           cardSize: cardSize,
-          definedInstances: definedInstances,
+          linkedCardFaces: linkedCardFaces,
           projectSettings: projectSettings,
           includes: includes,
           onAddIncludeItem: (p0) {

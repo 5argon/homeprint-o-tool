@@ -137,7 +137,7 @@ class PicksPage extends StatelessWidget {
       basePath: basePath,
       projectSettings: projectSettings,
       definedCards: definedCards,
-      definedInstances: linkedCardFaces,
+      linkedCardFaces: linkedCardFaces,
       includes: includes,
       skipIncludes: skipIncludes,
       onIncludesChanged: onIncludesChanged,
@@ -148,7 +148,7 @@ class PicksPage extends StatelessWidget {
       onIncludesChanged: onIncludesChanged,
       basePath: basePath,
       cardSize: projectSettings.cardSize,
-      definedInstances: linkedCardFaces,
+      linkedCardFaces: linkedCardFaces,
       projectSettings: projectSettings,
       layoutData: layoutData,
     );

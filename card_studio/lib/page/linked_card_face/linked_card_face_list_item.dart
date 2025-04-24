@@ -9,23 +9,23 @@ import '../../core/card.dart';
 
 class LinkedCardFaceListItem extends StatefulWidget {
   final String basePath;
-  final CardFace instanceCardEachSingle;
+  final CardFace linkedCardFace;
   final SizePhysical cardSize;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final ProjectSettings projectSettings;
   final int order;
-  final Function(CardFace card) onInstanceCardChange;
+  final Function(CardFace card) onLinkedCardFaceChange;
   final Function() onDelete;
 
   LinkedCardFaceListItem({
     super.key,
     required this.basePath,
-    required this.instanceCardEachSingle,
+    required this.linkedCardFace,
     required this.cardSize,
-    required this.definedInstances,
+    required this.linkedCardFaces,
     required this.projectSettings,
     required this.order,
-    required this.onInstanceCardChange,
+    required this.onLinkedCardFaceChange,
     required this.onDelete,
   });
 
@@ -40,15 +40,14 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
   void initState() {
     super.initState();
     _cardNameController =
-        TextEditingController(text: widget.instanceCardEachSingle.name ?? "");
+        TextEditingController(text: widget.linkedCardFace.name ?? "");
   }
 
   @override
   void didUpdateWidget(covariant LinkedCardFaceListItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.instanceCardEachSingle.name !=
-        widget.instanceCardEachSingle.name) {
-      _cardNameController.text = widget.instanceCardEachSingle.name ?? "";
+    if (oldWidget.linkedCardFace.name != widget.linkedCardFace.name) {
+      _cardNameController.text = widget.linkedCardFace.name ?? "";
     }
   }
 
@@ -73,9 +72,9 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
         labelText: "Name",
       ),
       onChanged: (value) {
-        final newCardEach = widget.instanceCardEachSingle;
+        final newCardEach = widget.linkedCardFace;
         newCardEach.name = value;
-        widget.onInstanceCardChange(newCardEach);
+        widget.onLinkedCardFaceChange(newCardEach);
       },
     );
     final removeButton = IconButton(
@@ -99,9 +98,9 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                 child: SingleCardPreview(
                   basePath: widget.basePath,
                   cardSize: widget.cardSize,
-                  bleedFactor: widget.instanceCardEachSingle
+                  bleedFactor: widget.linkedCardFace
                       .effectiveContentExpand(widget.projectSettings),
-                  cardFace: widget.instanceCardEachSingle,
+                  cardFace: widget.linkedCardFace,
                 )),
             SizedBox(width: 16),
             Expanded(
@@ -123,20 +122,19 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                         child: GroupMemberListItemOneSide(
                           isBack: false,
                           forLinkedCardFaceTab: true,
-                          cardEachSingle: widget.instanceCardEachSingle,
-                          linkedCardFaces: widget.definedInstances,
-                          linked:
-                              widget.instanceCardEachSingle.isLinkedCardFace,
+                          cardEachSingle: widget.linkedCardFace,
+                          linkedCardFaces: widget.linkedCardFaces,
+                          linked: widget.linkedCardFace.isLinkedCardFace,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {
-                            // Instance is only one side of a card,
+                            // Linked Card Face is only one side of a card,
                             // so we can't allow it to disappear on removing
                             // like normal double sided cards.
                             if (card == null) {
-                              widget.onInstanceCardChange(CardFace.empty());
+                              widget.onLinkedCardFaceChange(CardFace.empty());
                             } else {
-                              widget.onInstanceCardChange(card);
+                              widget.onLinkedCardFaceChange(card);
                             }
                           },
                         ),

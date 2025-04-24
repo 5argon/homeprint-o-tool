@@ -48,7 +48,7 @@ class Sidebar extends StatelessWidget {
       title: "Project Section",
       paragraphs: [
         "A section for authoring the JSON printing specification file. Any changes you did in this section must be manually saved back into the file with the Save button. If you are on the consumer side that just wanted to print at home, you can ignore this section and start on the \"Printing\" section below.",
-        "\"Project\" is to set constant values applying to all cards, most importantly the project's card size, because this app can only create an uncut sheet of cards of the same size. In \"Instances\", you can define a reusable card face that can be used as either card front or card back of any card, so they all link to one single image file and any changes to the graphic is updated throughout the project.",
+        "\"Project\" is to set constant values applying to all cards, most importantly the project's card size, because this app can only create an uncut sheet of cards of the same size. In \"Linked Card Face\", you can define a reusable card face that can be used as either card front or card back of any card, so they all link to one single image file and any changes to the graphic is updated throughout the project.",
         "\"Cards\" is the heart of the project where you first create a group of cards, then each individual card inside the group with their default quantity per one pick of the group. User can pick just a part of the project to print based on groups you defined, or any single card individually. Each card is defined by a relative path starting from the location of the JSON file. Hover on the JSON file name under the project label to see the full path.",
       ],
     );

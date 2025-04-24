@@ -12,7 +12,7 @@ class PickedOneCard extends StatelessWidget {
   final String basePath;
   final DuplexCard cardEach;
   final SizePhysical cardSize;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final ProjectSettings projectSettings;
   final List<Widget>? extraRender;
 
@@ -21,7 +21,7 @@ class PickedOneCard extends StatelessWidget {
     required this.basePath,
     required this.cardEach,
     required this.cardSize,
-    required this.definedInstances,
+    required this.linkedCardFaces,
     required this.projectSettings,
     this.extraRender,
   });
@@ -83,7 +83,7 @@ class PickedOneCard extends StatelessWidget {
                           isBack: false,
                           forLinkedCardFaceTab: false,
                           cardEachSingle: cardEach.front,
-                          linkedCardFaces: definedInstances,
+                          linkedCardFaces: linkedCardFaces,
                           linked: cardEach.front?.isLinkedCardFace ?? false,
                           showEditButton: false,
                           basePath: basePath,
@@ -96,7 +96,7 @@ class PickedOneCard extends StatelessWidget {
                           isBack: true,
                           forLinkedCardFaceTab: false,
                           cardEachSingle: cardEach.back,
-                          linkedCardFaces: definedInstances,
+                          linkedCardFaces: linkedCardFaces,
                           linked: cardEach.back?.isLinkedCardFace ?? false,
                           showEditButton: false,
                           basePath: basePath,

@@ -28,7 +28,7 @@ class PickedList extends StatelessWidget {
   final Function(Includes) onIncludesChanged;
   final String basePath;
   final SizePhysical cardSize;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
 
@@ -38,7 +38,7 @@ class PickedList extends StatelessWidget {
     required this.onIncludesChanged,
     required this.basePath,
     required this.cardSize,
-    required this.definedInstances,
+    required this.linkedCardFaces,
     required this.projectSettings,
     required this.layoutData,
   }) : super(key: key);
@@ -94,7 +94,7 @@ class PickedList extends StatelessWidget {
           },
           basePath: basePath,
           cardSize: cardSize,
-          definedInstances: definedInstances,
+          linkedCardFaces: linkedCardFaces,
           projectSettings: projectSettings,
           includes: includes,
           includePosition: includePosition,
