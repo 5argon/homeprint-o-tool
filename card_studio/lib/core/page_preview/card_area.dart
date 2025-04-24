@@ -11,7 +11,7 @@ import 'package:path/path.dart' as p;
 import '../../page/layout/layout_helper.dart';
 import 'parallel_guide.dart';
 
-class CardArea extends StatelessWidget {
+class CardArea extends StatefulWidget {
   CardArea({
     super.key,
     required this.horizontalSpace,
@@ -28,24 +28,7 @@ class CardArea extends StatelessWidget {
     required this.showHorizontalInnerCutLine,
     required this.back,
     required this.backStrategy,
-  }) {
-    final card = this.card;
-    final baseDirectory = this.baseDirectory;
-    if (card != null && baseDirectory != null) {
-      final f = File(p.join(baseDirectory, card.relativeFilePath));
-      if (f.existsSync()) {
-        _getDescriptorFuture = getDescriptor(f);
-        fileObject = f;
-      }
-    } else {
-      _getDescriptorFuture = Future.value();
-    }
-  }
-
-  /// If no graphic this completes immediately, if with graphic you can check
-  /// if they are loaded yet here.
-  Future<ImageDescriptor?>? _getDescriptorFuture;
-  File? fileObject;
+  }) {}
 
   /// Card is centered in this area. It takes this much space horizontally. (Max 1.0)
   final double horizontalSpace;
@@ -67,11 +50,37 @@ class CardArea extends StatelessWidget {
   final bool back;
   final BackArrangement backStrategy;
 
+  @override
+  State<CardArea> createState() => _CardAreaState();
+}
+
+class _CardAreaState extends State<CardArea> {
+  /// If no graphic this completes immediately, if with graphic you can check
+  /// if they are loaded yet here.
+  Future<ImageDescriptor?>? _getDescriptorFuture;
+  File? fileObject;
+
   Future<ImageDescriptor?> getDescriptor(File loadedFile) async {
     final bytes = await loadedFile.readAsBytes();
     final buff = await ImmutableBuffer.fromUint8List(bytes);
     final descriptor = await ImageDescriptor.encoded(buff);
     return descriptor;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final card = widget.card;
+    final baseDirectory = widget.baseDirectory;
+    if (card != null && baseDirectory != null) {
+      final f = File(p.join(baseDirectory, card.relativeFilePath));
+      if (f.existsSync()) {
+        _getDescriptorFuture = getDescriptor(f);
+        fileObject = f;
+      }
+    } else {
+      _getDescriptorFuture = Future.value();
+    }
   }
 
   @override
@@ -82,12 +91,12 @@ class CardArea extends StatelessWidget {
       );
     }
     Widget imageWidget = Container();
-    if (card != null && baseDirectory != null) {
+    if (widget.card != null && widget.baseDirectory != null) {
       // final renderChild =
       //     Image.file(File(p.join(baseDirectory, card.relativeFilePath)));
       // imageWidget = Cropper(cropRect: cropRect, renderChild: renderChild);
+      final card = widget.card;
       final fileObject = this.fileObject;
-      final card = this.card;
       if (fileObject != null && card != null) {
         imageWidget = FutureBuilder(
             builder: (context, snapshot) {
@@ -105,13 +114,13 @@ class CardArea extends StatelessWidget {
                   final parentWidth = constraints.maxWidth;
                   final imageWidth =
                       rotated ? descriptorData.height : descriptorData.width;
-                  final contentWidth = parentWidth * horizontalSpace;
+                  final contentWidth = parentWidth * widget.horizontalSpace;
                   final widthFitScale = (imageWidth / contentWidth);
 
                   final parentHeight = constraints.maxHeight;
                   final imageHeight =
                       rotated ? descriptorData.width : descriptorData.height;
-                  final contentHeight = parentHeight * verticalSpace;
+                  final contentHeight = parentHeight * widget.verticalSpace;
                   final heightFitScale = (imageHeight / contentHeight);
 
                   final widthAfterHeightFit = heightFitScale * contentWidth;
@@ -121,18 +130,18 @@ class CardArea extends StatelessWidget {
                   // This expand was relative to the image's dimension.
                   // Card Area dimension might turns out to be different shape depending on margin settings.
                   final originalExpand =
-                      card.effectiveContentExpand(projectSettings);
+                      card.effectiveContentExpand(widget.projectSettings);
 
-                  final cardWidth = cardSize.widthCm;
-                  final cardHeight = cardSize.heightCm;
+                  final cardWidth = widget.cardSize.widthCm;
+                  final cardHeight = widget.cardSize.heightCm;
                   final heightFitScaleCardToImage = (imageHeight / cardHeight);
                   final widthFitScaleCardToImage = (imageWidth / cardWidth);
 
                   // Check
                   final widthAfterHeightFit2 =
-                      heightFitScaleCardToImage * cardSize.widthCm;
+                      heightFitScaleCardToImage * widget.cardSize.widthCm;
                   final heightAfterWidthFit2 =
-                      widthFitScaleCardToImage * cardSize.heightCm;
+                      widthFitScaleCardToImage * widget.cardSize.heightCm;
                   final expandFocusWidth = widthAfterHeightFit2 >= imageWidth;
 
                   final double effectiveExpand;
@@ -178,8 +187,8 @@ class CardArea extends StatelessWidget {
                       turns = 3;
                       break;
                   }
-                  if (back &&
-                      backStrategy == BackArrangement.invertedRow &&
+                  if (widget.back &&
+                      widget.backStrategy == BackArrangement.invertedRow &&
                       card.rotation != Rotation.none) {
                     turns = turns + 2;
                   }
@@ -203,22 +212,22 @@ class CardArea extends StatelessWidget {
     Color previewColor = Colors.red;
     Color realColor = Color.fromARGB(60, 255, 255, 255);
 
-    if (previewCutLine || showVerticalInnerCutLine) {
+    if (widget.previewCutLine || widget.showVerticalInnerCutLine) {
       verticalGuide = ParallelGuide(
-        spaceTaken: guideHorizontal,
+        spaceTaken: widget.guideHorizontal,
         axis: Axis.vertical,
-        color: previewCutLine ? previewColor : realColor,
+        color: widget.previewCutLine ? previewColor : realColor,
       );
     }
-    if (previewCutLine || showHorizontalInnerCutLine) {
+    if (widget.previewCutLine || widget.showHorizontalInnerCutLine) {
       horizontalGuide = ParallelGuide(
-        spaceTaken: guideVertical,
+        spaceTaken: widget.guideVertical,
         axis: Axis.horizontal,
-        color: previewCutLine ? previewColor : realColor,
+        color: widget.previewCutLine ? previewColor : realColor,
       );
     }
     Widget eachCardFrame = Container();
-    if (layoutMode) {
+    if (widget.layoutMode) {
       eachCardFrame = Container(
         decoration: BoxDecoration(
             border: Border.all(
@@ -227,7 +236,8 @@ class CardArea extends StatelessWidget {
       );
     }
     List<Widget> stackChildren = [
-      LayoutHelper(color: Colors.orange, visible: layoutMode, flashing: false),
+      LayoutHelper(
+          color: Colors.orange, visible: widget.layoutMode, flashing: false),
       eachCardFrame,
       imageWidget,
       verticalGuide,

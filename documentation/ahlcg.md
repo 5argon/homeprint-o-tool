@@ -12,19 +12,25 @@ Fantasy Flight Games has been releasing extra printable contents for free since 
 
 Since then, some fans have been extracting these PDFs into individual `.png` files, even with card bleed extended to be more ready to be sent to professional printing, named/organized systematically and nicely. This organizing format is perfect for this program.
 
+It's perfect to be the first walkthrough too because of low amount of cards in each set, and if one only print the investigator card front/back, they don't have to worry about their printer quality because they don't have to be shuffled into official cards. Maybe you can try picking just the investigator card of 9 parallel investigators to fill up an entire A4 page to test this program.
+
 For this walkthrough we'll use [this coldtoes's extended bleed edits of the official PDF files](https://drive.google.com/drive/folders/1TmniKONBPpFztFcgtW4nFIOYw2QcHR2B?usp=share_link). Please download the entire "Parallels & Challenge Scenarios" folder first. While you can rename the downloaded folder, do not rename any folders inside, since we will be placing our `.json` project file that has relative paths to stuff inside those.
 
-Next, download this sample `.json` project file and place it inside the folder. Open the program and press "Load JSON" to load that file. There are a few neat things that I've set up.
+Next, download this sample `.json` project file and place it inside the folder. Open the program and press "Load JSON" to load that file. There are a few neat things that I've set up in this project.
 
-The inside of downloaded sub-folders commonly has "back.png" to be used as the back of most single sided cards, for challenge scenarios, the encounter card back is paired per-card on their "-b" back side graphic.
+The inside of downloaded sub-folders commonly has "back.png" to be used as the back of most single sided cards. For challenge scenarios, the encounter card back is paired per-card on their "-b" back side graphic.
 
-This project changes things up a bit. In the "Symbols" page you'll notice 2 symbols : The common back face of player card and encounter card. Every cards that are supposed to use player card back all references to the symbol that uses `01 Daisy Walker - Read or Die/back.png`, and every cards that are supposed to use encounter card back all references to an another symbol that uses `01 Daisy Walker - Read or Die/007 Namer of the Dead-b.png`.
+This project changes things up a bit. In the "Linked Card Face" page you'll notice 2 pre-defined faces : The common back face of player card and encounter card. Every cards that are supposed to use player card back all references to the symbol that uses `01 Daisy Walker - Read or Die/back.png`, and every cards that are supposed to use encounter card back all references to an another symbol that uses `01 Daisy Walker - Read or Die/007 Namer of the Dead-b.png`.
 
-The end result should not matter in most cases because every copy of `back.png` that coldtoes provided are the same, but when you starts needing to color-match the card back to be as close to the FFG-printed card as possible, with how I've set them up, you only have to save your color edits to `01 Daisy Walker - Read or Die/back.png` and `01 Daisy Walker - Read or Die/007 Namer of the Dead-b.png` for it to reflects everywhere, even outside of `01 Daisy Walker - Read or Die` folder.
+The end result should not matter in most cases because every copy of `back.png` that coldtoes provided are the same, but when you starts needing to color-match the card back to be as close to the FFG-printed card as possible, with how I've set them up, you only have to save your color edits to `01 Daisy Walker - Read or Die/back.png` and `01 Daisy Walker - Read or Die/007 Namer of the Dead-b.png` for it to reflects everywhere, even outside of `01 Daisy Walker - Read or Die` folder. (This just happened to be the first parallel released, so I choose this one.)
 
-The next neat things I want to point out is that some set of parallel investigator release contains a "Challenge Scenario" side story of that investigator as a part of the set. But from my previous interactions with gaming friends most wants only the player cards and not the scenario to save printing cost or just that they aren't likely to be played.
+The next neat thing I want to point out is that some set of parallel investigator release contains a "Challenge Scenario" side story of that investigator as a part of the set. But from my previous interactions with gaming friends, most wants only the player cards and not the scenario to save printing cost or just that they aren't likely to be played.
 
 I've made picking only the player cards easier with the grouping feature. The contents inside `01 Daisy Walker - Read or Die` is separated into 2 groups when viewed inside the program, so you can pick just Daisy and her signature cards, or the Read or Die Challenge Scenario.
+
+If you want just the Daisy Walker investigator card and not even her signature cards, you can use individual picking button inside the group instead of picking by group. Repeat for other groups, you can output an uncut sheet page consisting of just the investigator cards!
+
+![Pick only investigator cards](image/ahlcg-only-investigators.png)
 
 The Picks tab having quantity has a debugger that displays spaces left in your last page, along with quantity of cards for each set. Supposed that you picked everything you want and you see "3 Cards Left" displayed, you know exactly you can sneak in an extra set of Zoey Samaras in there, but you cannot add Jim Culver which requires 5 cards without spawning a new page.
 

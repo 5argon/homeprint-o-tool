@@ -60,7 +60,7 @@ class AvailableListItem extends StatelessWidget {
     }).fold(0, (previousValue, element) => previousValue + element.count());
 
     final totalQuantityDisplay =
-        SizedBox(width: 90, child: Text("x${cardGroup.count()} Cards"));
+        SizedBox(width: 90, child: Text("× ${cardGroup.count()} Cards"));
     final groupIncludedCount = includes
         .where((element) => element.cardGroup == cardGroup)
         .fold(0, (p, e) => p + e.amount);

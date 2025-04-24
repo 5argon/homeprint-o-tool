@@ -86,6 +86,11 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
+            "Relative File Path",
+            style: TextStyle(fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+          Text(
             tempFilePath ?? "(No file selected)",
             style: TextStyle(fontSize: 14),
             textAlign: TextAlign.center,
@@ -166,7 +171,6 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                 Alignment.center,
                 1,
                 Rotation.none,
-                PerCardSynthesizedBleed.mirror,
                 null,
                 true,
                 true,

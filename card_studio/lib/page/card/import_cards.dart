@@ -81,17 +81,8 @@ List<DuplexCard> importCards(
   for (var path in paths) {
     final decoded = decodeCardName(path);
     final relativePath = decoded.path;
-    final decodedCardFace = CardFace(
-        relativePath,
-        Alignment.center,
-        1.0,
-        Rotation.none,
-        PerCardSynthesizedBleed.mirror,
-        decoded.name,
-        true,
-        true,
-        true,
-        false);
+    final decodedCardFace = CardFace(relativePath, Alignment.center, 1.0,
+        Rotation.none, decoded.name, true, true, true, false);
     map.update(decoded.name, (card) {
       card.amount = decoded.amount;
       if (decoded.backside) {

@@ -17,9 +17,9 @@ class CountNumberInCircle extends StatelessWidget {
     if (zeroValue) {
       color = Colors.grey;
     } else if (plus == true) {
-      color = Colors.cyan;
+      color = Theme.of(context).colorScheme.secondary;
     } else {
-      color = Colors.red;
+      color = Theme.of(context).colorScheme.primary;
     }
     return Container(
       width: 50,

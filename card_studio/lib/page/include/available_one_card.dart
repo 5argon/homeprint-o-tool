@@ -66,7 +66,7 @@ class AvailabeOneCard extends StatelessWidget {
     );
     final amount = cardEach.amount;
     final cardsCount = Text(
-      "x ${amount.toString()} ${amount > 1 ? "Cards" : "Card"}",
+      "× ${amount.toString()} ${amount > 1 ? "Cards" : "Card"}",
     );
     final List<Widget> extraRenderChildren = [
       countNumberInCircle,

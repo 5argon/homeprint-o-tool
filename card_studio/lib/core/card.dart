@@ -111,31 +111,26 @@ class DuplexCard {
     {
       final frontInstance = json['frontInstance'];
       if (frontInstance is String) {
-        for (var instance in cardFaces) {
-          if (instance.uuid == frontInstance) {
-            front = instance;
-            break;
-          }
-        }
-      } else {
-        front = json['front'] == null
-            ? null
-            : CardFace.fromJson(json['front'], isLinkedCardFace: false);
-      }
-    }
-    {
-      final frontLink = json['frontLink'];
-      if (frontLink is String) {
         for (var cardFace in cardFaces) {
-          if (cardFace.uuid == frontLink) {
+          if (cardFace.uuid == frontInstance) {
             front = cardFace;
             break;
           }
         }
       } else {
-        front = json['front'] == null
-            ? null
-            : CardFace.fromJson(json['front'], isLinkedCardFace: false);
+        final frontLink = json['frontLink'];
+        if (frontLink is String) {
+          for (var cardFace in cardFaces) {
+            if (cardFace.uuid == frontLink) {
+              front = cardFace;
+              break;
+            }
+          }
+        } else {
+          front = json['front'] == null
+              ? null
+              : CardFace.fromJson(json['front'], isLinkedCardFace: false);
+        }
       }
     }
 
@@ -143,33 +138,27 @@ class DuplexCard {
       final backInstance = json['backInstance'];
       if (backInstance is String) {
         // Search from matching UUID in instances instead.
-        for (var instance in cardFaces) {
-          if (instance.uuid == backInstance) {
-            back = instance;
-            break;
-          }
-        }
-      } else {
-        back = json['back'] == null
-            ? null
-            : CardFace.fromJson(json['back'], isLinkedCardFace: false);
-      }
-    }
-
-    {
-      final backLink = json['backLink'];
-      if (backLink is String) {
-        // Search from matching UUID in instances instead.
         for (var cardFace in cardFaces) {
-          if (cardFace.uuid == backLink) {
+          if (cardFace.uuid == backInstance) {
             back = cardFace;
             break;
           }
         }
       } else {
-        back = json['back'] == null
-            ? null
-            : CardFace.fromJson(json['back'], isLinkedCardFace: false);
+        final backLink = json['backLink'];
+        if (backLink is String) {
+          // Search from matching UUID in instances instead.
+          for (var cardFace in cardFaces) {
+            if (cardFace.uuid == backLink) {
+              back = cardFace;
+              break;
+            }
+          }
+        } else {
+          back = json['back'] == null
+              ? null
+              : CardFace.fromJson(json['back'], isLinkedCardFace: false);
+        }
       }
     }
   }
@@ -223,9 +212,6 @@ class CardFace {
   late Rotation rotation;
   late bool useDefaultRotation;
 
-  /// Used to override project-wide synthesized bleed settings per card.
-  late PerCardSynthesizedBleed synthesizedBleed;
-
   /// Cards in a group can be automatically sorted by name.
   String? name;
 
@@ -240,7 +226,6 @@ class CardFace {
       this.contentCenterOffset,
       this.contentExpand,
       this.rotation,
-      this.synthesizedBleed,
       this.name,
       this.useDefaultContentCenterOffset,
       this.useDefaultContentExpand,
@@ -253,7 +238,6 @@ class CardFace {
         contentCenterOffset = Alignment.center,
         contentExpand = 1.0,
         rotation = Rotation.none,
-        synthesizedBleed = PerCardSynthesizedBleed.projectSettings,
         name = null,
         useDefaultContentCenterOffset = true,
         useDefaultContentExpand = true,
@@ -298,8 +282,6 @@ class CardFace {
         jsonToBoolOrFalse(json['useDefaultContentExpand']);
     rotation = Rotation.values.byName(json['rotation']);
     useDefaultRotation = jsonToBoolOrFalse(json['useDefaultRotation']);
-    synthesizedBleed =
-        PerCardSynthesizedBleed.values.byName(json['synthesizedBleed']);
     name = json['name'];
     uuid = json['uuid'] ?? Uuid().v4();
   }
@@ -313,7 +295,6 @@ class CardFace {
       'useDefaultContentExpand': useDefaultContentExpand,
       'rotation': rotation.name,
       'useDefaultRotation': useDefaultRotation,
-      'synthesizedBleed': synthesizedBleed.name,
       'name': name,
       'uuid': uuid,
     };
@@ -324,12 +305,6 @@ enum Rotation {
   none,
   clockwise90,
   counterClockwise90,
-}
-
-enum PerCardSynthesizedBleed {
-  projectSettings,
-  mirror,
-  none,
 }
 
 Alignment alignmentFromJson(Map<String, dynamic> json) {
