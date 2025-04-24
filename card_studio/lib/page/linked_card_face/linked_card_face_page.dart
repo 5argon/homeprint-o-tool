@@ -32,7 +32,7 @@ class LinkedCardFacePage extends StatelessWidget {
           ),
         );
 
-        final newCard = CardFace.empty();
+        final newCard = CardFace.emptyLinked();
         final newLinkedCardFaces = linkCardFaces;
         newLinkedCardFaces.add(newCard);
         onLinkedCardFacesChange(newLinkedCardFaces);
@@ -46,7 +46,8 @@ class LinkedCardFacePage extends StatelessWidget {
         HelpButton(title: "Linked Card Face", paragraphs: [
           "Normally a card in Cards page consists of 2 faces : The front and back face. Linked card face is a standalone card faces, neither front nor back face, and cannot be printed on its own. Any card's face can link to these linked card faces instead of having its own independent face. Doing so it is possible to update many card faces in the project at once by altering the linked card face.",
           "This feature is mainly used for card backs that are the same throughout the project. You can correct content area or edit a single source image for the change to propagate to all cards that are linked.",
-          "If you have linked a face here to something already, deleting it will cause the link to be broken and rendered an error instead."
+          "If you have linked a face here to something already, deleting it will cause the link to be broken and rendered an error instead.",
+          "Linked Card Face index 1 and 2 both receive a special quick assign button in the Cards tab. All other linked card faces have to be browsed from the dropdown inside the modal that edit each card's face.",
         ]),
       ],
     );

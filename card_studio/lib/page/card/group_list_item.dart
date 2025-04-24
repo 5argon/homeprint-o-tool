@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 import '../../core/card.dart';
+import 'import_from_folder_dialog.dart';
 
 class GroupListItem extends StatelessWidget {
   final bool includeMode;
@@ -87,56 +88,24 @@ class GroupListItem extends StatelessWidget {
     );
     final messenger = ScaffoldMessenger.of(context);
     final importFromFolderButton = ElevatedButton(
-      onPressed: () async {
-        final filePath = await FilePicker.platform.getDirectoryPath(
-          dialogTitle: "Import every files in the selected folder.",
-          initialDirectory: basePath,
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return ImportFromFolderDialog(
+              basePath: basePath,
+              linkedCardFaces: linkedCardFaces,
+              onImport: (importedCards) {
+                final newCardGroup = cardGroup;
+                newCardGroup.cards.addAll(importedCards);
+                onCardGroupChange(newCardGroup);
+                messenger.showSnackBar(SnackBar(
+                  content: Text("Imported ${importedCards.length} cards."),
+                ));
+              },
+            );
+          },
         );
-        if (filePath != null) {
-          if (!filePath.startsWith(basePath)) {
-            messenger.showSnackBar(SnackBar(
-              content: Text(
-                  "Cannot import this folder as it is outside of project's base path."),
-            ));
-            return;
-          }
-          final directory = Directory(filePath);
-          final entities = await directory.list().toList();
-          final extensions = [".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG"];
-          final absolutePaths =
-              entities.whereType<File>().map((e) => e.path).where((element) {
-            for (var ext in extensions) {
-              if (element.endsWith(ext)) {
-                return true;
-              }
-            }
-            return false;
-          }).toList();
-          CardFace? firstLinkedCardFace;
-          if (linkedCardFaces.isNotEmpty) {
-            firstLinkedCardFace = linkedCardFaces.first;
-          }
-          final relativePaths =
-              absolutePaths.map((e) => relative(e, from: basePath)).toList();
-          final cards = importCards(relativePaths, firstLinkedCardFace);
-          if (cards.isEmpty) {
-            messenger.hideCurrentSnackBar();
-            messenger.showSnackBar(SnackBar(
-              content:
-                  Text("Could not import any card from the selected folder."),
-            ));
-            return;
-          }
-          final newCardGroup = cardGroup;
-          for (var card in cards) {
-            newCardGroup.cards.add(card);
-          }
-          onCardGroupChange(newCardGroup);
-          messenger.hideCurrentSnackBar();
-          messenger.showSnackBar(SnackBar(
-            content: Text("Imported ${cards.length} cards from the folder."),
-          ));
-        }
       },
       child: const Text('Import From Folder'),
     );

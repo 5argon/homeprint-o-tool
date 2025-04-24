@@ -7,31 +7,31 @@ import '../../core/card.dart';
 import 'edit_card_face_dialog.dart';
 
 class GroupMemberListItemOneSide extends StatelessWidget {
-  final CardFace? cardEachSingle;
+  final CardFace? cardFace;
   final LinkedCardFaces linkedCardFaces;
   final bool isBack;
   final bool linked;
   final bool showEditButton;
   final String basePath;
-  final Function(CardFace? card) onCardEachSingleChange;
+  final Function(CardFace? card) onCardChange;
   final bool forLinkedCardFaceTab;
 
   GroupMemberListItemOneSide({
     super.key,
-    this.cardEachSingle,
+    this.cardFace,
     required this.linkedCardFaces,
     required this.isBack,
     required this.linked,
     required this.showEditButton,
     required this.basePath,
-    required this.onCardEachSingleChange,
+    required this.onCardChange,
     required this.forLinkedCardFaceTab,
   });
 
   @override
   Widget build(BuildContext context) {
     Widget linkedIndicator;
-    final cardEachSingle = this.cardEachSingle;
+    final cardFace = this.cardFace;
     final editButton = IconButton(
       tooltip: "Change this card face",
       onPressed: () async {
@@ -41,8 +41,8 @@ class GroupMemberListItemOneSide extends StatelessWidget {
             return EditCardFaceDialog(
               basePath: basePath,
               linkedCardFaces: linkedCardFaces,
-              onCardEachSingleChange: onCardEachSingleChange,
-              initialCard: cardEachSingle,
+              onCardEachSingleChange: onCardChange,
+              initialCard: cardFace,
             );
           },
         );
@@ -53,7 +53,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     final trashButton = IconButton(
         tooltip: "Remove",
         onPressed: () {
-          onCardEachSingleChange(null); // Assuming an empty card
+          onCardChange(null); // Assuming an empty card
         },
         icon: Icon(Icons.delete));
 
@@ -88,17 +88,17 @@ class GroupMemberListItemOneSide extends StatelessWidget {
 
     final linkedCardFaceOneAvailable = linkedCardFaces.isNotEmpty;
     final linkedCardFaceTwoAvailable = linkedCardFaces.length > 1;
-    final isCurrentlyLinkedCardFaceOne = cardEachSingle != null &&
+    final isCurrentlyLinkedCardFaceOne = cardFace != null &&
         linkedCardFaces.isNotEmpty &&
-        cardEachSingle == linkedCardFaces[0];
-    final isCurrentlyLinkedCardFaceTwo = cardEachSingle != null &&
+        cardFace == linkedCardFaces[0];
+    final isCurrentlyLinkedCardFaceTwo = cardFace != null &&
         linkedCardFaces.length > 1 &&
-        cardEachSingle == linkedCardFaces[1];
+        cardFace == linkedCardFaces[1];
     final linkedCardFaceOneButton = IconButton(
         tooltip: "Quick assign this card face to the linked card face #1.",
         onPressed: linkedCardFaceOneAvailable
             ? () async {
-                onCardEachSingleChange(linkedCardFaces[0]);
+                onCardChange(linkedCardFaces[0]);
               }
             : null,
         icon: createLinkIconWithNumber(1));
@@ -107,13 +107,13 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         tooltip: "Quick assign this card face to the linked card face #2.",
         onPressed: linkedCardFaceTwoAvailable
             ? () async {
-                onCardEachSingleChange(linkedCardFaces[1]);
+                onCardChange(linkedCardFaces[1]);
               }
             : null,
         icon: createLinkIconWithNumber(2));
-    if (cardEachSingle != null && cardEachSingle.isLinkedCardFace) {
+    if (cardFace != null && cardFace.isLinkedCardFace) {
       final index =
-          linkedCardFaces.indexWhere((element) => element == cardEachSingle);
+          linkedCardFaces.indexWhere((element) => element == cardFace);
       final linkedText = index == -1 ? "Linked" : "Linked #${index + 1}";
       linkedIndicator = Row(
         children: [
@@ -139,19 +139,19 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       linkedIndicator = Container();
     }
     final Text relativeFilePathText;
-    if (cardEachSingle == null) {
+    if (cardFace == null) {
       relativeFilePathText = Text(
         "(None)",
         style: TextStyle(fontSize: 12),
       );
-    } else if (cardEachSingle.relativeFilePath.isEmpty) {
+    } else if (cardFace.relativeFilePath.isEmpty) {
       relativeFilePathText = Text(
         "(Unassigned)",
         style: TextStyle(fontSize: 12),
       );
     } else {
       relativeFilePathText = Text(
-        cardEachSingle.relativeFilePath,
+        cardFace.relativeFilePath,
         style: TextStyle(fontSize: 12),
       );
     }
@@ -161,7 +161,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       child: Row(
         children: [
           showEditButton ? editButton : Container(),
-          showEditButton && cardEachSingle != null ? trashButton : Container(),
+          showEditButton && cardFace != null ? trashButton : Container(),
           showEditButton &&
                   isBack &&
                   linkedCardFaceOneAvailable &&

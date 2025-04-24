@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import '../../core/card.dart';
 import 'package:file_picker/file_picker.dart';
+import '../../core/form/linked_card_face_dropdown.dart';
 
 import '../../core/save_file.dart';
 
@@ -114,14 +115,14 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
     var linkedCardFaceTab = Center(
       child: widget.linkedCardFaces.isEmpty
           ? Text("You have not defined any linked card face yet.")
-          : DropdownButton<CardFace>(
-              isExpanded: true,
-              value: selectedCardFace,
-              hint: Text("Select a linked card face"),
-              items: dropdownItems,
-              onChanged: (CardFace? value) {
+          : LinkedCardFaceDropdown(
+              linkedCardFaces: widget.linkedCardFaces,
+              selectedValue: selectedCardFace,
+              onChanged: (value) {
                 setState(() {
                   selectedCardFace = value;
+                  tempFilePath =
+                      null; // Clear the file path when selecting a linked card face
                 });
               },
             ),

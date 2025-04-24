@@ -122,17 +122,18 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                         child: GroupMemberListItemOneSide(
                           isBack: false,
                           forLinkedCardFaceTab: true,
-                          cardEachSingle: widget.linkedCardFace,
+                          cardFace: widget.linkedCardFace,
                           linkedCardFaces: widget.linkedCardFaces,
                           linked: widget.linkedCardFace.isLinkedCardFace,
                           basePath: widget.basePath,
                           showEditButton: true,
-                          onCardEachSingleChange: (card) {
+                          onCardChange: (card) {
                             // Linked Card Face is only one side of a card,
                             // so we can't allow it to disappear on removing
                             // like normal double sided cards.
                             if (card == null) {
-                              widget.onLinkedCardFaceChange(CardFace.empty());
+                              widget.onLinkedCardFaceChange(
+                                  CardFace.emptyLinked());
                             } else {
                               widget.onLinkedCardFaceChange(card);
                             }

@@ -233,17 +233,23 @@ class CardFace {
       this.isLinkedCardFace)
       : uuid = Uuid().v4();
 
-  CardFace.empty()
-      : relativeFilePath = "",
-        contentCenterOffset = Alignment.center,
-        contentExpand = 1.0,
-        rotation = Rotation.none,
-        name = null,
-        useDefaultContentCenterOffset = true,
-        useDefaultContentExpand = true,
-        useDefaultRotation = true,
-        uuid = Uuid().v4(),
-        isLinkedCardFace = false;
+  CardFace.withRelativeFilePath(String relativeFilePath,
+      {bool isLinked = false})
+      : this(
+          relativeFilePath,
+          Alignment.center,
+          1.0,
+          Rotation.none,
+          null,
+          true,
+          true,
+          true,
+          isLinked,
+        );
+
+  CardFace.empty() : this.withRelativeFilePath("");
+
+  CardFace.emptyLinked() : this.withRelativeFilePath("", isLinked: true);
 
   bool isImageMissing(String baseDirectory) {
     final f = File(p.join(baseDirectory, relativeFilePath));

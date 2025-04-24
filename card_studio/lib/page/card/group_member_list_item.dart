@@ -153,12 +153,12 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                         child: GroupMemberListItemOneSide(
                           isBack: false,
                           forLinkedCardFaceTab: false,
-                          cardEachSingle: widget.card.front,
+                          cardFace: widget.card.front,
                           linkedCardFaces: widget.linkedCardFaces,
                           linked: widget.card.front?.isLinkedCardFace ?? false,
                           basePath: widget.basePath,
                           showEditButton: true,
-                          onCardEachSingleChange: (card) {
+                          onCardChange: (card) {
                             final newCardEach = widget.card;
                             newCardEach.front = card;
                             widget.onCardChange(newCardEach);
@@ -170,12 +170,12 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                         child: GroupMemberListItemOneSide(
                           isBack: true,
                           forLinkedCardFaceTab: false,
-                          cardEachSingle: widget.card.back,
+                          cardFace: widget.card.back,
                           linkedCardFaces: widget.linkedCardFaces,
                           linked: widget.card.back?.isLinkedCardFace ?? false,
                           basePath: widget.basePath,
                           showEditButton: true,
-                          onCardEachSingleChange: (card) {
+                          onCardChange: (card) {
                             final newCardEach = widget.card;
                             newCardEach.back = card;
                             widget.onCardChange(newCardEach);
