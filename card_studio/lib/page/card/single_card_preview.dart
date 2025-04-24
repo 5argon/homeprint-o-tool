@@ -7,36 +7,27 @@ import 'package:path/path.dart' as p;
 
 import '../../core/card.dart';
 
-class SingleCardPreview extends StatelessWidget {
+class SingleCardPreview extends StatefulWidget {
   final double bleedFactor;
   final String basePath;
   final SizePhysical cardSize;
-  final CardFace? cardEachSingle;
-  final bool instance;
-
-  Future<ImageDescriptor>? descriptorFuture;
-  late File file;
+  final CardFace? cardFace;
 
   SingleCardPreview({
     super.key,
     required this.bleedFactor,
     required this.cardSize,
     required this.basePath,
-    required this.cardEachSingle,
-    required this.instance,
-  }) {
-    final cardEachSingle = this.cardEachSingle;
-    if (cardEachSingle != null) {
-      final joinedPath = p.join(basePath, cardEachSingle.relativeFilePath);
-      final file = File(joinedPath);
-      this.file = file;
-      if (file.existsSync()) {
-        descriptorFuture = getDescriptor(file);
-      } else {
-        descriptorFuture = null;
-      }
-    }
-  }
+    required this.cardFace,
+  });
+
+  @override
+  State<SingleCardPreview> createState() => _SingleCardPreviewState();
+}
+
+class _SingleCardPreviewState extends State<SingleCardPreview> {
+  Future<ImageDescriptor>? descriptorFuture;
+  late File file;
 
   Future<ImageDescriptor> getDescriptor(File loadedFile) async {
     final bytes = await loadedFile.readAsBytes();
@@ -46,8 +37,23 @@ class SingleCardPreview extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+    final cardFace = widget.cardFace;
+    if (cardFace != null) {
+      final filePath = cardFace.relativeFilePath;
+      file = File(p.join(widget.basePath, filePath));
+      if (file.existsSync()) {
+        descriptorFuture = getDescriptor(file);
+      } else {
+        descriptorFuture = null;
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final cardEachSingle = this.cardEachSingle;
+    final cardEachSingle = this.widget.cardFace;
     if (cardEachSingle == null) {
       return Container();
     }
@@ -92,11 +98,11 @@ class SingleCardPreview extends StatelessWidget {
             double cardShapeWidth;
             double cardShapeHeight;
             if (cardEachSingle.rotation == Rotation.none) {
-              cardShapeWidth = cardSize.widthCm;
-              cardShapeHeight = cardSize.heightCm;
+              cardShapeWidth = widget.cardSize.widthCm;
+              cardShapeHeight = widget.cardSize.heightCm;
             } else {
-              cardShapeWidth = cardSize.heightCm;
-              cardShapeHeight = cardSize.widthCm;
+              cardShapeWidth = widget.cardSize.heightCm;
+              cardShapeHeight = widget.cardSize.widthCm;
             }
 
             // Fit card shape inside card in box.
@@ -112,8 +118,8 @@ class SingleCardPreview extends StatelessWidget {
               cardShapeInBoxHeight = cardInBoxHeight;
             }
 
-            cardShapeInBoxWidth = cardShapeInBoxWidth * bleedFactor;
-            cardShapeInBoxHeight = cardShapeInBoxHeight * bleedFactor;
+            cardShapeInBoxWidth = cardShapeInBoxWidth * widget.bleedFactor;
+            cardShapeInBoxHeight = cardShapeInBoxHeight * widget.bleedFactor;
 
             final image = Image.file(
               file,

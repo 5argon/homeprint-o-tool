@@ -101,8 +101,7 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                   cardSize: widget.cardSize,
                   bleedFactor: widget.instanceCardEachSingle
                       .effectiveContentExpand(widget.projectSettings),
-                  instance: widget.instanceCardEachSingle.isLinkedCardFace,
-                  cardEachSingle: widget.instanceCardEachSingle,
+                  cardFace: widget.instanceCardEachSingle,
                 )),
             SizedBox(width: 16),
             Expanded(
@@ -123,10 +122,10 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: false,
-                          instanceSetupMode: true,
+                          forLinkedCardFaceTab: true,
                           cardEachSingle: widget.instanceCardEachSingle,
-                          definedInstances: widget.definedInstances,
-                          instance:
+                          linkedCardFaces: widget.definedInstances,
+                          linked:
                               widget.instanceCardEachSingle.isLinkedCardFace,
                           basePath: widget.basePath,
                           showEditButton: true,

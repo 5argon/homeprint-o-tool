@@ -270,7 +270,7 @@ class GroupListItem extends StatelessWidget {
             ),
             SizedBox(width: 4),
             Text(
-              "${integrityCheckResult.missingFileCount} missing files",
+              "${integrityCheckResult.missingFileCount} missing file${integrityCheckResult.missingFileCount == 1 ? '' : 's'}",
               style: TextStyle(
                   color: Theme.of(context).colorScheme.error, fontSize: 12),
             ),

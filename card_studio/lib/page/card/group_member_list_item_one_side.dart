@@ -8,29 +8,29 @@ import 'edit_card_face_dialog.dart';
 
 class GroupMemberListItemOneSide extends StatelessWidget {
   final CardFace? cardEachSingle;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final bool isBack;
-  final bool instance;
+  final bool linked;
   final bool showEditButton;
   final String basePath;
   final Function(CardFace? card) onCardEachSingleChange;
-  final bool instanceSetupMode;
+  final bool forLinkedCardFaceTab;
 
   GroupMemberListItemOneSide({
     super.key,
     this.cardEachSingle,
-    required this.definedInstances,
+    required this.linkedCardFaces,
     required this.isBack,
-    required this.instance,
+    required this.linked,
     required this.showEditButton,
     required this.basePath,
     required this.onCardEachSingleChange,
-    required this.instanceSetupMode,
+    required this.forLinkedCardFaceTab,
   });
 
   @override
   Widget build(BuildContext context) {
-    Widget instanceMark;
+    Widget linkedIndicator;
     final cardEachSingle = this.cardEachSingle;
     final editButton = IconButton(
       tooltip: "Change this card face",
@@ -40,7 +40,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
           builder: (BuildContext context) {
             return EditCardFaceDialog(
               basePath: basePath,
-              linkedCardFaces: definedInstances,
+              linkedCardFaces: linkedCardFaces,
               onCardEachSingleChange: onCardEachSingleChange,
               initialCard: cardEachSingle,
             );
@@ -57,7 +57,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         },
         icon: Icon(Icons.delete));
 
-    Stack createInstanceIconWithNumber(int number) {
+    Stack createLinkIconWithNumber(int number) {
       return Stack(
         children: [
           Icon(Icons.link),
@@ -86,37 +86,37 @@ class GroupMemberListItemOneSide extends StatelessWidget {
       );
     }
 
-    final instanceOneAvailable = definedInstances.isNotEmpty;
-    final instanceTwoAvailable = definedInstances.length > 1;
-    final isCurrentlyInstanceOne = cardEachSingle != null &&
-        definedInstances.isNotEmpty &&
-        cardEachSingle == definedInstances[0];
-    final isCurrentlyInstanceTwo = cardEachSingle != null &&
-        definedInstances.length > 1 &&
-        cardEachSingle == definedInstances[1];
+    final linkedCardFaceOneAvailable = linkedCardFaces.isNotEmpty;
+    final linkedCardFaceTwoAvailable = linkedCardFaces.length > 1;
+    final isCurrentlyLinkedCardFaceOne = cardEachSingle != null &&
+        linkedCardFaces.isNotEmpty &&
+        cardEachSingle == linkedCardFaces[0];
+    final isCurrentlyLinkedCardFaceTwo = cardEachSingle != null &&
+        linkedCardFaces.length > 1 &&
+        cardEachSingle == linkedCardFaces[1];
     final instanceOneButton = IconButton(
         tooltip: "Quick assign this card face to the linked card face #1.",
-        onPressed: instanceOneAvailable
+        onPressed: linkedCardFaceOneAvailable
             ? () async {
-                onCardEachSingleChange(definedInstances[0]);
+                onCardEachSingleChange(linkedCardFaces[0]);
               }
             : null,
-        icon: createInstanceIconWithNumber(1));
+        icon: createLinkIconWithNumber(1));
 
-    final instanceTwoButton = IconButton(
+    final linkedCardFaceTwoButton = IconButton(
         tooltip: "Quick assign this card face to the linked card face #2.",
-        onPressed: instanceTwoAvailable
+        onPressed: linkedCardFaceTwoAvailable
             ? () async {
-                onCardEachSingleChange(definedInstances[1]);
+                onCardEachSingleChange(linkedCardFaces[1]);
               }
             : null,
-        icon: createInstanceIconWithNumber(2));
+        icon: createLinkIconWithNumber(2));
     if (cardEachSingle != null && cardEachSingle.isLinkedCardFace) {
       // Find index of this instance in definedInstances.
       final index =
-          definedInstances.indexWhere((element) => element == cardEachSingle);
+          linkedCardFaces.indexWhere((element) => element == cardEachSingle);
       final instanceText = index == -1 ? "Linked" : "Linked #${index + 1}";
-      instanceMark = Row(
+      linkedIndicator = Row(
         children: [
           Container(
             color: Theme.of(context).colorScheme.primary,
@@ -137,7 +137,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         ],
       );
     } else {
-      instanceMark = Container();
+      linkedIndicator = Container();
     }
     final Text relativeFilePathText;
     if (cardEachSingle == null) {
@@ -165,22 +165,22 @@ class GroupMemberListItemOneSide extends StatelessWidget {
           showEditButton && cardEachSingle != null ? trashButton : Container(),
           showEditButton &&
                   isBack &&
-                  instanceOneAvailable &&
-                  !isCurrentlyInstanceOne
+                  linkedCardFaceOneAvailable &&
+                  !isCurrentlyLinkedCardFaceOne
               ? instanceOneButton
               : Container(),
           showEditButton &&
                   isBack &&
-                  instanceTwoAvailable &&
-                  !isCurrentlyInstanceTwo
-              ? instanceTwoButton
+                  linkedCardFaceTwoAvailable &&
+                  !isCurrentlyLinkedCardFaceTwo
+              ? linkedCardFaceTwoButton
               : Container(),
           SizedBox(width: 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                !instanceSetupMode
+                !forLinkedCardFaceTab
                     ? Text(isBack ? "Back Face" : "Front Face",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -188,7 +188,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
                     : Container(),
                 Row(
                   children: [
-                    instanceMark,
+                    linkedIndicator,
                     Expanded(child: relativeFilePathText),
                   ],
                 ),

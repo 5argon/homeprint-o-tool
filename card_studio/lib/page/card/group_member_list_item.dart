@@ -114,8 +114,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   bleedFactor: widget.card.front
                           ?.effectiveContentExpand(widget.projectSettings) ??
                       1.0,
-                  instance: widget.card.front?.isLinkedCardFace ?? false,
-                  cardEachSingle: widget.card.front,
+                  cardFace: widget.card.front,
                 )),
             SizedBox(width: 4),
             SizedBox(
@@ -127,8 +126,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                   bleedFactor: widget.card.back
                           ?.effectiveContentExpand(widget.projectSettings) ??
                       1.0,
-                  instance: widget.card.back?.isLinkedCardFace ?? false,
-                  cardEachSingle: widget.card.back,
+                  cardFace: widget.card.back,
                 )),
             SizedBox(width: 16),
             Expanded(
@@ -154,11 +152,10 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: false,
-                          instanceSetupMode: false,
+                          forLinkedCardFaceTab: false,
                           cardEachSingle: widget.card.front,
-                          definedInstances: widget.linkedCardFaces,
-                          instance:
-                              widget.card.front?.isLinkedCardFace ?? false,
+                          linkedCardFaces: widget.linkedCardFaces,
+                          linked: widget.card.front?.isLinkedCardFace ?? false,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {
@@ -172,10 +169,10 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: true,
-                          instanceSetupMode: false,
+                          forLinkedCardFaceTab: false,
                           cardEachSingle: widget.card.back,
-                          definedInstances: widget.linkedCardFaces,
-                          instance: widget.card.back?.isLinkedCardFace ?? false,
+                          linkedCardFaces: widget.linkedCardFaces,
+                          linked: widget.card.back?.isLinkedCardFace ?? false,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {

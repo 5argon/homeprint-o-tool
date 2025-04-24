@@ -49,8 +49,7 @@ class PickedOneCard extends StatelessWidget {
                   bleedFactor:
                       cardEach.front?.effectiveContentExpand(projectSettings) ??
                           1.0,
-                  instance: cardEach.front?.isLinkedCardFace ?? false,
-                  cardEachSingle: cardEach.front,
+                  cardFace: cardEach.front,
                 )),
             SizedBox(width: 4),
             SizedBox(
@@ -62,8 +61,7 @@ class PickedOneCard extends StatelessWidget {
                   bleedFactor:
                       cardEach.back?.effectiveContentExpand(projectSettings) ??
                           1.0,
-                  instance: cardEach.back?.isLinkedCardFace ?? false,
-                  cardEachSingle: cardEach.back,
+                  cardFace: cardEach.back,
                 )),
             SizedBox(width: 16),
             Expanded(
@@ -83,10 +81,10 @@ class PickedOneCard extends StatelessWidget {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: false,
-                          instanceSetupMode: false,
+                          forLinkedCardFaceTab: false,
                           cardEachSingle: cardEach.front,
-                          definedInstances: definedInstances,
-                          instance: cardEach.front?.isLinkedCardFace ?? false,
+                          linkedCardFaces: definedInstances,
+                          linked: cardEach.front?.isLinkedCardFace ?? false,
                           showEditButton: false,
                           basePath: basePath,
                           onCardEachSingleChange: (card) {},
@@ -96,10 +94,10 @@ class PickedOneCard extends StatelessWidget {
                       Expanded(
                         child: GroupMemberListItemOneSide(
                           isBack: true,
-                          instanceSetupMode: false,
+                          forLinkedCardFaceTab: false,
                           cardEachSingle: cardEach.back,
-                          definedInstances: definedInstances,
-                          instance: cardEach.back?.isLinkedCardFace ?? false,
+                          linkedCardFaces: definedInstances,
+                          linked: cardEach.back?.isLinkedCardFace ?? false,
                           showEditButton: false,
                           basePath: basePath,
                           onCardEachSingleChange: (card) {},
