@@ -9,12 +9,12 @@ import '../../core/card.dart';
 
 class LinkedCardFaceListItem extends StatefulWidget {
   final String basePath;
-  final CardEachSingle instanceCardEachSingle;
+  final CardFace instanceCardEachSingle;
   final SizePhysical cardSize;
   final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;
   final int order;
-  final Function(CardEachSingle card) onInstanceCardChange;
+  final Function(CardFace card) onInstanceCardChange;
   final Function() onDelete;
 
   LinkedCardFaceListItem({
@@ -101,7 +101,7 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                   cardSize: widget.cardSize,
                   bleedFactor: widget.instanceCardEachSingle
                       .effectiveContentExpand(widget.projectSettings),
-                  instance: widget.instanceCardEachSingle.isInstance,
+                  instance: widget.instanceCardEachSingle.isLinkedCardFace,
                   cardEachSingle: widget.instanceCardEachSingle,
                 )),
             SizedBox(width: 16),
@@ -126,7 +126,8 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                           instanceSetupMode: true,
                           cardEachSingle: widget.instanceCardEachSingle,
                           definedInstances: widget.definedInstances,
-                          instance: widget.instanceCardEachSingle.isInstance,
+                          instance:
+                              widget.instanceCardEachSingle.isLinkedCardFace,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {
@@ -134,8 +135,7 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                             // so we can't allow it to disappear on removing
                             // like normal double sided cards.
                             if (card == null) {
-                              widget
-                                  .onInstanceCardChange(CardEachSingle.empty());
+                              widget.onInstanceCardChange(CardFace.empty());
                             } else {
                               widget.onInstanceCardChange(card);
                             }

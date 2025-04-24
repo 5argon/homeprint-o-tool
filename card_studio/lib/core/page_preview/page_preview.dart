@@ -133,7 +133,7 @@ class PagePreview extends StatelessWidget {
 
       List<Widget> realCards = [];
       for (var j = 0; j < horizontalCards; j++) {
-        CardEachSingle? card;
+        CardFace? card;
         if (cards.length > i && cards[i].length > j) {
           card = cards[i][j];
         }

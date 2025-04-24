@@ -30,7 +30,7 @@ bool frontSideOnlyIncludes(Includes includes) {
 /// CardGroup, CardEach or a page break. Array of this became the output.
 class IncludeItem {
   CardGroup? cardGroup;
-  CardEach? cardEach;
+  DuplexCard? cardEach;
 
   bool isGroup() {
     return cardGroup != null;
@@ -49,10 +49,10 @@ class IncludeItem {
         amount = 0,
         pageBreak = true;
 
-  List<CardEach> linearize() {
+  List<DuplexCard> linearize() {
     final cardGroup = this.cardGroup;
     final cardEach = this.cardEach;
-    final result = <CardEach>[];
+    final result = <DuplexCard>[];
     if (cardGroup != null) {
       final linearized = cardGroup.linearize();
       for (var i = 0; i < amount; i++) {

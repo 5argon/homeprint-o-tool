@@ -10,7 +10,7 @@ import '../../core/card.dart';
 
 class PickedOneCard extends StatelessWidget {
   final String basePath;
-  final CardEach cardEach;
+  final DuplexCard cardEach;
   final SizePhysical cardSize;
   final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;
@@ -49,7 +49,7 @@ class PickedOneCard extends StatelessWidget {
                   bleedFactor:
                       cardEach.front?.effectiveContentExpand(projectSettings) ??
                           1.0,
-                  instance: cardEach.front?.isInstance ?? false,
+                  instance: cardEach.front?.isLinkedCardFace ?? false,
                   cardEachSingle: cardEach.front,
                 )),
             SizedBox(width: 4),
@@ -62,7 +62,7 @@ class PickedOneCard extends StatelessWidget {
                   bleedFactor:
                       cardEach.back?.effectiveContentExpand(projectSettings) ??
                           1.0,
-                  instance: cardEach.back?.isInstance ?? false,
+                  instance: cardEach.back?.isLinkedCardFace ?? false,
                   cardEachSingle: cardEach.back,
                 )),
             SizedBox(width: 16),
@@ -86,7 +86,7 @@ class PickedOneCard extends StatelessWidget {
                           instanceSetupMode: false,
                           cardEachSingle: cardEach.front,
                           definedInstances: definedInstances,
-                          instance: cardEach.front?.isInstance ?? false,
+                          instance: cardEach.front?.isLinkedCardFace ?? false,
                           showEditButton: false,
                           basePath: basePath,
                           onCardEachSingleChange: (card) {},
@@ -99,7 +99,7 @@ class PickedOneCard extends StatelessWidget {
                           instanceSetupMode: false,
                           cardEachSingle: cardEach.back,
                           definedInstances: definedInstances,
-                          instance: cardEach.back?.isInstance ?? false,
+                          instance: cardEach.back?.isLinkedCardFace ?? false,
                           showEditButton: false,
                           basePath: basePath,
                           onCardEachSingleChange: (card) {},

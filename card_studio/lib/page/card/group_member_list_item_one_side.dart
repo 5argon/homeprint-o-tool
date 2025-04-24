@@ -7,13 +7,13 @@ import '../../core/card.dart';
 import 'edit_card_face_dialog.dart';
 
 class GroupMemberListItemOneSide extends StatelessWidget {
-  final CardEachSingle? cardEachSingle;
+  final CardFace? cardEachSingle;
   final LinkedCardFaces definedInstances;
   final bool isBack;
   final bool instance;
   final bool showEditButton;
   final String basePath;
-  final Function(CardEachSingle? card) onCardEachSingleChange;
+  final Function(CardFace? card) onCardEachSingleChange;
   final bool instanceSetupMode;
 
   GroupMemberListItemOneSide({
@@ -40,7 +40,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
           builder: (BuildContext context) {
             return EditCardFaceDialog(
               basePath: basePath,
-              definedInstances: definedInstances,
+              linkedCardFaces: definedInstances,
               onCardEachSingleChange: onCardEachSingleChange,
               initialCard: cardEachSingle,
             );
@@ -111,7 +111,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
               }
             : null,
         icon: createInstanceIconWithNumber(2));
-    if (cardEachSingle != null && cardEachSingle.isInstance) {
+    if (cardEachSingle != null && cardEachSingle.isLinkedCardFace) {
       // Find index of this instance in definedInstances.
       final index =
           definedInstances.indexWhere((element) => element == cardEachSingle);

@@ -75,13 +75,13 @@ DecodedCardName decodeCardName(String path) {
   return DecodedCardName(path, justFileName, amount, backside);
 }
 
-List<CardEach> importCards(
-    List<String> paths, CardEachSingle? missingSideInstance) {
-  final map = <String, CardEach>{};
+List<DuplexCard> importCards(
+    List<String> paths, CardFace? missingFaceReplacement) {
+  final map = <String, DuplexCard>{};
   for (var path in paths) {
     final decoded = decodeCardName(path);
     final relativePath = decoded.path;
-    final decodedCardEachSingle = CardEachSingle(
+    final decodedCardFace = CardFace(
         relativePath,
         Alignment.center,
         1.0,
@@ -95,17 +95,17 @@ List<CardEach> importCards(
     map.update(decoded.name, (card) {
       card.amount = decoded.amount;
       if (decoded.backside) {
-        card.back = decodedCardEachSingle;
+        card.back = decodedCardFace;
       } else {
-        card.front = decodedCardEachSingle;
+        card.front = decodedCardFace;
       }
       return card;
     }, ifAbsent: () {
       if (decoded.backside) {
-        return CardEach(missingSideInstance, decodedCardEachSingle,
+        return DuplexCard(missingFaceReplacement, decodedCardFace,
             decoded.amount, decoded.name);
       } else {
-        return CardEach(decodedCardEachSingle, missingSideInstance,
+        return DuplexCard(decodedCardFace, missingFaceReplacement,
             decoded.amount, decoded.name);
       }
     });

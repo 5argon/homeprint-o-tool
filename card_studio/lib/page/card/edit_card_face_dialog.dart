@@ -7,25 +7,25 @@ import '../../core/save_file.dart';
 
 class EditCardFaceDialog extends StatefulWidget {
   final String basePath;
-  final LinkedCardFaces definedInstances;
-  final Function(CardEachSingle? card) onCardEachSingleChange;
-  final CardEachSingle? initialCard; // New parameter for initial value
+  final LinkedCardFaces linkedCardFaces;
+  final Function(CardFace? card) onCardEachSingleChange;
+  final CardFace? initialCard; // New parameter for initial value
 
   const EditCardFaceDialog({
     super.key,
     required this.basePath,
-    required this.definedInstances,
+    required this.linkedCardFaces,
     required this.onCardEachSingleChange,
     this.initialCard, // Optional initial value
   });
 
   @override
-  _EditCardFaceDialogState createState() => _EditCardFaceDialogState();
+  EditCardFaceDialogState createState() => EditCardFaceDialogState();
 }
 
-class _EditCardFaceDialogState extends State<EditCardFaceDialog>
+class EditCardFaceDialogState extends State<EditCardFaceDialog>
     with SingleTickerProviderStateMixin {
-  CardEachSingle? selectedInstance;
+  CardFace? selectedCardFace;
   late TabController _tabController;
   String? initialFilePath;
   String? tempFilePath; // Temporary file path for the File tab
@@ -40,10 +40,10 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
       if (widget.initialCard!.relativeFilePath.isNotEmpty) {
         _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
         initialFilePath = widget.initialCard!.relativeFilePath;
-        tempFilePath = initialFilePath; // Initialize tempFilePath
+        tempFilePath = initialFilePath;
       } else {
         _tabController = TabController(length: 2, vsync: this, initialIndex: 1);
-        selectedInstance = widget.initialCard;
+        selectedCardFace = widget.initialCard;
       }
     } else {
       _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
@@ -55,50 +55,48 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
 
   @override
   void dispose() {
-    filePathController
-        .dispose(); // Dispose the controller when the widget is destroyed
+    filePathController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<DropdownMenuItem<CardEachSingle>> dropdownItems =
-        widget.definedInstances.asMap().entries.map((entry) {
-      final int index = entry.key + 1; // 1-based index
-      final CardEachSingle instance = entry.value;
-      final String instanceName = instance.name ?? "";
-      final String displayInstanceName;
-      if (instanceName.isNotEmpty) {
-        displayInstanceName = instanceName;
-      } else if (instance.relativeFilePath.isNotEmpty) {
-        displayInstanceName = p.basename(instance.relativeFilePath);
+    final List<DropdownMenuItem<CardFace>> dropdownItems =
+        widget.linkedCardFaces.asMap().entries.map((entry) {
+      final int index = entry.key + 1; // Start from 1 for display
+      final CardFace linkedCardFace = entry.value;
+      final String linkedCardFaceName = linkedCardFace.name ?? "";
+      final String displayLinkedCardFaceName;
+      if (linkedCardFaceName.isNotEmpty) {
+        displayLinkedCardFaceName = linkedCardFaceName;
+      } else if (linkedCardFace.relativeFilePath.isNotEmpty) {
+        displayLinkedCardFaceName = p.basename(linkedCardFace.relativeFilePath);
       } else {
-        displayInstanceName = "#$index: Unnamed Linked Card Face";
+        displayLinkedCardFaceName = "#$index: Unnamed Linked Card Face";
       }
-      return DropdownMenuItem<CardEachSingle>(
-        value: instance,
-        child: Text(displayInstanceName),
+      return DropdownMenuItem<CardFace>(
+        value: linkedCardFace,
+        child: Text(displayLinkedCardFaceName),
       );
     }).toList();
 
     var relativeFilePathTab = Center(
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Center vertically
-        crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            tempFilePath ??
-                "(No file selected)", // Display the file path or a placeholder
+            tempFilePath ?? "(No file selected)",
             style: TextStyle(fontSize: 14),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 8), // Add spacing between the text and the button
+          SizedBox(height: 8),
           ElevatedButton(
             onPressed: () async {
               final path = await pickRelativePath(widget.basePath);
               if (path != null) {
                 setState(() {
-                  tempFilePath = path; // Update tempFilePath
+                  tempFilePath = path;
                 });
               }
             },
@@ -108,17 +106,17 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
       ),
     );
 
-    var instancesTab = Center(
-      child: widget.definedInstances.isEmpty
+    var linkedCardFaceTab = Center(
+      child: widget.linkedCardFaces.isEmpty
           ? Text("You have not defined any linked card face yet.")
-          : DropdownButton<CardEachSingle>(
+          : DropdownButton<CardFace>(
               isExpanded: true,
-              value: selectedInstance,
+              value: selectedCardFace,
               hint: Text("Select a linked card face"),
               items: dropdownItems,
-              onChanged: (CardEachSingle? value) {
+              onChanged: (CardFace? value) {
                 setState(() {
-                  selectedInstance = value;
+                  selectedCardFace = value;
                 });
               },
             ),
@@ -145,10 +143,8 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    // Tab 1: Relative File Path
                     relativeFilePathTab,
-                    // Tab 2: Instances
-                    instancesTab,
+                    linkedCardFaceTab,
                   ],
                 ),
               ),
@@ -165,7 +161,7 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
           onPressed: () {
             if (_tabController.index == 0 && tempFilePath != null) {
               // Commit changes only when OK is pressed
-              final newCard = CardEachSingle(
+              final newCard = CardFace(
                 tempFilePath!,
                 Alignment.center,
                 1,
@@ -178,8 +174,8 @@ class _EditCardFaceDialogState extends State<EditCardFaceDialog>
                 false,
               );
               widget.onCardEachSingleChange(newCard);
-            } else if (_tabController.index == 1 && selectedInstance != null) {
-              widget.onCardEachSingleChange(selectedInstance);
+            } else if (_tabController.index == 1 && selectedCardFace != null) {
+              widget.onCardEachSingleChange(selectedCardFace);
             }
             Navigator.of(context).pop();
           },

@@ -58,7 +58,7 @@ class CardArea extends StatelessWidget {
 
   final String? baseDirectory;
   final ProjectSettings projectSettings;
-  final CardEachSingle? card;
+  final CardFace? card;
   final SizePhysical cardSize;
   final bool layoutMode;
   final bool previewCutLine;

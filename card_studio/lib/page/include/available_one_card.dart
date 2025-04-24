@@ -10,7 +10,7 @@ import 'count_number_in_circle.dart';
 
 class AvailabeOneCard extends StatelessWidget {
   final String basePath;
-  final CardEach cardEach;
+  final DuplexCard cardEach;
   final SizePhysical cardSize;
   final LinkedCardFaces definedInstances;
   final ProjectSettings projectSettings;

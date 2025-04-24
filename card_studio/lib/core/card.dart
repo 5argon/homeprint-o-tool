@@ -15,12 +15,12 @@ class CardGroupCheckIntegrityResult {
 
 class CardGroup {
   String? name;
-  late List<CardEach> cards;
+  late List<DuplexCard> cards;
   String id = Uuid().v4();
   CardGroup(this.cards, this.name);
 
-  List<CardEach> linearize() {
-    final result = <CardEach>[];
+  List<DuplexCard> linearize() {
+    final result = <DuplexCard>[];
     for (var card in cards) {
       result.addAll(card.linearize());
     }
@@ -49,30 +49,29 @@ class CardGroup {
   }
 
   CardGroup copy() {
-    final newCards = <CardEach>[];
+    final newCards = <DuplexCard>[];
     for (var card in cards) {
       newCards.add(card.copy());
     }
     return CardGroup(newCards, name);
   }
 
-  CardGroup.fromJson(
-      Map<String, dynamic> json, List<CardEachSingle> instances) {
+  CardGroup.fromJson(Map<String, dynamic> json, List<CardFace> cardFaces) {
     name = json['name'];
     cards = [];
     for (var card in json['cards']) {
-      cards.add(CardEach.fromJson(card, instances));
+      cards.add(DuplexCard.fromJson(card, cardFaces));
     }
   }
 
-  Map<String, dynamic> toJson(List<CardEachSingle> instances) {
+  Map<String, dynamic> toJson(List<CardFace> cardFaces) {
     return {
       'name': name,
-      'cards': cards.map((e) => e.toJson(instances)).toList(),
+      'cards': cards.map((e) => e.toJson(cardFaces)).toList(),
     };
   }
 
-  /// How many cards are in this group.
+  /// Count to the amount of each card in this group.
   int count() {
     var total = 0;
     for (var card in cards) {
@@ -86,61 +85,96 @@ class CardGroup {
   }
 }
 
-class CardEach {
-  CardEachSingle? front;
-  CardEachSingle? back;
+class DuplexCard {
+  CardFace? front;
+  CardFace? back;
 
   /// On including this card as a group, automatically duplicates itself by this many count.
   /// Individual add will not be affected.
   late int amount;
   String? name;
 
-  CardEach(this.front, this.back, this.amount, this.name);
+  DuplexCard(this.front, this.back, this.amount, this.name);
 
-  List<CardEach> linearize() {
+  List<DuplexCard> linearize() {
     return List.filled(amount, this);
   }
 
-  CardEach copy() {
-    return CardEach(front, back, amount, name);
+  DuplexCard copy() {
+    return DuplexCard(front, back, amount, name);
   }
 
-  CardEach.fromJson(Map<String, dynamic> json, List<CardEachSingle> instances) {
+  DuplexCard.fromJson(Map<String, dynamic> json, List<CardFace> cardFaces) {
     amount = json['amount'] ?? 1;
     name = json['name'] ?? "";
 
-    final frontInstance = json['frontInstance'];
-    if (frontInstance is String) {
-      // Search from matching UUID in instances instead.
-      for (var instance in instances) {
-        if (instance.uuid == frontInstance) {
-          front = instance;
-          break;
+    {
+      final frontInstance = json['frontInstance'];
+      if (frontInstance is String) {
+        for (var instance in cardFaces) {
+          if (instance.uuid == frontInstance) {
+            front = instance;
+            break;
+          }
         }
+      } else {
+        front = json['front'] == null
+            ? null
+            : CardFace.fromJson(json['front'], isLinkedCardFace: false);
       }
-    } else {
-      front = json['front'] == null
-          ? null
-          : CardEachSingle.fromJson(json['front'], isInstance: false);
+    }
+    {
+      final frontLink = json['frontLink'];
+      if (frontLink is String) {
+        for (var cardFace in cardFaces) {
+          if (cardFace.uuid == frontLink) {
+            front = cardFace;
+            break;
+          }
+        }
+      } else {
+        front = json['front'] == null
+            ? null
+            : CardFace.fromJson(json['front'], isLinkedCardFace: false);
+      }
     }
 
-    final backInstance = json['backInstance'];
-    if (backInstance is String) {
-      // Search from matching UUID in instances instead.
-      for (var instance in instances) {
-        if (instance.uuid == backInstance) {
-          back = instance;
-          break;
+    {
+      final backInstance = json['backInstance'];
+      if (backInstance is String) {
+        // Search from matching UUID in instances instead.
+        for (var instance in cardFaces) {
+          if (instance.uuid == backInstance) {
+            back = instance;
+            break;
+          }
         }
+      } else {
+        back = json['back'] == null
+            ? null
+            : CardFace.fromJson(json['back'], isLinkedCardFace: false);
       }
-    } else {
-      back = json['back'] == null
-          ? null
-          : CardEachSingle.fromJson(json['back'], isInstance: false);
+    }
+
+    {
+      final backLink = json['backLink'];
+      if (backLink is String) {
+        // Search from matching UUID in instances instead.
+        for (var cardFace in cardFaces) {
+          if (cardFace.uuid == backLink) {
+            back = cardFace;
+            break;
+          }
+        }
+      } else {
+        back = json['back'] == null
+            ? null
+            : CardFace.fromJson(json['back'], isLinkedCardFace: false);
+      }
     }
   }
 
-  Map<String, dynamic> toJson(List<CardEachSingle> instances) {
+  Map<String, dynamic> toJson(List<CardFace> cardFaces) {
     Map<String, dynamic> writeObject = {};
     writeObject['amount'] = amount;
     writeObject['name'] = name;
@@ -148,14 +182,14 @@ class CardEach {
     // If found, write just the UUID instead.
     var foundFront = false;
     var foundBack = false;
-    for (var instance in instances) {
-      if (!foundFront && identical(instance, front)) {
-        writeObject['frontInstance'] = instance.uuid;
+    for (var cardFace in cardFaces) {
+      if (!foundFront && identical(cardFace, front)) {
+        writeObject['frontLink'] = cardFace.uuid;
         foundFront = true;
         break;
       }
-      if (!foundBack && identical(instance, back)) {
-        writeObject['backInstance'] = instance.uuid;
+      if (!foundBack && identical(cardFace, back)) {
+        writeObject['backLink'] = cardFace.uuid;
         foundBack = true;
         break;
       }
@@ -170,7 +204,7 @@ class CardEach {
   }
 }
 
-class CardEachSingle {
+class CardFace {
   /// Relative to project's base directory. Not starting with a slash.
   late String relativeFilePath;
 
@@ -180,6 +214,8 @@ class CardEachSingle {
   /// From 0.0 to 1.0. At 1.0, expand from [contentCenterOffset] until one side
   /// of the card's shape (in project settings) touches any edge.
   late double contentExpand;
+
+  /// Ignore [contentExpand] and use the default value from project settings.
   late bool useDefaultContentExpand;
 
   /// Rotation to apply to make this card match with project's card size.
@@ -190,16 +226,16 @@ class CardEachSingle {
   /// Used to override project-wide synthesized bleed settings per card.
   late PerCardSynthesizedBleed synthesizedBleed;
 
-  /// Optional name but recommended for instances.
   /// Cards in a group can be automatically sorted by name.
   String? name;
 
-  /// In serialized JSON, card that use instances will be linked by this UUID.
+  /// In serialized JSON, card that use links will be linked by this UUID.
   late String uuid;
 
-  late bool isInstance;
+  /// This means this object is defined separately in the Linked Card Face tab.
+  late bool isLinkedCardFace;
 
-  CardEachSingle(
+  CardFace(
       this.relativeFilePath,
       this.contentCenterOffset,
       this.contentExpand,
@@ -209,10 +245,10 @@ class CardEachSingle {
       this.useDefaultContentCenterOffset,
       this.useDefaultContentExpand,
       this.useDefaultRotation,
-      this.isInstance)
+      this.isLinkedCardFace)
       : uuid = Uuid().v4();
 
-  CardEachSingle.empty()
+  CardFace.empty()
       : relativeFilePath = "",
         contentCenterOffset = Alignment.center,
         contentExpand = 1.0,
@@ -223,7 +259,7 @@ class CardEachSingle {
         useDefaultContentExpand = true,
         useDefaultRotation = true,
         uuid = Uuid().v4(),
-        isInstance = false;
+        isLinkedCardFace = false;
 
   bool isImageMissing(String baseDirectory) {
     final f = File(p.join(baseDirectory, relativeFilePath));
@@ -251,8 +287,8 @@ class CardEachSingle {
     return rotation;
   }
 
-  CardEachSingle.fromJson(Map<String, dynamic> json,
-      {this.isInstance = false}) {
+  CardFace.fromJson(Map<String, dynamic> json,
+      {this.isLinkedCardFace = false}) {
     relativeFilePath = json['relativeFilePath'];
     contentCenterOffset = alignmentFromJson(json['contentCenterOffset']);
     useDefaultContentCenterOffset =

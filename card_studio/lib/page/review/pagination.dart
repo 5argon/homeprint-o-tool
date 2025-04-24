@@ -34,7 +34,7 @@ CardsPagination calculatePagination(Includes includes, LayoutData layoutData,
 }
 
 /// Card can be blank on one side or even both sides. Use null for that.
-typedef RowColCards = List<List<CardEachSingle?>>;
+typedef RowColCards = List<List<CardFace?>>;
 
 class CardsAtPage {
   RowColCards front;
@@ -84,8 +84,8 @@ RowColCards distributeRowCol(
     int page,
     int rows,
     int cols,
-    List<CardEachSingle?> cards,
-    List<CardEachSingle?> skipCards,
+    List<CardFace?> cards,
+    List<CardFace?> skipCards,
     BackArrangement backStrategy,
     List<int> skips) {
   RowColCards allRows = [];
@@ -104,7 +104,7 @@ RowColCards distributeRowCol(
     } else {
       target = v % cols;
     }
-    final CardEachSingle? cardToAdd;
+    final CardFace? cardToAdd;
     final isSkip = skips.contains(v + 1);
     if (isSkip) {
       if (skipCards.isNotEmpty) {

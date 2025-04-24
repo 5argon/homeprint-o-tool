@@ -9,23 +9,23 @@ import '../../core/card.dart';
 
 class GroupMemberListItem extends StatefulWidget {
   final String basePath;
-  final CardEach cardEach;
+  final DuplexCard card;
   final SizePhysical cardSize;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final ProjectSettings projectSettings;
   final int order;
-  final Function(CardEach card) onCardEachChange;
+  final Function(DuplexCard card) onCardChange;
   final Function() onDelete;
 
   GroupMemberListItem({
     super.key,
     required this.basePath,
-    required this.cardEach,
+    required this.card,
     required this.cardSize,
-    required this.definedInstances,
+    required this.linkedCardFaces,
     required this.projectSettings,
     required this.order,
-    required this.onCardEachChange,
+    required this.onCardChange,
     required this.onDelete,
   });
 
@@ -39,15 +39,14 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
   @override
   void initState() {
     super.initState();
-    _cardNameController =
-        TextEditingController(text: widget.cardEach.name ?? "");
+    _cardNameController = TextEditingController(text: widget.card.name ?? "");
   }
 
   @override
   void didUpdateWidget(covariant GroupMemberListItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.cardEach.name != widget.cardEach.name) {
-      _cardNameController.text = widget.cardEach.name ?? "";
+    if (oldWidget.card.name != widget.card.name) {
+      _cardNameController.text = widget.card.name ?? "";
     }
   }
 
@@ -72,22 +71,22 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
         labelText: "Card Name",
       ),
       onChanged: (value) {
-        final newCardEach = widget.cardEach;
+        final newCardEach = widget.card;
         newCardEach.name = value;
-        widget.onCardEachChange(newCardEach);
+        widget.onCardChange(newCardEach);
       },
     );
     final quantityBox = TextFormField(
-      initialValue: widget.cardEach.amount.toString(),
+      initialValue: widget.card.amount.toString(),
       decoration: InputDecoration(
         labelText: "Copies",
       ),
       onChanged: (value) {
-        final newCardEach = widget.cardEach;
+        final newCardEach = widget.card;
         final tryParsed = int.tryParse(value);
         if (tryParsed != null) {
           newCardEach.amount = tryParsed;
-          widget.onCardEachChange(newCardEach);
+          widget.onCardChange(newCardEach);
         }
       },
     );
@@ -112,11 +111,11 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 child: SingleCardPreview(
                   basePath: widget.basePath,
                   cardSize: widget.cardSize,
-                  bleedFactor: widget.cardEach.front
+                  bleedFactor: widget.card.front
                           ?.effectiveContentExpand(widget.projectSettings) ??
                       1.0,
-                  instance: widget.cardEach.front?.isInstance ?? false,
-                  cardEachSingle: widget.cardEach.front,
+                  instance: widget.card.front?.isLinkedCardFace ?? false,
+                  cardEachSingle: widget.card.front,
                 )),
             SizedBox(width: 4),
             SizedBox(
@@ -125,11 +124,11 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 child: SingleCardPreview(
                   basePath: widget.basePath,
                   cardSize: widget.cardSize,
-                  bleedFactor: widget.cardEach.back
+                  bleedFactor: widget.card.back
                           ?.effectiveContentExpand(widget.projectSettings) ??
                       1.0,
-                  instance: widget.cardEach.back?.isInstance ?? false,
-                  cardEachSingle: widget.cardEach.back,
+                  instance: widget.card.back?.isLinkedCardFace ?? false,
+                  cardEachSingle: widget.card.back,
                 )),
             SizedBox(width: 16),
             Expanded(
@@ -156,15 +155,16 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                         child: GroupMemberListItemOneSide(
                           isBack: false,
                           instanceSetupMode: false,
-                          cardEachSingle: widget.cardEach.front,
-                          definedInstances: widget.definedInstances,
-                          instance: widget.cardEach.front?.isInstance ?? false,
+                          cardEachSingle: widget.card.front,
+                          definedInstances: widget.linkedCardFaces,
+                          instance:
+                              widget.card.front?.isLinkedCardFace ?? false,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {
-                            final newCardEach = widget.cardEach;
+                            final newCardEach = widget.card;
                             newCardEach.front = card;
-                            widget.onCardEachChange(newCardEach);
+                            widget.onCardChange(newCardEach);
                           },
                         ),
                       ),
@@ -173,15 +173,15 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                         child: GroupMemberListItemOneSide(
                           isBack: true,
                           instanceSetupMode: false,
-                          cardEachSingle: widget.cardEach.back,
-                          definedInstances: widget.definedInstances,
-                          instance: widget.cardEach.back?.isInstance ?? false,
+                          cardEachSingle: widget.card.back,
+                          definedInstances: widget.linkedCardFaces,
+                          instance: widget.card.back?.isLinkedCardFace ?? false,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardEachSingleChange: (card) {
-                            final newCardEach = widget.cardEach;
+                            final newCardEach = widget.card;
                             newCardEach.back = card;
-                            widget.onCardEachChange(newCardEach);
+                            widget.onCardChange(newCardEach);
                           },
                         ),
                       )

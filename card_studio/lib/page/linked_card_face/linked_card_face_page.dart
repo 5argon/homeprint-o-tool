@@ -32,7 +32,7 @@ class LinkedCardFacePage extends StatelessWidget {
           ),
         );
 
-        final newCard = CardEachSingle.empty();
+        final newCard = CardFace.empty();
         final newDefinedInstances = linkCardFaces;
         newDefinedInstances.add(newCard);
         onLinkedCardFacesChange(newDefinedInstances);

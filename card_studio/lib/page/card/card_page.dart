@@ -77,7 +77,7 @@ class CardPage extends StatelessWidget {
         basePath: basePath,
         cardGroup: cardGroup,
         cardSize: projectSettings.cardSize,
-        definedInstances: linkedCardFaces,
+        linkedCardFaces: linkedCardFaces,
         projectSettings: projectSettings,
         onCardGroupChange: (cardGroup) {
           final newDefinedCards = definedCards;

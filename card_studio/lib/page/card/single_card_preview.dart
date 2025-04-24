@@ -11,7 +11,7 @@ class SingleCardPreview extends StatelessWidget {
   final double bleedFactor;
   final String basePath;
   final SizePhysical cardSize;
-  final CardEachSingle? cardEachSingle;
+  final CardFace? cardEachSingle;
   final bool instance;
 
   Future<ImageDescriptor>? descriptorFuture;

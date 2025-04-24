@@ -19,7 +19,7 @@ DefinedCards deepCopyDefinedCards(DefinedCards definedCards) {
   return newList;
 }
 
-typedef LinkedCardFaces = List<CardEachSingle>;
+typedef LinkedCardFaces = List<CardFace>;
 
 typedef LoadResult = ({SaveFile saveFile, String basePath, String fileName});
 
@@ -66,20 +66,20 @@ class SaveFile {
 
   factory SaveFile.fromJson(Map<String, dynamic> json) {
     final projectSettings = ProjectSettings.fromJson(json['projectSettings']);
-    var linkedCardFaces = <CardEachSingle>[];
+    var linkedCardFaces = <CardFace>[];
     final instancesJson = json['instances'];
     if (instancesJson != null) {
-      linkedCardFaces = List<CardEachSingle>.from(instancesJson.map(
-          (instance) => CardEachSingle.fromJson(instance, isInstance: true)));
+      linkedCardFaces = List<CardFace>.from(instancesJson.map(
+          (instance) => CardFace.fromJson(instance, isLinkedCardFace: true)));
     }
     final linkedCardFacesJson = json['linkedCardFaces'];
     if (linkedCardFacesJson != null) {
-      linkedCardFaces = List<CardEachSingle>.from(linkedCardFacesJson.map(
+      linkedCardFaces = List<CardFace>.from(linkedCardFacesJson.map(
           (linkedCardFace) =>
-              CardEachSingle.fromJson(linkedCardFace, isInstance: true)));
+              CardFace.fromJson(linkedCardFace, isLinkedCardFace: true)));
     }
     final cardGroups = List<CardGroup>.from(json['cardGroups']
-        .map((instance) => CardGroup.fromJson(instance, linkedCardFaces)));
+        .map((cardGroup) => CardGroup.fromJson(cardGroup, linkedCardFaces)));
     return SaveFile(projectSettings, linkedCardFaces, cardGroups);
   }
 

@@ -16,7 +16,7 @@ class GroupListItem extends StatelessWidget {
   final String basePath;
   final CardGroup cardGroup;
   final SizePhysical cardSize;
-  final LinkedCardFaces definedInstances;
+  final LinkedCardFaces linkedCardFaces;
   final ProjectSettings projectSettings;
   final Function(CardGroup cardGroup) onCardGroupChange;
   final Function() onDelete;
@@ -27,7 +27,7 @@ class GroupListItem extends StatelessWidget {
       required this.basePath,
       required this.cardGroup,
       required this.cardSize,
-      required this.definedInstances,
+      required this.linkedCardFaces,
       required this.projectSettings,
       required this.onCardGroupChange,
       required this.onDelete});
@@ -35,7 +35,7 @@ class GroupListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final integrityCheckResult =
-        cardGroup.checkIntegrity(basePath, definedInstances);
+        cardGroup.checkIntegrity(basePath, linkedCardFaces);
     final removeButton = IconButton(
       onPressed: () {
         onDelete();
@@ -80,13 +80,13 @@ class GroupListItem extends StatelessWidget {
     final addButton = ElevatedButton(
       onPressed: () {
         final newCardGroup = cardGroup;
-        newCardGroup.cards.insert(0, CardEach(null, null, 1, ""));
+        newCardGroup.cards.insert(0, DuplexCard(null, null, 1, ""));
         onCardGroupChange(newCardGroup);
       },
       child: const Text('Create New Card'),
     );
     final messenger = ScaffoldMessenger.of(context);
-    final createGroupButton = ElevatedButton(
+    final importFromFolderButton = ElevatedButton(
       onPressed: () async {
         final filePath = await FilePicker.platform.getDirectoryPath(
           dialogTitle: "Import every files in the selected folder.",
@@ -112,16 +112,18 @@ class GroupListItem extends StatelessWidget {
             }
             return false;
           }).toList();
-          CardEachSingle? firstInstance;
-          if (definedInstances.isNotEmpty) {
-            firstInstance = definedInstances.first;
+          CardFace? firstLinkedCardFace;
+          if (linkedCardFaces.isNotEmpty) {
+            firstLinkedCardFace = linkedCardFaces.first;
           }
           final relativePaths =
               absolutePaths.map((e) => relative(e, from: basePath)).toList();
-          final cards = importCards(relativePaths, firstInstance);
+          final cards = importCards(relativePaths, firstLinkedCardFace);
           if (cards.isEmpty) {
+            messenger.hideCurrentSnackBar();
             messenger.showSnackBar(SnackBar(
-              content: Text("Cannot import any card from the folder."),
+              content:
+                  Text("Could not import any card from the selected folder."),
             ));
             return;
           }
@@ -130,6 +132,7 @@ class GroupListItem extends StatelessWidget {
             newCardGroup.cards.add(card);
           }
           onCardGroupChange(newCardGroup);
+          messenger.hideCurrentSnackBar();
           messenger.showSnackBar(SnackBar(
             content: Text("Imported ${cards.length} cards from the folder."),
           ));
@@ -156,7 +159,7 @@ class GroupListItem extends StatelessWidget {
                       controller: regexController,
                       decoration: const InputDecoration(
                         labelText: 'Regex',
-                        hintText: r'Example: .*\/(.*)\.\w+$',
+                        hintText: r'Example: Same_Prefix_(.*)_Same_Suffix',
                       ),
                     ),
                   ],
@@ -229,11 +232,11 @@ class GroupListItem extends StatelessWidget {
       final card = cardGroup.cards[i];
       groupMembers.add(GroupMemberListItem(
           basePath: basePath,
-          cardEach: card,
+          card: card,
           cardSize: cardSize,
-          definedInstances: definedInstances,
+          linkedCardFaces: linkedCardFaces,
           projectSettings: projectSettings,
-          onCardEachChange: (card) {
+          onCardChange: (card) {
             final newCardGroup = cardGroup;
             newCardGroup.cards[i] = card;
             onCardGroupChange(newCardGroup);
@@ -305,7 +308,7 @@ class GroupListItem extends StatelessWidget {
             SizedBox(
               width: 8,
             ),
-            createGroupButton,
+            importFromFolderButton,
             SizedBox(
               width: 8,
             ),
