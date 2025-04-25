@@ -43,6 +43,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
               linkedCardFaces: linkedCardFaces,
               onCardEachSingleChange: onCardChange,
               initialCard: cardFace,
+              forLinkedCardFaceTab: forLinkedCardFaceTab,
             );
           },
         );
@@ -122,14 +123,16 @@ class GroupMemberListItemOneSide extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 4),
               // Text white on primary
-              child: Text(
-                linkedText,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: forLinkedCardFaceTab
+                  ? null
+                  : Text(
+                      linkedText,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
           SizedBox(width: 4),

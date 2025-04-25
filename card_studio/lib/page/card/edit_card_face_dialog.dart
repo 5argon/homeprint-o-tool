@@ -10,13 +10,15 @@ class EditCardFaceDialog extends StatefulWidget {
   final String basePath;
   final LinkedCardFaces linkedCardFaces;
   final Function(CardFace? card) onCardEachSingleChange;
-  final CardFace? initialCard; // New parameter for initial value
+  final CardFace? initialCard;
+  final bool forLinkedCardFaceTab;
 
   const EditCardFaceDialog({
     super.key,
     required this.basePath,
     required this.linkedCardFaces,
     required this.onCardEachSingleChange,
+    required this.forLinkedCardFaceTab,
     this.initialCard, // Optional initial value
   });
 
@@ -37,14 +39,20 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
   void initState() {
     super.initState();
     // Determine initial tab and values
-    if (widget.initialCard != null) {
-      if (widget.initialCard!.relativeFilePath.isNotEmpty) {
+    if (widget.forLinkedCardFaceTab) {
+      _tabController = TabController(length: 1, vsync: this, initialIndex: 0);
+    } else if (widget.initialCard != null) {
+      if (widget.initialCard!.isLinkedCardFace) {
+        // Start with Linked Card Face tab selected
+        _tabController = TabController(length: 2, vsync: this, initialIndex: 1);
+        selectedCardFace = widget.initialCard;
+        tempFilePath = null; // Ensure File tab shows "No file selected"
+      } else if (widget.initialCard!.relativeFilePath.isNotEmpty) {
         _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
         initialFilePath = widget.initialCard!.relativeFilePath;
         tempFilePath = initialFilePath;
       } else {
-        _tabController = TabController(length: 2, vsync: this, initialIndex: 1);
-        selectedCardFace = widget.initialCard;
+        _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
       }
     } else {
       _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
@@ -62,25 +70,6 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
 
   @override
   Widget build(BuildContext context) {
-    final List<DropdownMenuItem<CardFace>> dropdownItems =
-        widget.linkedCardFaces.asMap().entries.map((entry) {
-      final int index = entry.key + 1; // Start from 1 for display
-      final CardFace linkedCardFace = entry.value;
-      final String linkedCardFaceName = linkedCardFace.name ?? "";
-      final String displayLinkedCardFaceName;
-      if (linkedCardFaceName.isNotEmpty) {
-        displayLinkedCardFaceName = linkedCardFaceName;
-      } else if (linkedCardFace.relativeFilePath.isNotEmpty) {
-        displayLinkedCardFaceName = p.basename(linkedCardFace.relativeFilePath);
-      } else {
-        displayLinkedCardFaceName = "#$index: Unnamed Linked Card Face";
-      }
-      return DropdownMenuItem<CardFace>(
-        value: linkedCardFace,
-        child: Text(displayLinkedCardFaceName),
-      );
-    }).toList();
-
     var relativeFilePathTab = Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -129,29 +118,34 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
     );
 
     return AlertDialog(
-      title: Text("Edit Card Face"),
+      title: widget.forLinkedCardFaceTab
+          ? Text("Edit Linked Card Face")
+          : Text("Edit Card Face"),
       content: SizedBox(
         width: 400,
         child: DefaultTabController(
-          length: 2,
+          length: widget.forLinkedCardFaceTab ? 1 : 2,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TabBar(
-                controller: _tabController,
-                tabs: [
-                  Tab(text: "File"),
-                  Tab(text: "Linked Card Face"),
-                ],
-              ),
+              if (!widget.forLinkedCardFaceTab)
+                TabBar(
+                  controller: _tabController,
+                  tabs: [
+                    Tab(text: "File"),
+                    Tab(text: "Linked Card Face"),
+                  ],
+                ),
               SizedBox(
                 height: 200, // Adjust height as needed
                 child: TabBarView(
                   controller: _tabController,
-                  children: [
-                    relativeFilePathTab,
-                    linkedCardFaceTab,
-                  ],
+                  children: widget.forLinkedCardFaceTab
+                      ? [relativeFilePathTab]
+                      : [
+                          relativeFilePathTab,
+                          linkedCardFaceTab,
+                        ],
                 ),
               ),
             ],
