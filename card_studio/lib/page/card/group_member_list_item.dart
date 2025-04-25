@@ -155,7 +155,6 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                           forLinkedCardFaceTab: false,
                           cardFace: widget.card.front,
                           linkedCardFaces: widget.linkedCardFaces,
-                          linked: widget.card.front?.isLinkedCardFace ?? false,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardChange: (card) {
@@ -172,7 +171,6 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                           forLinkedCardFaceTab: false,
                           cardFace: widget.card.back,
                           linkedCardFaces: widget.linkedCardFaces,
-                          linked: widget.card.back?.isLinkedCardFace ?? false,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardChange: (card) {

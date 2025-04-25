@@ -10,7 +10,6 @@ class GroupMemberListItemOneSide extends StatelessWidget {
   final CardFace? cardFace;
   final LinkedCardFaces linkedCardFaces;
   final bool isBack;
-  final bool linked;
   final bool showEditButton;
   final String basePath;
   final Function(CardFace? card) onCardChange;
@@ -21,7 +20,6 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     this.cardFace,
     required this.linkedCardFaces,
     required this.isBack,
-    required this.linked,
     required this.showEditButton,
     required this.basePath,
     required this.onCardChange,
@@ -41,7 +39,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
             return EditCardFaceDialog(
               basePath: basePath,
               linkedCardFaces: linkedCardFaces,
-              onCardEachSingleChange: onCardChange,
+              onCardFaceChange: onCardChange,
               initialCard: cardFace,
               forLinkedCardFaceTab: forLinkedCardFaceTab,
             );
@@ -99,6 +97,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         tooltip: "Quick assign this card face to the linked card face #1.",
         onPressed: linkedCardFaceOneAvailable
             ? () async {
+                print(linkedCardFaces[0].isLinkedCardFace);
                 onCardChange(linkedCardFaces[0]);
               }
             : null,
@@ -153,10 +152,21 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         style: TextStyle(fontSize: 12),
       );
     } else {
-      relativeFilePathText = Text(
-        cardFace.relativeFilePath,
-        style: TextStyle(fontSize: 12),
-      );
+      final cardFaceName = cardFace.name;
+      if (cardFace.isLinkedCardFace &&
+          !forLinkedCardFaceTab &&
+          cardFaceName != null &&
+          cardFaceName.isNotEmpty) {
+        relativeFilePathText = Text(
+          cardFaceName,
+          style: TextStyle(fontSize: 12),
+        );
+      } else {
+        relativeFilePathText = Text(
+          cardFace.relativeFilePath,
+          style: TextStyle(fontSize: 12),
+        );
+      }
     }
 
     final padding = Padding(

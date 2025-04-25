@@ -37,7 +37,6 @@ class ContentAreaCalculator extends StatelessWidget {
                   contentHeight > 0) {
                 final widthRatio = contentWidth / graphicWidth;
                 final heightRatio = contentHeight / graphicHeight;
-                print("Width Ratio: $widthRatio, Height Ratio: $heightRatio");
                 calculatedPercentage =
                     (widthRatio > heightRatio ? widthRatio : heightRatio);
               } else {

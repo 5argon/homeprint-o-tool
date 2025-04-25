@@ -124,7 +124,6 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                           forLinkedCardFaceTab: true,
                           cardFace: widget.linkedCardFace,
                           linkedCardFaces: widget.linkedCardFaces,
-                          linked: widget.linkedCardFace.isLinkedCardFace,
                           basePath: widget.basePath,
                           showEditButton: true,
                           onCardChange: (card) {

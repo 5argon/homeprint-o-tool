@@ -9,7 +9,7 @@ import '../../core/save_file.dart';
 class EditCardFaceDialog extends StatefulWidget {
   final String basePath;
   final LinkedCardFaces linkedCardFaces;
-  final Function(CardFace? card) onCardEachSingleChange;
+  final Function(CardFace? card) onCardFaceChange;
   final CardFace? initialCard;
   final bool forLinkedCardFaceTab;
 
@@ -17,7 +17,7 @@ class EditCardFaceDialog extends StatefulWidget {
     super.key,
     required this.basePath,
     required this.linkedCardFaces,
-    required this.onCardEachSingleChange,
+    required this.onCardFaceChange,
     required this.forLinkedCardFaceTab,
     this.initialCard, // Optional initial value
   });
@@ -159,22 +159,19 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
         ),
         TextButton(
           onPressed: () {
+            final tempFilePath = this.tempFilePath;
             if (_tabController.index == 0 && tempFilePath != null) {
-              // Commit changes only when OK is pressed
-              final newCard = CardFace(
-                tempFilePath!,
-                Alignment.center,
-                1,
-                Rotation.none,
-                null,
-                true,
-                true,
-                true,
-                false,
-              );
-              widget.onCardEachSingleChange(newCard);
+              // New card should preserve everything except changing the file path.
+              final initialCard = widget.initialCard;
+              final CardFace newCard;
+              if (initialCard != null) {
+                newCard = initialCard.changeRelativeFilePath(tempFilePath);
+              } else {
+                newCard = CardFace.withRelativeFilePath(tempFilePath);
+              }
+              widget.onCardFaceChange(newCard);
             } else if (_tabController.index == 1 && selectedCardFace != null) {
-              widget.onCardEachSingleChange(selectedCardFace);
+              widget.onCardFaceChange(selectedCardFace);
             }
             Navigator.of(context).pop();
           },
