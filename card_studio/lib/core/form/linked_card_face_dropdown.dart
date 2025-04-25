@@ -8,12 +8,14 @@ class LinkedCardFaceDropdown extends StatelessWidget {
   final LinkedCardFaces linkedCardFaces;
   final CardFace? selectedValue;
   final Function(CardFace?) onChanged;
+  final bool? disabled;
 
   const LinkedCardFaceDropdown({
     Key? key,
     required this.linkedCardFaces,
     required this.selectedValue,
     required this.onChanged,
+    this.disabled,
   }) : super(key: key);
 
   @override
@@ -41,7 +43,11 @@ class LinkedCardFaceDropdown extends StatelessWidget {
       value: selectedValue,
       hint: const Text("Select Linked Card Face"),
       items: dropdownItems,
-      onChanged: onChanged,
+      onChanged: disabled == true
+          ? null
+          : (CardFace? newValue) {
+              onChanged(newValue);
+            },
     );
   }
 }
