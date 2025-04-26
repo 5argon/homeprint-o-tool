@@ -1,4 +1,5 @@
 import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/page/layout/layout_debug_display.dart';
 
 import '../../core/page_preview/page_preview.dart';
 import '../../core/page_preview/page_preview_frame.dart';
@@ -56,14 +57,29 @@ class LayoutPage extends StatelessWidget {
             ),
             borderRadius: const BorderRadius.all(Radius.circular(4)),
           ),
-          child: SizedBox(
-            height: 450,
-            child: Row(
-              children: [
-                Expanded(
-                  child: leftSide,
-                ),
-              ],
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SizedBox(
+              height: 400,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  leftSide,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: LayoutDebugDisplay(
+                              layoutData: layoutData,
+                              projectSettings: projectSettings),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
