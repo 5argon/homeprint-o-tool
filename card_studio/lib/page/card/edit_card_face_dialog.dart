@@ -9,7 +9,11 @@ import '../../core/save_file.dart';
 class EditCardFaceDialog extends StatefulWidget {
   final String basePath;
   final LinkedCardFaces linkedCardFaces;
+
+  /// If using Linked Card Face, return the instance defined in the list.
+  /// If using File, create a new instance based on the selected file.
   final Function(CardFace? card) onCardFaceChange;
+
   final CardFace? initialCard;
   final bool forLinkedCardFaceTab;
 
@@ -165,7 +169,8 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
               final initialCard = widget.initialCard;
               final CardFace newCard;
               if (initialCard != null) {
-                newCard = initialCard.changeRelativeFilePath(tempFilePath);
+                newCard =
+                    initialCard.copyChangingRelativeFilePath(tempFilePath);
               } else {
                 newCard = CardFace.withRelativeFilePath(tempFilePath);
               }

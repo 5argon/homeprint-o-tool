@@ -250,7 +250,7 @@ class CardFace {
 
   CardFace.emptyLinked() : this.withRelativeFilePath("", isLinked: true);
 
-  CardFace changeRelativeFilePath(String newRelativeFilePath) {
+  CardFace copyChangingRelativeFilePath(String newRelativeFilePath) {
     final newCard = CardFace(
       newRelativeFilePath,
       contentCenterOffset,
@@ -265,6 +265,17 @@ class CardFace {
     // Constructor always assign a new UUID, reassign the same UUID.
     newCard.uuid = uuid;
     return newCard;
+  }
+
+  void copyFrom(CardFace other) {
+    relativeFilePath = other.relativeFilePath;
+    contentCenterOffset = other.contentCenterOffset;
+    contentExpand = other.contentExpand;
+    rotation = other.rotation;
+    name = other.name;
+    useDefaultContentCenterOffset = other.useDefaultContentCenterOffset;
+    useDefaultContentExpand = other.useDefaultContentExpand;
+    useDefaultRotation = other.useDefaultRotation;
   }
 
   bool isImageMissing(String baseDirectory) {

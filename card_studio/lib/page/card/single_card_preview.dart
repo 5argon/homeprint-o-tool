@@ -52,8 +52,33 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
   }
 
   @override
+  void didUpdateWidget(covariant SingleCardPreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Check if cardFace has changed or its properties have changed
+    final oldCardFace = oldWidget.cardFace;
+    final newCardFace = widget.cardFace;
+    final relativeFilePathChanged =
+        oldCardFace?.relativeFilePath != newCardFace?.relativeFilePath;
+    if (oldCardFace != newCardFace || relativeFilePathChanged) {
+      // Card face has changed, update the file and descriptorFuture
+      if (newCardFace != null) {
+        final filePath = newCardFace.relativeFilePath;
+        file = File(p.join(widget.basePath, filePath));
+        if (file.existsSync()) {
+          descriptorFuture = getDescriptor(file);
+        } else {
+          descriptorFuture = null;
+        }
+      } else {
+        descriptorFuture = null;
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final cardEachSingle = this.widget.cardFace;
+    final cardEachSingle = widget.cardFace;
     if (cardEachSingle == null) {
       return Container();
     }

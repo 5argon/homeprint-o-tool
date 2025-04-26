@@ -63,10 +63,9 @@ class LinkedCardFacePage extends StatelessWidget {
         order: i + 1,
         linkedCardFace: linkedCardFace,
         cardSize: projectSettings.cardSize,
-        onLinkedCardFaceChange: (card) {
-          final newLikedCardFaces = linkCardFaces;
-          newLikedCardFaces[i] = card;
-          onLinkedCardFacesChange(newLikedCardFaces);
+        onLinkedCardFaceChange: () {
+          // Members are changed in place.
+          onLinkedCardFacesChange(linkCardFaces);
         },
         onDelete: () {
           final scaffoldMessenger = ScaffoldMessenger.of(context);
