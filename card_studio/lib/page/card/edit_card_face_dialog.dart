@@ -164,8 +164,10 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
         TextButton(
           onPressed: () {
             final tempFilePath = this.tempFilePath;
+            final selectedCardFace = this.selectedCardFace;
             if (_tabController.index == 0 && tempFilePath != null) {
               // New card should preserve everything except changing the file path.
+              // But always new instance.
               final initialCard = widget.initialCard;
               final CardFace newCard;
               if (initialCard != null) {
@@ -176,7 +178,10 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
               }
               widget.onCardFaceChange(newCard);
             } else if (_tabController.index == 1 && selectedCardFace != null) {
-              widget.onCardFaceChange(selectedCardFace);
+              // Linked card face also need to be cloned so components
+              // looking for changes are updated.
+              final newCard = CardFace.copyFrom(selectedCardFace);
+              widget.onCardFaceChange(newCard);
             }
             Navigator.of(context).pop();
           },

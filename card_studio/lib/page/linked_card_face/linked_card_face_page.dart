@@ -9,14 +9,14 @@ import 'linked_card_face_list_item.dart';
 class LinkedCardFacePage extends StatelessWidget {
   final String basePath;
   final ProjectSettings projectSettings;
-  final LinkedCardFaces linkCardFaces;
+  final LinkedCardFaces linkedCardFaces;
   final Function(LinkedCardFaces linkedCardFaces) onLinkedCardFacesChange;
 
   LinkedCardFacePage({
     super.key,
     required this.basePath,
     required this.projectSettings,
-    required this.linkCardFaces,
+    required this.linkedCardFaces,
     required this.onLinkedCardFacesChange,
   });
 
@@ -33,7 +33,7 @@ class LinkedCardFacePage extends StatelessWidget {
         );
 
         final newCard = CardFace.emptyLinked();
-        final newLinkedCardFaces = linkCardFaces;
+        final newLinkedCardFaces = linkedCardFaces;
         newLinkedCardFaces.add(newCard);
         onLinkedCardFacesChange(newLinkedCardFaces);
       },
@@ -53,19 +53,23 @@ class LinkedCardFacePage extends StatelessWidget {
     );
 
     List<LinkedCardFaceListItem> listItem = [];
-    for (var i = 0; i < linkCardFaces.length; i++) {
-      final linkedCardFace = linkCardFaces[i];
+    for (var i = 0; i < linkedCardFaces.length; i++) {
+      final linkedCardFace = linkedCardFaces[i];
       final item = LinkedCardFaceListItem(
         key: Key(linkedCardFace.uuid),
         basePath: basePath,
         projectSettings: projectSettings,
-        linkedCardFaces: linkCardFaces,
+        linkedCardFaces: linkedCardFaces,
         order: i + 1,
         linkedCardFace: linkedCardFace,
         cardSize: projectSettings.cardSize,
-        onLinkedCardFaceChange: () {
-          // Members are changed in place.
-          onLinkedCardFacesChange(linkCardFaces);
+        onLinkedCardFaceChange: (newLinkedCardFace) {
+          // A completely new instance on each change of any member.
+          // But any card referencing it is by UUID so they can always relink to
+          // that even if instance is not the same. Changing instances also good
+          // for making the component reactive with less effort.
+          linkedCardFaces[i] = newLinkedCardFace;
+          onLinkedCardFacesChange(linkedCardFaces);
         },
         onDelete: () {
           final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -76,7 +80,7 @@ class LinkedCardFacePage extends StatelessWidget {
               content: Text(message),
             ),
           );
-          final newLinkedCardFaces = linkCardFaces;
+          final newLinkedCardFaces = linkedCardFaces;
           newLinkedCardFaces.removeAt(i);
           onLinkedCardFacesChange(newLinkedCardFaces);
         },
@@ -92,7 +96,7 @@ class LinkedCardFacePage extends StatelessWidget {
         final removedLinkedCardFace = listItem.removeAt(oldIndex);
         listItem.insert(newIndex, removedLinkedCardFace);
 
-        final newLinkedCardFaces = List.of(linkCardFaces);
+        final newLinkedCardFaces = List.of(linkedCardFaces);
         final movedLinkedCardFace = newLinkedCardFaces.removeAt(oldIndex);
         newLinkedCardFaces.insert(newIndex, movedLinkedCardFace);
         onLinkedCardFacesChange(newLinkedCardFaces);

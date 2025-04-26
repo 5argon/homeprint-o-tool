@@ -13,10 +13,8 @@ class GroupMemberListItemOneSide extends StatelessWidget {
   final bool showEditButton;
   final String basePath;
 
-  /// If using Linked Card Face tabs inside the modal or the quick assign buttons,
-  /// return the instance defined in the list.
-  /// If using File, create a new instance based on the selected file.
-  /// If using delete button, return null.
+  /// Returns a new instance always, even assigning a new linked card face,
+  /// you get a different instance from those that are originally defined.
   final Function(CardFace? card) onCardChange;
   final bool forLinkedCardFaceTab;
 

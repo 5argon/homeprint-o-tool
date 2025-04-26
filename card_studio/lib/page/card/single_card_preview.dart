@@ -58,9 +58,7 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
     // Check if cardFace has changed or its properties have changed
     final oldCardFace = oldWidget.cardFace;
     final newCardFace = widget.cardFace;
-    final relativeFilePathChanged =
-        oldCardFace?.relativeFilePath != newCardFace?.relativeFilePath;
-    if (oldCardFace != newCardFace || relativeFilePathChanged) {
+    if (oldCardFace != newCardFace) {
       // Card face has changed, update the file and descriptorFuture
       if (newCardFace != null) {
         final filePath = newCardFace.relativeFilePath;

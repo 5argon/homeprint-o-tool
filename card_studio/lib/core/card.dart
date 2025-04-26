@@ -267,16 +267,17 @@ class CardFace {
     return newCard;
   }
 
-  void copyFrom(CardFace other) {
-    relativeFilePath = other.relativeFilePath;
-    contentCenterOffset = other.contentCenterOffset;
-    contentExpand = other.contentExpand;
-    rotation = other.rotation;
-    name = other.name;
-    useDefaultContentCenterOffset = other.useDefaultContentCenterOffset;
-    useDefaultContentExpand = other.useDefaultContentExpand;
-    useDefaultRotation = other.useDefaultRotation;
-  }
+  CardFace.copyFrom(CardFace cardFace)
+      : this(
+            cardFace.relativeFilePath,
+            cardFace.contentCenterOffset,
+            cardFace.contentExpand,
+            cardFace.rotation,
+            cardFace.name,
+            cardFace.useDefaultContentCenterOffset,
+            cardFace.useDefaultContentExpand,
+            cardFace.useDefaultRotation,
+            cardFace.isLinkedCardFace);
 
   bool isImageMissing(String baseDirectory) {
     final f = File(p.join(baseDirectory, relativeFilePath));

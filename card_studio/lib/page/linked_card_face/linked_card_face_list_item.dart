@@ -17,7 +17,7 @@ class LinkedCardFaceListItem extends StatefulWidget {
 
   /// Input instance [linkedCardFace] was modified in place, there's nothing
   /// returnd from this function.
-  final Function() onLinkedCardFaceChange;
+  final Function(CardFace cardFace) onLinkedCardFaceChange;
   final Function() onDelete;
 
   LinkedCardFaceListItem({
@@ -75,9 +75,9 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
         labelText: "Name",
       ),
       onChanged: (value) {
-        final inputCard = widget.linkedCardFace;
-        inputCard.name = value;
-        widget.onLinkedCardFaceChange();
+        final nameChangedCard = CardFace.copyFrom(widget.linkedCardFace);
+        nameChangedCard.name = value;
+        widget.onLinkedCardFaceChange(nameChangedCard);
       },
     );
     final removeButton = IconButton(
@@ -129,18 +129,15 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                           linkedCardFaces: widget.linkedCardFaces,
                           basePath: widget.basePath,
                           showEditButton: true,
-                          onCardChange: (card) {
-                            // This one side component returns a new instance of card
-                            // when using File tab. But we can't allow instance to change
-                            // in Linked Card Face. We need to copy properties of the new card instance
-                            // to the old one.
-                            final currentCard = widget.linkedCardFace;
-                            if (card == null) {
-                              currentCard.relativeFilePath = "";
-                            } else {
-                              currentCard.copyFrom(card);
+                          onCardChange: (newCardFace) {
+                            // Linked card face is already one face, deleting the face
+                            // is changed to just blank the relative path.
+                            if (newCardFace == null) {
+                              widget.onLinkedCardFaceChange(
+                                  CardFace.emptyLinked());
+                              return;
                             }
-                            widget.onLinkedCardFaceChange();
+                            widget.onLinkedCardFaceChange(newCardFace);
                           },
                         ),
                       ),

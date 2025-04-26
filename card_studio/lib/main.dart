@@ -153,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     var linkedCardFacePage = LinkedCardFacePage(
                       basePath: baseDirectory,
                       projectSettings: _projectSettings,
-                      linkCardFaces: _linkedCardFaces,
+                      linkedCardFaces: _linkedCardFaces,
                       onLinkedCardFacesChange: (linkedCardFaces) {
                         setState(() {
                           _linkedCardFaces = linkedCardFaces;
