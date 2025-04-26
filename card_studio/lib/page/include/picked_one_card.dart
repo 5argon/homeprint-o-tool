@@ -1,8 +1,8 @@
+import 'package:homeprint_o_tool/core/layout_const.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/card/group_member_list_item_one_side.dart';
 import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
-import 'package:homeprint_o_tool/page/include/include_data.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
 
@@ -35,6 +35,78 @@ class PickedOneCard extends StatelessWidget {
       Icons.credit_card,
       size: 20,
     );
+    var firstRow = LayoutBuilder(builder: (context, constraints) {
+      final lowWidth = constraints.maxWidth < cardListLowWidth;
+      if (lowWidth) {
+        return Column(
+          children: [
+            Row(
+              children: [
+                cardIcon,
+                SizedBox(width: 8),
+                Expanded(child: cardNameBox),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                ...?extraRender,
+              ],
+            ),
+          ],
+        );
+      }
+      return Row(
+        children: [
+          cardIcon,
+          SizedBox(width: 8),
+          Expanded(child: cardNameBox),
+          SizedBox(width: 16),
+          ...?extraRender,
+        ],
+      );
+    });
+    var leftCardFace = GroupMemberListItemOneSide(
+      isBack: false,
+      forLinkedCardFaceTab: false,
+      cardFace: cardEach.front,
+      linkedCardFaces: linkedCardFaces,
+      showEditButton: false,
+      basePath: basePath,
+      onCardChange: (card) {},
+    );
+    var rightCardFace = GroupMemberListItemOneSide(
+      isBack: true,
+      forLinkedCardFaceTab: false,
+      cardFace: cardEach.back,
+      linkedCardFaces: linkedCardFaces,
+      showEditButton: false,
+      basePath: basePath,
+      onCardChange: (card) {},
+    );
+    var cardFacesRow = LayoutBuilder(builder: (context, constraints) {
+      var lowWidth = constraints.maxWidth < cardListLowWidth;
+      if (lowWidth) {
+        return Column(
+          children: [
+            leftCardFace,
+            SizedBox(height: 16),
+            rightCardFace,
+          ],
+        );
+      }
+      return Row(
+        children: [
+          Expanded(
+            child: leftCardFace,
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: rightCardFace,
+          )
+        ],
+      );
+    });
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -67,42 +139,8 @@ class PickedOneCard extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      cardIcon,
-                      SizedBox(width: 8),
-                      Expanded(child: cardNameBox),
-                      SizedBox(width: 16),
-                      ...?extraRender,
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GroupMemberListItemOneSide(
-                          isBack: false,
-                          forLinkedCardFaceTab: false,
-                          cardFace: cardEach.front,
-                          linkedCardFaces: linkedCardFaces,
-                          showEditButton: false,
-                          basePath: basePath,
-                          onCardChange: (card) {},
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: GroupMemberListItemOneSide(
-                          isBack: true,
-                          forLinkedCardFaceTab: false,
-                          cardFace: cardEach.back,
-                          linkedCardFaces: linkedCardFaces,
-                          showEditButton: false,
-                          basePath: basePath,
-                          onCardChange: (card) {},
-                        ),
-                      )
-                    ],
-                  ),
+                  firstRow,
+                  cardFacesRow,
                 ],
               ),
             ),

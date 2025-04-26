@@ -1,0 +1,1 @@
+const cardListLowWidth = 600;

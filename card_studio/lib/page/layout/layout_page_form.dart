@@ -68,50 +68,40 @@ class LayoutPageForm extends StatelessWidget {
       },
     );
 
-    final paperRowPageSize = Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          LabelAndForm(
-            label: "Paper Size",
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  paperSizeDropdown,
-                  SizedBox(width: 16),
-                  paperSizeInput,
-                ],
-              ),
-            ],
-          ),
-          LabelAndForm(
-            label: "Printer Margin Area",
-            help:
-                "Grey in the preview. Reserve edge area on the paper where printing head cannot reach. This area is completely white, even the cutting guide will be placed next to this margin.",
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  printerMarginInput,
-                ],
-              ),
-            ],
-          ),
-          LabelAndForm(
-              label: "Cutting Guide Area",
-              help:
-                  "Blue in the preview. Black cut guide lines along the edges will be drawn within this area.",
+    final firstColumn = Column(
+      children: [
+        LabelAndForm(
+          label: "Paper Size",
+          children: [
+            Column(
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    edgeCutGuideInput,
+                    paperSizeDropdown,
                   ],
                 ),
-              ])
-        ],
-      ),
+                Row(children: [
+                  paperSizeInput,
+                ]),
+              ],
+            ),
+          ],
+        ),
+        LabelAndForm(
+          label: "Printer Margin Area",
+          help:
+              "Grey in the preview. Reserve edge area on the paper where printing head cannot reach. This area is completely white, even the cutting guide will be placed next to this margin.",
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                printerMarginInput,
+              ],
+            ),
+          ],
+        ),
+      ],
     );
 
     final extraBleedForm = LabelAndForm(
@@ -199,31 +189,32 @@ class LayoutPageForm extends StatelessWidget {
     final debugDisplay =
         LabelAndForm(label: "Layout Result", children: [debugRows]);
 
+    var cuttingGuideForm = LabelAndForm(
+        label: "Cutting Guide Area",
+        help:
+            "Blue in the preview. Black cut guide lines along the edges will be drawn within this area.",
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              edgeCutGuideInput,
+            ],
+          ),
+        ]);
+    var secondColumn = Column(
+      children: [
+        cuttingGuideForm,
+        extraBleedForm,
+      ],
+    );
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Left column: Existing form content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                paperRowPageSize,
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Right column: Checkboxes for removeOneRow and removeOneColumn
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                extraBleedForm,
-                debugDisplay,
-              ],
-            ),
-          ),
+          firstColumn,
+          const SizedBox(width: 50),
+          secondColumn,
         ],
       ),
     );

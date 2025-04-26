@@ -1,3 +1,4 @@
+import 'package:homeprint_o_tool/core/layout_const.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/card/group_member_list_item_one_side.dart';
@@ -100,6 +101,70 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
       Icons.credit_card,
       size: 32,
     );
+    var cardSettingsRow = Row(
+      children: [
+        cardIcon,
+        SizedBox(width: 8),
+        Expanded(child: cardNameBox),
+        SizedBox(width: 16),
+        SizedBox(
+          width: 50,
+          child: quantityBox,
+        ),
+        SizedBox(width: 16),
+        removeButton,
+        numberLabel,
+      ],
+    );
+    var frontFace = GroupMemberListItemOneSide(
+      isBack: false,
+      forLinkedCardFaceTab: false,
+      cardFace: widget.card.front,
+      linkedCardFaces: widget.linkedCardFaces,
+      basePath: widget.basePath,
+      showEditButton: true,
+      onCardChange: (card) {
+        final newCardEach = widget.card;
+        newCardEach.front = card;
+        widget.onCardChange(newCardEach);
+      },
+    );
+    var backFace = GroupMemberListItemOneSide(
+      isBack: true,
+      forLinkedCardFaceTab: false,
+      cardFace: widget.card.back,
+      linkedCardFaces: widget.linkedCardFaces,
+      basePath: widget.basePath,
+      showEditButton: true,
+      onCardChange: (card) {
+        final newCardEach = widget.card;
+        newCardEach.back = card;
+        widget.onCardChange(newCardEach);
+      },
+    );
+    var cardFacesRow = LayoutBuilder(builder: (context, constraints) {
+      var lowWidth = constraints.maxWidth < cardListLowWidth;
+      if (lowWidth) {
+        return Column(
+          children: [
+            frontFace,
+            SizedBox(height: 16),
+            backFace,
+          ],
+        );
+      }
+      return Row(
+        children: [
+          Expanded(
+            child: frontFace,
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: backFace,
+          )
+        ],
+      );
+    });
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -132,56 +197,8 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
             Expanded(
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      cardIcon,
-                      SizedBox(width: 8),
-                      Expanded(child: cardNameBox),
-                      SizedBox(width: 16),
-                      SizedBox(
-                        width: 50,
-                        child: quantityBox,
-                      ),
-                      SizedBox(width: 16),
-                      removeButton,
-                      numberLabel,
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GroupMemberListItemOneSide(
-                          isBack: false,
-                          forLinkedCardFaceTab: false,
-                          cardFace: widget.card.front,
-                          linkedCardFaces: widget.linkedCardFaces,
-                          basePath: widget.basePath,
-                          showEditButton: true,
-                          onCardChange: (card) {
-                            final newCardEach = widget.card;
-                            newCardEach.front = card;
-                            widget.onCardChange(newCardEach);
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: GroupMemberListItemOneSide(
-                          isBack: true,
-                          forLinkedCardFaceTab: false,
-                          cardFace: widget.card.back,
-                          linkedCardFaces: widget.linkedCardFaces,
-                          basePath: widget.basePath,
-                          showEditButton: true,
-                          onCardChange: (card) {
-                            final newCardEach = widget.card;
-                            newCardEach.back = card;
-                            widget.onCardChange(newCardEach);
-                          },
-                        ),
-                      )
-                    ],
-                  ),
+                  cardSettingsRow,
+                  cardFacesRow,
                 ],
               ),
             ),
