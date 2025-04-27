@@ -84,6 +84,22 @@ class _CardAreaState extends State<CardArea> {
   }
 
   @override
+  void didUpdateWidget(covariant CardArea oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final card = widget.card;
+    final baseDirectory = widget.baseDirectory;
+    if (card != null && baseDirectory != null) {
+      final f = File(p.join(baseDirectory, card.relativeFilePath));
+      if (f.existsSync()) {
+        _getDescriptorFuture = getDescriptor(f);
+        fileObject = f;
+      }
+    } else {
+      _getDescriptorFuture = Future.value();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (_getDescriptorFuture == null) {
       return Placeholder(
