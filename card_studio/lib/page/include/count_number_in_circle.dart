@@ -14,12 +14,13 @@ class CountNumberInCircle extends StatelessWidget {
   Widget build(BuildContext context) {
     final zeroValue = value == 0;
     final Color color;
+    final theme = Theme.of(context);
     if (zeroValue) {
-      color = Colors.grey;
+      color = theme.colorScheme.surfaceContainerHigh;
     } else if (plus == true) {
-      color = Theme.of(context).colorScheme.secondary;
+      color = theme.colorScheme.secondaryContainer;
     } else {
-      color = Theme.of(context).colorScheme.primary;
+      color = theme.colorScheme.primaryContainer;
     }
     return Container(
       width: 50,
@@ -31,7 +32,10 @@ class CountNumberInCircle extends StatelessWidget {
       child: Text(
         plus == true ? "+${value.toString()}" : value.toString(),
         textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(
+            color: plus == true
+                ? theme.colorScheme.onSecondaryContainer
+                : theme.colorScheme.onPrimaryContainer),
       ),
     );
   }

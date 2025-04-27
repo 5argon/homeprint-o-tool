@@ -8,6 +8,7 @@ import 'package:homeprint_o_tool/page/project/project_page.dart';
 import 'package:homeprint_o_tool/page/review/review_page.dart';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/page/sidebar/sidebar.dart';
+import 'package:homeprint_o_tool/theme.dart';
 import 'package:provider/provider.dart';
 
 import 'core/page_preview/render.dart';
@@ -27,22 +28,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme =
-        ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 0, 70, 56));
+    final theme = MaterialTheme();
     return ChangeNotifierProvider(
       create: (BuildContext context) {},
       child: MaterialApp(
         title: 'Homeprint O\' Tool',
         themeMode: ThemeMode.system,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: colorScheme,
-          brightness: Brightness.light,
-        ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.dark,
-        ),
+        theme: theme.light(),
+        darkTheme: theme.dark(),
         home: MyHomePage(),
       ),
     );

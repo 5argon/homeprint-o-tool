@@ -214,34 +214,23 @@ class GroupListItem extends StatelessWidget {
           order: i + 1));
     }
 
-    var itemHeader = Container(
-      width: double.infinity,
-      height: 24,
-      decoration: BoxDecoration(
-        color: Theme.of(context).splashColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(12), // Adjust the radius as needed
-          topRight: Radius.circular(12),
-        ),
-      ),
-      child: Row(
-        children: [
-          if (integrityCheckResult.missingFileCount > 0) ...[
-            SizedBox(width: 4),
-            Icon(
-              Icons.warning,
-              color: Theme.of(context).colorScheme.error,
-              size: 15,
-            ),
-            SizedBox(width: 4),
-            Text(
-              "${integrityCheckResult.missingFileCount} missing file${integrityCheckResult.missingFileCount == 1 ? '' : 's'}",
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.error, fontSize: 12),
-            ),
-          ],
+    var itemHeader = Row(
+      children: [
+        if (integrityCheckResult.missingFileCount > 0) ...[
+          SizedBox(width: 4),
+          Icon(
+            Icons.warning,
+            color: Theme.of(context).colorScheme.error,
+            size: 15,
+          ),
+          SizedBox(width: 4),
+          Text(
+            "${integrityCheckResult.missingFileCount} missing file${integrityCheckResult.missingFileCount == 1 ? '' : 's'}",
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.error, fontSize: 12),
+          ),
         ],
-      ),
+      ],
     );
 
     final head = Column(
