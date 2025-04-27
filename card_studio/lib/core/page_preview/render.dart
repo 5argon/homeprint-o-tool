@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/include/include_data.dart';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
@@ -48,9 +48,7 @@ Future renderRender(
   if (settings == null) {
     return;
   }
-  String? directory = await FilePicker.platform.getDirectoryPath(
-    dialogTitle: 'Please select an output directory.',
-  );
+  String? directory = await getDirectoryPath(initialDirectory: baseDirectory);
   if (directory == null) {
     return;
   }
@@ -253,10 +251,7 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
     view: flutterView,
     child: RenderPositionedBox(
         alignment: Alignment.center, child: repaintBoundary),
-    configuration: ViewConfiguration(
-      size: Size(pixelWidth, pixelHeight),
-      devicePixelRatio: 1,
-    ),
+    configuration: ViewConfiguration.fromView(flutterView),
   );
 
   final PipelineOwner pipelineOwner = PipelineOwner();

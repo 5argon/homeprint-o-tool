@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'card.dart';
+import 'layout_const.dart';
 import 'project_settings.dart';
 import 'package:path/path.dart' as p;
 
@@ -40,13 +41,11 @@ class SaveFile {
 
   /// Opens a dialog to choose JSON file. Return `null` if cancel out of dialog.
   static Future<LoadResult?> loadFromFilePicker() async {
-    final pickResult = await FilePicker.platform.pickFiles(
-      dialogTitle: "Choose a JSON file representing the project.",
-      allowedExtensions: ['json'],
+    final pickResult = await openFile(
+      acceptedTypeGroups: [jsonType],
     );
     if (pickResult == null) return null;
-    final filePath = pickResult.files.single.path;
-    if (filePath == null) return null;
+    final filePath = pickResult.path;
     return await loadFromPath(filePath);
   }
 

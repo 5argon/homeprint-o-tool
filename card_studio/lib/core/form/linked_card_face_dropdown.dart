@@ -11,12 +11,12 @@ class LinkedCardFaceDropdown extends StatelessWidget {
   final bool? disabled;
 
   const LinkedCardFaceDropdown({
-    Key? key,
+    super.key,
     required this.linkedCardFaces,
     required this.selectedValue,
     required this.onChanged,
     this.disabled,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

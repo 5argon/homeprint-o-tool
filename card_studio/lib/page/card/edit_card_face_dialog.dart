@@ -1,7 +1,7 @@
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import '../../core/card.dart';
-import 'package:file_picker/file_picker.dart';
 import '../../core/form/linked_card_face_dropdown.dart';
 
 import '../../core/save_file.dart';
@@ -194,14 +194,18 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
 
 // Open dialog to pick JPG or PNG file, path returned is relative to baseDirectory
 Future<String?> pickRelativePath(String basePath) async {
-  final pickResult = await FilePicker.platform.pickFiles(
-    dialogTitle: "Choose an image file to link its relative path to this card.",
-    allowedExtensions: ['png', 'jpg'],
+  final XFile? pickResult = await openFile(
+    acceptedTypeGroups: [
+      XTypeGroup(
+        label: 'Image Files',
+        extensions: ['png', 'jpg'],
+      ),
+    ],
   );
   if (pickResult == null) return null;
-  final filePath = pickResult.files.single.path;
-  final isUnderBasePath = p.isWithin(basePath, filePath ?? "");
+  final filePath = pickResult.path;
+  final isUnderBasePath = p.isWithin(basePath, filePath);
   if (!isUnderBasePath) return null;
-  final relativePath = p.relative(filePath ?? "", from: basePath);
+  final relativePath = p.relative(filePath, from: basePath);
   return relativePath;
 }

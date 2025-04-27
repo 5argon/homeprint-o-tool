@@ -1,8 +1,6 @@
 import 'package:homeprint_o_tool/core/save_file.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-import 'package:path/path.dart' as p;
 import '../../core/card.dart';
 import 'edit_card_face_dialog.dart';
 
@@ -215,18 +213,4 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     );
     return padding;
   }
-}
-
-// Open dialog to pick JPG or PNG file, path returned is relative to baseDirectory
-Future<String?> pickRelativePath(String basePath) async {
-  final pickResult = await FilePicker.platform.pickFiles(
-    dialogTitle: "Choose an image file to link its relative path to this card.",
-    allowedExtensions: ['png', 'jpg'],
-  );
-  if (pickResult == null) return null;
-  final filePath = pickResult.files.single.path;
-  final isUnderBasePath = p.isWithin(basePath, filePath ?? "");
-  if (!isUnderBasePath) return null;
-  final relativePath = p.relative(filePath ?? "", from: basePath);
-  return relativePath;
 }

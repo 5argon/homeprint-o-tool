@@ -1,5 +1,5 @@
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
@@ -228,7 +228,8 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
   }
 
   void onBrowse() async {
-    final folderPath = await FilePicker.platform.getDirectoryPath();
+    final folderPath =
+        await getDirectoryPath(initialDirectory: widget.basePath);
     if (folderPath != null) {
       fallbackBackFile = null; // Reset fallback back file
 

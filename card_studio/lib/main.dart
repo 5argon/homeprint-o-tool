@@ -1,10 +1,13 @@
+import 'dart:ffi';
+
+import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/card.dart';
+import 'package:homeprint_o_tool/core/layout_const.dart';
 import 'package:homeprint_o_tool/page/include/picks_page.dart';
 import 'package:homeprint_o_tool/page/linked_card_face/linked_card_face_page.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 import 'package:homeprint_o_tool/page/project/project_page.dart';
 import 'package:homeprint_o_tool/page/review/review_page.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/page/sidebar/sidebar.dart';
 import 'package:provider/provider.dart';
@@ -154,6 +157,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       basePath: baseDirectory,
                       projectSettings: _projectSettings,
                       linkedCardFaces: _linkedCardFaces,
+                      definedCards: _definedCards,
+                      onDefinedCardsChange: (definedCards) {
+                        setState(() {
+                          _definedCards = definedCards;
+                        });
+                      },
                       onLinkedCardFacesChange: (linkedCardFaces) {
                         setState(() {
                           _linkedCardFaces = linkedCardFaces;
@@ -256,23 +265,19 @@ class _MyHomePageState extends State<MyHomePage> {
         future: renderingFuture);
 
     onNew() async {
-      final filePathFuture = FilePicker.platform.saveFile(
-        dialogTitle:
-            "Where the file is saved will be set as project's base directory as well.",
+      final filePathFuture = getSaveLocation(
+        acceptedTypeGroups: [jsonType],
         initialDirectory: _baseDirectory,
-        fileName: _previousFileName,
-        allowedExtensions: ['json'],
+        suggestedName: "project.json",
       );
       setState(() {
         fullScreenDisableFuture = filePathFuture;
       });
       final filePath = await filePathFuture;
-
       if (filePath != null) {
-        // Allowed extensions not actually enforcing it. Append .json if it is not
-        // ending in that.
+        // Append .json if not already.
         final filePathJson =
-            !filePath.endsWith(".json") ? "$filePath.json" : filePath;
+            !filePath.path.endsWith(".json") ? "$filePath.json" : filePath.path;
         final saveFile =
             SaveFile(_projectSettings, _linkedCardFaces, _definedCards);
         final saveResult = await saveFile.saveToFile(filePathJson);
@@ -322,17 +327,16 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     onSave() async {
-      final filePath = await FilePicker.platform.saveFile(
-        dialogTitle:
-            "Where the file is saved will be set as project's base directory as well.",
+      final filePathFuture = getSaveLocation(
+        acceptedTypeGroups: [jsonType],
         initialDirectory: _baseDirectory,
-        fileName: _previousFileName,
-        allowedExtensions: ['json'],
+        suggestedName: _previousFileName,
       );
+      final filePath = await filePathFuture;
       if (filePath != null) {
         final saveFile =
             SaveFile(_projectSettings, _linkedCardFaces, _definedCards);
-        final saveResult = await saveFile.saveToFile(filePath);
+        final saveResult = await saveFile.saveToFile(filePath.path);
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
