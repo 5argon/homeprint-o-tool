@@ -31,8 +31,8 @@ class CardGroup {
       String baseDirectory, LinkedCardFaces linkedCardFaces) {
     var missingFileCount = 0;
     for (var card in cards) {
-      final front = card._front;
-      final back = card._back;
+      final front = card.getFront(linkedCardFaces);
+      final back = card.getBack(linkedCardFaces);
       if (front != null) {
         if (front.isImageMissing(baseDirectory)) {
           missingFileCount++;
@@ -267,8 +267,6 @@ class CardFace {
           isLinked,
         );
 
-  CardFace.empty() : this.withRelativeFilePath("");
-
   CardFace.emptyLinked() : this.withRelativeFilePath("", isLinked: true);
 
   CardFace copyChangingRelativeFilePath(String newRelativeFilePath) {
@@ -299,6 +297,23 @@ class CardFace {
             cardFace.useDefaultContentExpand,
             cardFace.useDefaultRotation,
             cardFace.isLinkedCardFace);
+
+  CardFace copyIncludingUuid() {
+    final newCard = CardFace(
+      relativeFilePath,
+      contentCenterOffset,
+      contentExpand,
+      rotation,
+      name,
+      useDefaultContentCenterOffset,
+      useDefaultContentExpand,
+      useDefaultRotation,
+      isLinkedCardFace,
+    );
+    // Constructor always assign a new UUID, reassign the same UUID.
+    newCard.uuid = uuid;
+    return newCard;
+  }
 
   bool isImageMissing(String baseDirectory) {
     final f = File(p.join(baseDirectory, relativeFilePath));

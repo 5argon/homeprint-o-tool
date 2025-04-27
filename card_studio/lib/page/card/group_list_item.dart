@@ -32,6 +32,7 @@ class GroupListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final integrityCheckResult =
         cardGroup.checkIntegrity(basePath, linkedCardFaces);
+
     final removeButton = IconButton(
       onPressed: () {
         onDelete();

@@ -178,9 +178,8 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
               }
               widget.onCardFaceChange(newCard);
             } else if (_tabController.index == 1 && selectedCardFace != null) {
-              // Linked card face also need to be cloned so components
-              // looking for changes are updated.
-              final newCard = CardFace.copyFrom(selectedCardFace);
+              // Different instance so component updates, but inside it's same UUID.
+              final newCard = selectedCardFace.copyIncludingUuid();
               widget.onCardFaceChange(newCard);
             }
             Navigator.of(context).pop();

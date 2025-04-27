@@ -98,8 +98,8 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         tooltip: "Quick assign this card face to the linked card face #1.",
         onPressed: linkedCardFaceOneAvailable
             ? () async {
-                print(linkedCardFaces[0].isLinkedCardFace);
-                onCardChange(linkedCardFaces[0]);
+                final copyOfLinked1 = linkedCardFaces[0].copyIncludingUuid();
+                onCardChange(copyOfLinked1);
               }
             : null,
         icon: createLinkIconWithNumber(1));
@@ -108,7 +108,8 @@ class GroupMemberListItemOneSide extends StatelessWidget {
         tooltip: "Quick assign this card face to the linked card face #2.",
         onPressed: linkedCardFaceTwoAvailable
             ? () async {
-                onCardChange(linkedCardFaces[1]);
+                final copyOfLinked2 = linkedCardFaces[1].copyIncludingUuid();
+                onCardChange(copyOfLinked2);
               }
             : null,
         icon: createLinkIconWithNumber(2));

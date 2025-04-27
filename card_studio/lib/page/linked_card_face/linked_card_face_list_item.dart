@@ -14,9 +14,6 @@ class LinkedCardFaceListItem extends StatefulWidget {
   final LinkedCardFaces linkedCardFaces;
   final ProjectSettings projectSettings;
   final int order;
-
-  /// Input instance [linkedCardFace] was modified in place, there's nothing
-  /// returnd from this function.
   final Function(CardFace cardFace) onLinkedCardFaceChange;
   final Function() onDelete;
 
@@ -75,7 +72,7 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
         labelText: "Name",
       ),
       onChanged: (value) {
-        final nameChangedCard = CardFace.copyFrom(widget.linkedCardFace);
+        final nameChangedCard = widget.linkedCardFace.copyIncludingUuid();
         nameChangedCard.name = value;
         widget.onLinkedCardFaceChange(nameChangedCard);
       },
@@ -133,8 +130,9 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                             // Linked card face is already one face, deleting the face
                             // is changed to just blank the relative path.
                             if (newCardFace == null) {
-                              widget.onLinkedCardFaceChange(
-                                  CardFace.emptyLinked());
+                              final previousCardFace = widget.linkedCardFace;
+                              widget.onLinkedCardFaceChange(previousCardFace
+                                  .copyChangingRelativeFilePath(""));
                               return;
                             }
                             widget.onLinkedCardFaceChange(newCardFace);

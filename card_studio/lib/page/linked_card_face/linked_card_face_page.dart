@@ -67,14 +67,11 @@ class LinkedCardFacePage extends StatelessWidget {
         linkedCardFace: linkedCardFace,
         cardSize: projectSettings.cardSize,
         onLinkedCardFaceChange: (newLinkedCardFace) {
+          // This is a new instance with same UUID, which breaks cards that were referencing
+          // the previous instance. But there is a getter that relinks to this
+          // new one by exhaustive search comparing UUID.
           linkedCardFaces[i] = newLinkedCardFace;
           onLinkedCardFacesChange(linkedCardFaces);
-
-          // A completely new instance on each change of any member.
-          // Changing instances is good for making the components reactive with less effort.
-          // But we have to manually scan all cards who were using the previous instance
-          // to update to this new one.
-          // (TODO)
         },
         onDelete: () {
           final scaffoldMessenger = ScaffoldMessenger.of(context);

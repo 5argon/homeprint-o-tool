@@ -294,7 +294,5 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
   final uint8List = bd!.buffer.asUint8List();
 
   // final finish3 = DateTime.timestamp();
-  // print(
-  //     "Third render took ${finish3.millisecondsSinceEpoch - start3.millisecondsSinceEpoch} ms");
   return uint8List;
 }
