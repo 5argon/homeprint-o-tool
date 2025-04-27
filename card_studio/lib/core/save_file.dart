@@ -19,6 +19,16 @@ DefinedCards deepCopyDefinedCards(DefinedCards definedCards) {
   return newList;
 }
 
+void replaceLinkedCardFaces(
+    LinkedCardFaces linkedCardFaces, DefinedCards definedCards) {
+  for (var group in definedCards) {
+    for (var card in group.cards) {
+      if (card.front != null) {}
+      if (card.back != null) {}
+    }
+  }
+}
+
 typedef LinkedCardFaces = List<CardFace>;
 
 typedef LoadResult = ({SaveFile saveFile, String basePath, String fileName});

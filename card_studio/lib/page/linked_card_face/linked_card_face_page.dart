@@ -10,15 +10,18 @@ class LinkedCardFacePage extends StatelessWidget {
   final String basePath;
   final ProjectSettings projectSettings;
   final LinkedCardFaces linkedCardFaces;
+  final DefinedCards definedCards;
   final Function(LinkedCardFaces linkedCardFaces) onLinkedCardFacesChange;
+  final Function(DefinedCards definedCards) onDefinedCardsChange;
 
-  LinkedCardFacePage({
-    super.key,
-    required this.basePath,
-    required this.projectSettings,
-    required this.linkedCardFaces,
-    required this.onLinkedCardFacesChange,
-  });
+  LinkedCardFacePage(
+      {super.key,
+      required this.basePath,
+      required this.projectSettings,
+      required this.linkedCardFaces,
+      required this.definedCards,
+      required this.onLinkedCardFacesChange,
+      required this.onDefinedCardsChange});
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +67,14 @@ class LinkedCardFacePage extends StatelessWidget {
         linkedCardFace: linkedCardFace,
         cardSize: projectSettings.cardSize,
         onLinkedCardFaceChange: (newLinkedCardFace) {
-          // A completely new instance on each change of any member.
-          // But any card referencing it is by UUID so they can always relink to
-          // that even if instance is not the same. Changing instances also good
-          // for making the component reactive with less effort.
           linkedCardFaces[i] = newLinkedCardFace;
           onLinkedCardFacesChange(linkedCardFaces);
+
+          // A completely new instance on each change of any member.
+          // Changing instances is good for making the components reactive with less effort.
+          // But we have to manually scan all cards who were using the previous instance
+          // to update to this new one.
+          // (TODO)
         },
         onDelete: () {
           final scaffoldMessenger = ScaffoldMessenger.of(context);
