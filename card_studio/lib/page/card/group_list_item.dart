@@ -153,8 +153,9 @@ class GroupListItem extends StatelessWidget {
                       final newCardGroup = cardGroup;
                       for (var i = 0; i < cardGroup.cards.length; i++) {
                         final card = cardGroup.cards[i];
-                        final frontFilePathNoExtension = card
-                                .front?.relativeFilePath
+                        final frontFace = card.getFront(linkedCardFaces);
+                        final frontFilePathNoExtension = frontFace
+                                ?.relativeFilePath
                                 .replaceAll(RegExp(r'\.[a-zA-Z0-9]+$'), '') ??
                             '';
                         final match =

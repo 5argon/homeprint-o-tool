@@ -69,7 +69,7 @@ class PickedOneCard extends StatelessWidget {
     var leftCardFace = GroupMemberListItemOneSide(
       isBack: false,
       forLinkedCardFaceTab: false,
-      cardFace: cardEach.front,
+      cardFace: cardEach.getFront(linkedCardFaces),
       linkedCardFaces: linkedCardFaces,
       showEditButton: false,
       basePath: basePath,
@@ -78,7 +78,7 @@ class PickedOneCard extends StatelessWidget {
     var rightCardFace = GroupMemberListItemOneSide(
       isBack: true,
       forLinkedCardFaceTab: false,
-      cardFace: cardEach.back,
+      cardFace: cardEach.getBack(linkedCardFaces),
       linkedCardFaces: linkedCardFaces,
       showEditButton: false,
       basePath: basePath,
@@ -118,10 +118,11 @@ class PickedOneCard extends StatelessWidget {
                 child: SingleCardPreview(
                   basePath: basePath,
                   cardSize: cardSize,
-                  bleedFactor:
-                      cardEach.front?.effectiveContentExpand(projectSettings) ??
-                          1.0,
-                  cardFace: cardEach.front,
+                  bleedFactor: cardEach
+                          .getFront(linkedCardFaces)
+                          ?.effectiveContentExpand(projectSettings) ??
+                      1.0,
+                  cardFace: cardEach.getFront(linkedCardFaces),
                 )),
             SizedBox(width: 4),
             SizedBox(
@@ -130,10 +131,11 @@ class PickedOneCard extends StatelessWidget {
                 child: SingleCardPreview(
                   basePath: basePath,
                   cardSize: cardSize,
-                  bleedFactor:
-                      cardEach.back?.effectiveContentExpand(projectSettings) ??
-                          1.0,
-                  cardFace: cardEach.back,
+                  bleedFactor: cardEach
+                          .getBack(linkedCardFaces)
+                          ?.effectiveContentExpand(projectSettings) ??
+                      1.0,
+                  cardFace: cardEach.getBack(linkedCardFaces),
                 )),
             SizedBox(width: 16),
             Expanded(

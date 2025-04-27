@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/include/include_data.dart';
 
 import 'package:flutter/material.dart';
@@ -39,11 +40,13 @@ Future renderRender(
   Includes includeItems,
   Includes skipIncludeItems,
   String baseDirectory,
+  LinkedCardFaces linkedCardFaces,
   void Function(int) onCurrentPageUpdate,
   void Function(ExportingFrontBack) onFrontBackUpdate,
   void Function(int) onTotalPageUpdate,
 ) async {
-  final bool frontSideOnly = frontSideOnlyIncludes(includeItems);
+  final bool frontSideOnly =
+      frontSideOnlyIncludes(includeItems, linkedCardFaces);
   ExportSettings? settings = await openPreExportDialog(context, frontSideOnly);
   if (settings == null) {
     return;
@@ -64,7 +67,7 @@ Future renderRender(
   for (var i = 0; i < pagination.totalPages; i++) {
     onCurrentPageUpdate(i + 1);
     final cards = cardsAtPage(includeItems, skipIncludeItems, layoutData,
-        projectSettings.cardSize, i + 1);
+        projectSettings.cardSize, i + 1, linkedCardFaces);
     onFrontBackUpdate(ExportingFrontBack.front);
 
     await renderOneSide(

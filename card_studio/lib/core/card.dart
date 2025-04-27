@@ -31,8 +31,8 @@ class CardGroup {
       String baseDirectory, LinkedCardFaces linkedCardFaces) {
     var missingFileCount = 0;
     for (var card in cards) {
-      final front = card.front;
-      final back = card.back;
+      final front = card._front;
+      final back = card._back;
       if (front != null) {
         if (front.isImageMissing(baseDirectory)) {
           missingFileCount++;
@@ -85,22 +85,64 @@ class CardGroup {
 }
 
 class DuplexCard {
-  CardFace? front;
-  CardFace? back;
+  CardFace? _front;
+  CardFace? _back;
+
+  CardFace? getFront(LinkedCardFaces linkedCardFaces) {
+    final front = _front;
+    if (front == null) {
+      return null;
+    }
+    if (front.isLinkedCardFace) {
+      // Always try to get the latest linked card face by matching UUID.
+      for (var linkedCardFace in linkedCardFaces) {
+        if (linkedCardFace.uuid == front.uuid) {
+          return linkedCardFace;
+        }
+      }
+      return null;
+    }
+    return front;
+  }
+
+  set front(CardFace? front) {
+    _front = front;
+  }
+
+  CardFace? getBack(LinkedCardFaces linkedCardFaces) {
+    final back = _back;
+    if (back == null) {
+      return null;
+    }
+    if (back.isLinkedCardFace) {
+      // Always try to get the latest linked card face by matching UUID.
+      for (var linkedCardFace in linkedCardFaces) {
+        if (linkedCardFace.uuid == back.uuid) {
+          return linkedCardFace;
+        }
+      }
+      return null;
+    }
+    return back;
+  }
+
+  set back(CardFace? back) {
+    _back = back;
+  }
 
   /// On including this card as a group, automatically duplicates itself by this many count.
   /// Individual add will not be affected.
   late int amount;
   String? name;
 
-  DuplexCard(this.front, this.back, this.amount, this.name);
+  DuplexCard(this._front, this._back, this.amount, this.name);
 
   List<DuplexCard> linearize() {
     return List.filled(amount, this);
   }
 
   DuplexCard copy() {
-    return DuplexCard(front, back, amount, name);
+    return DuplexCard(_front, _back, amount, name);
   }
 
   DuplexCard.fromJson(Map<String, dynamic> json, List<CardFace> cardFaces) {
@@ -108,56 +150,35 @@ class DuplexCard {
     name = json['name'] ?? "";
 
     {
-      final frontInstance = json['frontInstance'];
-      if (frontInstance is String) {
+      final frontLink = json['frontLink'];
+      if (frontLink is String) {
         for (var cardFace in cardFaces) {
-          if (cardFace.uuid == frontInstance) {
-            front = cardFace;
+          if (cardFace.uuid == frontLink) {
+            _front = cardFace;
             break;
           }
         }
       } else {
-        final frontLink = json['frontLink'];
-        if (frontLink is String) {
-          for (var cardFace in cardFaces) {
-            if (cardFace.uuid == frontLink) {
-              front = cardFace;
-              break;
-            }
-          }
-        } else {
-          front = json['front'] == null
-              ? null
-              : CardFace.fromJson(json['front'], isLinkedCardFace: false);
-        }
+        _front = json['front'] == null
+            ? null
+            : CardFace.fromJson(json['front'], isLinkedCardFace: false);
       }
     }
 
     {
-      final backInstance = json['backInstance'];
-      if (backInstance is String) {
+      final backLink = json['backLink'];
+      if (backLink is String) {
         // Search from matching UUID in instances instead.
         for (var cardFace in cardFaces) {
-          if (cardFace.uuid == backInstance) {
-            back = cardFace;
+          if (cardFace.uuid == backLink) {
+            _back = cardFace;
             break;
           }
         }
       } else {
-        final backLink = json['backLink'];
-        if (backLink is String) {
-          // Search from matching UUID in instances instead.
-          for (var cardFace in cardFaces) {
-            if (cardFace.uuid == backLink) {
-              back = cardFace;
-              break;
-            }
-          }
-        } else {
-          back = json['back'] == null
-              ? null
-              : CardFace.fromJson(json['back'], isLinkedCardFace: false);
-        }
+        _back = json['back'] == null
+            ? null
+            : CardFace.fromJson(json['back'], isLinkedCardFace: false);
       }
     }
   }
@@ -171,22 +192,22 @@ class DuplexCard {
     var foundFront = false;
     var foundBack = false;
     for (var cardFace in cardFaces) {
-      if (!foundFront && identical(cardFace, front)) {
+      if (!foundFront && identical(cardFace, _front)) {
         writeObject['frontLink'] = cardFace.uuid;
         foundFront = true;
         break;
       }
-      if (!foundBack && identical(cardFace, back)) {
+      if (!foundBack && identical(cardFace, _back)) {
         writeObject['backLink'] = cardFace.uuid;
         foundBack = true;
         break;
       }
     }
     if (!foundFront) {
-      writeObject['front'] = front?.toJson();
+      writeObject['front'] = _front?.toJson();
     }
     if (!foundBack) {
-      writeObject['back'] = back?.toJson();
+      writeObject['back'] = _back?.toJson();
     }
     return writeObject;
   }

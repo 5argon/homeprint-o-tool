@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 
 import '../../core/card.dart';
@@ -46,8 +47,13 @@ class CardsAtPage {
 /// Return a list of cards (both front and back as one card)
 /// that should be in a given page number. Page number starts from 1.
 /// Spot that is a skip returns null card.
-CardsAtPage cardsAtPage(Includes includes, Includes skipIncludes,
-    LayoutData layoutData, SizePhysical cardSize, int page) {
+CardsAtPage cardsAtPage(
+    Includes includes,
+    Includes skipIncludes,
+    LayoutData layoutData,
+    SizePhysical cardSize,
+    int page,
+    LinkedCardFaces linkedCardFaces) {
   final cardCountRowCol = calculateCardCountPerPage(layoutData, cardSize);
   final pagination = calculatePagination(includes, layoutData, cardSize,
       cardCountRowCol.rows, cardCountRowCol.columns);
@@ -66,10 +72,13 @@ CardsAtPage cardsAtPage(Includes includes, Includes skipIncludes,
       min((page - 1) * perPageWithSkips + perPageWithSkips, allIncludes.length);
   final onThisPage = allIncludes.sublist(start, end);
 
-  final frontCards = onThisPage.map((e) => e.front).toList();
-  final backCards = onThisPage.map((e) => e.back).toList();
-  final skipCardsFront = allSkips.map((e) => e.front).toList();
-  final skipCardsBack = allSkips.map((e) => e.back).toList();
+  final frontCards =
+      onThisPage.map((e) => e.getFront(linkedCardFaces)).toList();
+  final backCards = onThisPage.map((e) => e.getBack(linkedCardFaces)).toList();
+  final skipCardsFront =
+      allSkips.map((e) => e.getFront(linkedCardFaces)).toList();
+  final skipCardsBack =
+      allSkips.map((e) => e.getBack(linkedCardFaces)).toList();
   return CardsAtPage(
     distributeRowCol(page, cardCountRowCol.rows, cardCountRowCol.columns,
         frontCards, skipCardsFront, BackArrangement.exact, validSkips),

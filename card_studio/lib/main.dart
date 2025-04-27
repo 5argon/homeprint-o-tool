@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/card.dart';
 import 'package:homeprint_o_tool/core/layout_const.dart';
@@ -233,6 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       includes: _includes,
                       skipIncludes: _skipIncludes,
                       baseDirectory: baseDirectory,
+                      linkedCardFaces: _linkedCardFaces,
                     );
                     return reviewPage;
                   }
@@ -361,7 +360,8 @@ class _MyHomePageState extends State<MyHomePage> {
               _layoutData,
               _includes,
               _skipIncludes,
-              baseDirectory, (currentPage) {
+              baseDirectory,
+              _linkedCardFaces, (currentPage) {
             setState(() {
               exportingCurrentPage = currentPage;
             });

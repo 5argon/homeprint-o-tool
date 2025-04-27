@@ -1,3 +1,5 @@
+import 'package:homeprint_o_tool/core/save_file.dart';
+
 import '../../core/card.dart';
 
 typedef Includes = List<IncludeItem>;
@@ -7,19 +9,19 @@ int countIncludes(Includes includes) {
       0, (previousValue, element) => previousValue + element.count());
 }
 
-bool frontSideOnlyIncludes(Includes includes) {
+bool frontSideOnlyIncludes(Includes includes, LinkedCardFaces linkedCardFaces) {
   for (var i = 0; i < includes.length; i++) {
     final cardGroup = includes[i].cardGroup;
     final cardEach = includes[i].cardEach;
     if (cardGroup != null) {
       for (var j = 0; j < cardGroup.cards.length; j++) {
         final card = cardGroup.cards[j];
-        if (card.back != null) {
+        if (card.getBack(linkedCardFaces) != null) {
           return false;
         }
       }
     } else if (cardEach != null) {
-      if (cardEach.back != null) {
+      if (cardEach.getBack(linkedCardFaces) != null) {
         return false;
       }
     }

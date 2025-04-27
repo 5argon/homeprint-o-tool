@@ -116,10 +116,11 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
         numberLabel,
       ],
     );
-    var frontFace = GroupMemberListItemOneSide(
+    final frontFace = widget.card.getFront(widget.linkedCardFaces);
+    var frontFaceSide = GroupMemberListItemOneSide(
       isBack: false,
       forLinkedCardFaceTab: false,
-      cardFace: widget.card.front,
+      cardFace: frontFace,
       linkedCardFaces: widget.linkedCardFaces,
       basePath: widget.basePath,
       showEditButton: true,
@@ -129,10 +130,11 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
         widget.onCardChange(newCardEach);
       },
     );
-    var backFace = GroupMemberListItemOneSide(
+    final backFace = widget.card.getBack(widget.linkedCardFaces);
+    var backFaceSide = GroupMemberListItemOneSide(
       isBack: true,
       forLinkedCardFaceTab: false,
-      cardFace: widget.card.back,
+      cardFace: backFace,
       linkedCardFaces: widget.linkedCardFaces,
       basePath: widget.basePath,
       showEditButton: true,
@@ -147,20 +149,20 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
       if (lowWidth) {
         return Column(
           children: [
-            frontFace,
+            frontFaceSide,
             SizedBox(height: 16),
-            backFace,
+            backFaceSide,
           ],
         );
       }
       return Row(
         children: [
           Expanded(
-            child: frontFace,
+            child: frontFaceSide,
           ),
           SizedBox(width: 16),
           Expanded(
-            child: backFace,
+            child: backFaceSide,
           )
         ],
       );
@@ -176,10 +178,10 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 child: SingleCardPreview(
                   basePath: widget.basePath,
                   cardSize: widget.cardSize,
-                  bleedFactor: widget.card.front
+                  bleedFactor: frontFace
                           ?.effectiveContentExpand(widget.projectSettings) ??
                       1.0,
-                  cardFace: widget.card.front,
+                  cardFace: frontFace,
                 )),
             SizedBox(width: 4),
             SizedBox(
@@ -188,10 +190,10 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                 child: SingleCardPreview(
                   basePath: widget.basePath,
                   cardSize: widget.cardSize,
-                  bleedFactor: widget.card.back
+                  bleedFactor: backFace
                           ?.effectiveContentExpand(widget.projectSettings) ??
                       1.0,
-                  cardFace: widget.card.back,
+                  cardFace: backFace,
                 )),
             SizedBox(width: 16),
             Expanded(

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/include/include_data.dart';
 import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +23,15 @@ class ReviewPage extends StatefulWidget {
       required this.layoutData,
       required this.includes,
       required this.skipIncludes,
-      required this.baseDirectory});
+      required this.baseDirectory,
+      required this.linkedCardFaces});
 
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
   final Includes includes;
   final Includes skipIncludes;
   final String baseDirectory;
+  final LinkedCardFaces linkedCardFaces;
 
   @override
   State<ReviewPage> createState() => _ReviewPageState();
@@ -50,8 +53,14 @@ class _ReviewPageState extends State<ReviewPage> {
     if (widget.includes.isEmpty) {
       return nothingToPreviewRender;
     }
-    final cards = cardsAtPage(widget.includes, widget.skipIncludes,
-        widget.layoutData, widget.projectSettings.cardSize, _page);
+    final cards = cardsAtPage(
+      widget.includes,
+      widget.skipIncludes,
+      widget.layoutData,
+      widget.projectSettings.cardSize,
+      _page,
+      widget.linkedCardFaces,
+    );
 
     var textTheme = Theme.of(context).textTheme;
     var lrPreviewPadding = 8.0;
