@@ -63,10 +63,10 @@ class CardGroup {
     }
   }
 
-  Map<String, dynamic> toJson(List<CardFace> cardFaces) {
+  Map<String, dynamic> toJson(LinkedCardFaces linkedCardFaces) {
     return {
       'name': name,
-      'cards': cards.map((e) => e.toJson(cardFaces)).toList(),
+      'cards': cards.map((e) => e.toJson(linkedCardFaces)).toList(),
     };
   }
 
@@ -183,21 +183,21 @@ class DuplexCard {
     }
   }
 
-  Map<String, dynamic> toJson(List<CardFace> cardFaces) {
+  Map<String, dynamic> toJson(LinkedCardFaces linkedCardFaces) {
     Map<String, dynamic> writeObject = {};
     writeObject['amount'] = amount;
     writeObject['name'] = name;
-    // Match this object by pointer address among instances.
-    // If found, write just the UUID instead.
     var foundFront = false;
     var foundBack = false;
-    for (var cardFace in cardFaces) {
-      if (!foundFront && identical(cardFace, _front)) {
+    for (var cardFace in linkedCardFaces) {
+      final front = _front;
+      if (!foundFront && front != null && cardFace.uuid == front.uuid) {
         writeObject['frontLink'] = cardFace.uuid;
         foundFront = true;
         break;
       }
-      if (!foundBack && identical(cardFace, _back)) {
+      final back = _back;
+      if (!foundBack && back != null && cardFace.uuid == back.uuid) {
         writeObject['backLink'] = cardFace.uuid;
         foundBack = true;
         break;
