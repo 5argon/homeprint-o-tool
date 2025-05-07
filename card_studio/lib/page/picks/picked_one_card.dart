@@ -74,6 +74,7 @@ class PickedOneCard extends StatelessWidget {
       showEditButton: false,
       basePath: basePath,
       onCardChange: (card) {},
+      projectSettings: projectSettings,
     );
     var rightCardFace = GroupMemberListItemOneSide(
       isBack: true,
@@ -83,6 +84,7 @@ class PickedOneCard extends StatelessWidget {
       showEditButton: false,
       basePath: basePath,
       onCardChange: (card) {},
+      projectSettings: projectSettings,
     );
     var cardFacesRow = LayoutBuilder(builder: (context, constraints) {
       var lowWidth = constraints.maxWidth < cardListLowWidth;

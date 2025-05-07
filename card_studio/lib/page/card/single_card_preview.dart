@@ -12,6 +12,7 @@ class SingleCardPreview extends StatefulWidget {
   final String basePath;
   final SizePhysical cardSize;
   final CardFace? cardFace;
+  final Function(double width, double height)? onImageDescriptorLoaded;
 
   SingleCardPreview({
     super.key,
@@ -19,6 +20,7 @@ class SingleCardPreview extends StatefulWidget {
     required this.cardSize,
     required this.basePath,
     required this.cardFace,
+    this.onImageDescriptorLoaded,
   });
 
   @override
@@ -33,6 +35,13 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
     final bytes = await loadedFile.readAsBytes();
     final buff = await ImmutableBuffer.fromUint8List(bytes);
     final descriptor = await ImageDescriptor.encoded(buff);
+
+    // Notify parent about image dimensions if callback is provided
+    if (widget.onImageDescriptorLoaded != null) {
+      widget.onImageDescriptorLoaded!(
+          descriptor.width.toDouble(), descriptor.height.toDouble());
+    }
+
     return descriptor;
   }
 

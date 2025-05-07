@@ -129,6 +129,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
         newCardEach.front = card;
         widget.onCardChange(newCardEach);
       },
+      projectSettings: widget.projectSettings,
     );
     final backFace = widget.card.getBack(widget.linkedCardFaces);
     var backFaceSide = GroupMemberListItemOneSide(
@@ -143,6 +144,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
         newCardEach.back = card;
         widget.onCardChange(newCardEach);
       },
+      projectSettings: widget.projectSettings,
     );
     var cardFacesRow = LayoutBuilder(builder: (context, constraints) {
       var lowWidth = constraints.maxWidth < cardListLowWidth;

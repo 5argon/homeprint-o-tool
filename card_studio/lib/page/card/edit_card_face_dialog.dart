@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import '../../core/card.dart';
 import '../../core/form/linked_card_face_dropdown.dart';
+import '../../core/project_settings.dart';
+import 'single_card_preview.dart';
+import 'content-area-editor.dart';
 
 import '../../core/save_file.dart';
 
 class EditCardFaceDialog extends StatefulWidget {
   final String basePath;
   final LinkedCardFaces linkedCardFaces;
+  final ProjectSettings projectSettings;
 
   /// If using Linked Card Face, return the instance defined in the list.
   /// If using File, create a new instance based on the selected file.
@@ -23,6 +27,7 @@ class EditCardFaceDialog extends StatefulWidget {
     required this.linkedCardFaces,
     required this.onCardFaceChange,
     required this.forLinkedCardFaceTab,
+    required this.projectSettings,
     this.initialCard, // Optional initial value
   });
 
@@ -38,6 +43,10 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
   String? tempFilePath; // Temporary file path for the File tab
   late TextEditingController
       filePathController; // Controller for the text field
+
+  // Content area controls
+  bool useDefaultContentExpand = true;
+  double customContentExpand = 1.0;
 
   @override
   void initState() {
@@ -55,6 +64,10 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
         _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
         initialFilePath = widget.initialCard!.relativeFilePath;
         tempFilePath = initialFilePath;
+
+        // Initialize content area settings from initial card
+        useDefaultContentExpand = widget.initialCard!.useDefaultContentExpand;
+        customContentExpand = widget.initialCard!.contentExpand;
       } else {
         _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
       }
@@ -101,6 +114,112 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
             },
             child: Text("Browse File"),
           ),
+
+          // Show card preview and content area controls side by side if a file is selected
+          if (tempFilePath != null) ...[
+            SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left side: Card preview
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    height: 230,
+                    child: SingleCardPreview(
+                      bleedFactor: useDefaultContentExpand
+                          ? widget.projectSettings.defaultContentExpand
+                          : customContentExpand,
+                      cardSize: widget.projectSettings.cardSize,
+                      basePath: widget.basePath,
+                      cardFace: CardFace.withRelativeFilePath(tempFilePath!),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 16),
+                // Right side: Content area settings
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Content Area Settings",
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      RadioListTile<bool>(
+                        dense: true,
+                        title: Text(
+                            "Use Default Content Area (${(widget.projectSettings.defaultContentExpand * 100).toStringAsFixed(1)}%)"),
+                        value: true,
+                        groupValue: useDefaultContentExpand,
+                        onChanged: (value) {
+                          setState(() {
+                            useDefaultContentExpand = value!;
+                          });
+                        },
+                      ),
+                      RadioListTile<bool>(
+                        dense: true,
+                        title: Text("Use Custom Content Area"),
+                        value: false,
+                        groupValue: useDefaultContentExpand,
+                        onChanged: (value) {
+                          setState(() {
+                            useDefaultContentExpand = value!;
+                          });
+                        },
+                      ),
+                      if (!useDefaultContentExpand) ...[
+                        Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: Row(
+                            children: [
+                              Text(
+                                  "${(customContentExpand * 100).toStringAsFixed(1)}%"),
+                              SizedBox(width: 16),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  // Create a temporary CardFace to pass to the editor
+                                  final tempCard =
+                                      CardFace.withRelativeFilePath(
+                                          tempFilePath!);
+
+                                  final result = await showDialog<double>(
+                                    context: context,
+                                    builder: (context) =>
+                                        ContentAreaEditorDialog(
+                                      basePath: widget.basePath,
+                                      cardFace: tempCard,
+                                      cardSize: widget.projectSettings.cardSize,
+                                      initialContentExpand: customContentExpand,
+                                      onContentExpandChanged: (value) => {
+                                        setState(() {
+                                          customContentExpand = value;
+                                        })
+                                      },
+                                    ),
+                                  );
+
+                                  if (result != null) {
+                                    setState(() {
+                                      customContentExpand = result;
+                                    });
+                                  }
+                                },
+                                child: Text("Editor"),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -126,7 +245,7 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
           ? Text("Edit Linked Card Face")
           : Text("Edit Card Face"),
       content: SizedBox(
-        width: 400,
+        width: 550, // Increased width for the side-by-side layout
         child: DefaultTabController(
           length: widget.forLinkedCardFaceTab ? 1 : 2,
           child: Column(
@@ -141,7 +260,7 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                   ],
                 ),
               SizedBox(
-                height: 200, // Adjust height as needed
+                height: 350, // Adjusted height
                 child: TabBarView(
                   controller: _tabController,
                   children: widget.forLinkedCardFaceTab
@@ -173,8 +292,18 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
               if (initialCard != null) {
                 newCard =
                     initialCard.copyChangingRelativeFilePath(tempFilePath);
+                // Update content expand settings
+                newCard.useDefaultContentExpand = useDefaultContentExpand;
+                if (!useDefaultContentExpand) {
+                  newCard.contentExpand = customContentExpand;
+                }
               } else {
                 newCard = CardFace.withRelativeFilePath(tempFilePath);
+                // Apply content expand settings to new card
+                newCard.useDefaultContentExpand = useDefaultContentExpand;
+                if (!useDefaultContentExpand) {
+                  newCard.contentExpand = customContentExpand;
+                }
               }
               widget.onCardFaceChange(newCard);
             } else if (_tabController.index == 1 && selectedCardFace != null) {

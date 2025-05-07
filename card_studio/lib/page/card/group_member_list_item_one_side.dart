@@ -1,3 +1,4 @@
+import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
   final bool isBack;
   final bool showEditButton;
   final String basePath;
+  final ProjectSettings projectSettings;
 
   /// Returns a new instance always, even assigning a new linked card face,
   /// you get a different instance from those that are originally defined.
@@ -25,6 +27,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
     required this.basePath,
     required this.onCardChange,
     required this.forLinkedCardFaceTab,
+    required this.projectSettings,
   });
 
   @override
@@ -38,6 +41,7 @@ class GroupMemberListItemOneSide extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return EditCardFaceDialog(
+              projectSettings: projectSettings,
               basePath: basePath,
               linkedCardFaces: linkedCardFaces,
               onCardFaceChange: onCardChange,

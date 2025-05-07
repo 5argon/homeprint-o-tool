@@ -199,6 +199,7 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                             }
                             widget.onLinkedCardFaceChange(newCardFace);
                           },
+                          projectSettings: widget.projectSettings,
                         ),
                       ),
                     ],
