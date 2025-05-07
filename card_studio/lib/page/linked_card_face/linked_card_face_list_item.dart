@@ -37,18 +37,33 @@ class LinkedCardFaceListItem extends StatefulWidget {
 
 class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
   late TextEditingController _cardNameController;
+  final FocusNode _focusNode = FocusNode();
+  bool _isEditing = false;
 
   @override
   void initState() {
     super.initState();
     _cardNameController =
         TextEditingController(text: widget.linkedCardFace.name ?? "");
+
+    // Only update the card when focus is lost, not on every character
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus && _isEditing) {
+        _isEditing = false;
+        final nameChangedCard = widget.linkedCardFace.copyIncludingUuid();
+        nameChangedCard.name = _cardNameController.text;
+        widget.onLinkedCardFaceChange(nameChangedCard);
+      }
+    });
   }
 
   @override
   void didUpdateWidget(covariant LinkedCardFaceListItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.linkedCardFace.name != widget.linkedCardFace.name) {
+    // Only update the controller text if we're not currently editing
+    // and if the name actually changed from an external source
+    if (!_isEditing &&
+        oldWidget.linkedCardFace.name != widget.linkedCardFace.name) {
       _cardNameController.text = widget.linkedCardFace.name ?? "";
     }
   }
@@ -56,6 +71,7 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
   @override
   void dispose() {
     _cardNameController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -91,13 +107,12 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
     );
     final cardNameBox = TextFormField(
       controller: _cardNameController,
-      decoration: InputDecoration(
+      focusNode: _focusNode,
+      decoration: const InputDecoration(
         labelText: "Name",
       ),
       onChanged: (value) {
-        final nameChangedCard = widget.linkedCardFace.copyIncludingUuid();
-        nameChangedCard.name = value;
-        widget.onLinkedCardFaceChange(nameChangedCard);
+        _isEditing = true;
       },
     );
     final removeButton = IconButton(
