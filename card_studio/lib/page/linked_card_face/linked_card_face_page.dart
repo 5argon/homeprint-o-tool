@@ -49,7 +49,8 @@ class LinkedCardFacePage extends StatelessWidget {
         HelpButton(title: "Linked Card Face", paragraphs: [
           "Normally a card in Cards page consists of 2 faces : The front and back face. Linked card face is a standalone card faces, neither front nor back face, and cannot be printed on its own. Any card's face can link to these linked card faces instead of having its own independent face. Doing so it is possible to update many card faces in the project at once by altering the linked card face.",
           "This feature is mainly used for card backs that are the same throughout the project. You can correct content area or edit a single source image for the change to propagate to all cards that are linked.",
-          "If you have linked a face here to something already, deleting it will cause the link to be broken and rendered an error instead.",
+          "A counter shows how many card faces are currently using each linked card face.",
+          "When deleting a linked card face that is being used by cards, a warning dialog will appear with options to either migrate those card faces to another linked card face or remove all references to it.",
           "Linked Card Face index 1 and 2 both receive a special quick assign button in the Cards tab. All other linked card faces have to be browsed from the dropdown inside the modal that edit each card's face.",
         ]),
       ],
@@ -66,6 +67,7 @@ class LinkedCardFacePage extends StatelessWidget {
         order: i + 1,
         linkedCardFace: linkedCardFace,
         cardSize: projectSettings.cardSize,
+        definedCards: definedCards,
         onLinkedCardFaceChange: (newLinkedCardFace) {
           // This is a new instance with same UUID, which breaks cards that were referencing
           // the previous instance. But there is a getter that relinks to this
@@ -74,17 +76,13 @@ class LinkedCardFacePage extends StatelessWidget {
           onLinkedCardFacesChange(linkedCardFaces);
         },
         onDelete: () {
-          final scaffoldMessenger = ScaffoldMessenger.of(context);
-          scaffoldMessenger.removeCurrentSnackBar();
-          String message = 'Deleted linked card face : ${linkedCardFace.name}';
-          scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text(message),
-            ),
-          );
+          // The delete handling is now managed inside LinkedCardFaceListItem
+          // which shows warning dialog and handles migration if needed
           final newLinkedCardFaces = linkedCardFaces;
           newLinkedCardFaces.removeAt(i);
           onLinkedCardFacesChange(newLinkedCardFaces);
+          // Also notify that definedCards might have been modified if references were blanked or migrated
+          onDefinedCardsChange(definedCards);
         },
       );
       listItem.add(item);
