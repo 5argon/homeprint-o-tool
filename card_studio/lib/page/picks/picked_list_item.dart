@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:homeprint_o_tool/page/include/picked_list.dart';
-import 'package:homeprint_o_tool/page/include/picked_one_card.dart';
+import 'package:homeprint_o_tool/page/picks/picked_list.dart';
+import 'package:homeprint_o_tool/page/picks/picked_one_card.dart';
 import '../../core/project_settings.dart';
 import '../../core/save_file.dart';
 import '../layout/layout_struct.dart';

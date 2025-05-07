@@ -1,7 +1,7 @@
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
-import 'package:homeprint_o_tool/page/include/include_data.dart';
-import 'package:homeprint_o_tool/page/include/picked_one_card.dart';
+import 'package:homeprint_o_tool/page/picks/include_data.dart';
+import 'package:homeprint_o_tool/page/picks/picked_one_card.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
 

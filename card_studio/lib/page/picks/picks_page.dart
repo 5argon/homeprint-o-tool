@@ -1,7 +1,7 @@
 import 'package:homeprint_o_tool/core/form/help_button.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
-import 'package:homeprint_o_tool/page/include/include_data.dart';
-import 'package:homeprint_o_tool/page/include/picked_list.dart';
+import 'package:homeprint_o_tool/page/picks/include_data.dart';
+import 'package:homeprint_o_tool/page/picks/picked_list.dart';
 import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:homeprint_o_tool/page/review/pagination.dart';

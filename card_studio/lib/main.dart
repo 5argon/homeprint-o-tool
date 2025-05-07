@@ -1,7 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/card.dart';
 import 'package:homeprint_o_tool/core/layout_const.dart';
-import 'package:homeprint_o_tool/page/include/picks_page.dart';
+import 'package:homeprint_o_tool/page/picks/picks_page.dart';
 import 'package:homeprint_o_tool/page/linked_card_face/linked_card_face_page.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 import 'package:homeprint_o_tool/page/project/project_page.dart';
@@ -15,7 +15,7 @@ import 'core/page_preview/render.dart';
 import 'core/project_settings.dart';
 import 'core/save_file.dart';
 import 'page/card/card_page.dart';
-import 'page/include/include_data.dart';
+import 'page/picks/include_data.dart';
 import 'page/layout/layout_page.dart';
 import 'page/layout/layout_struct.dart';
 
@@ -299,12 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _linkedCardFaces = loadResult.saveFile.linkedCardFaces;
             _baseDirectory = loadResult.basePath;
             _previousFileName = loadResult.fileName;
-            // Overwrite inclues to all cards on load.
-            Includes newIncludes = [];
-            for (var i = 0; i < _definedCards.length; i++) {
-              newIncludes.add(IncludeItem.cardGroup(_definedCards[i], 1));
-            }
-            _includes = newIncludes;
+            _includes = [];
             _skipIncludes = [];
           });
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
