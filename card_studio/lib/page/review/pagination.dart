@@ -114,7 +114,6 @@ RowColCards distributeRowCol(
       target = v % cols;
     }
     final CardFace? cardToAdd;
-    print(skips);
     final isSkip = skips.contains(v);
     if (isSkip) {
       if (skipCards.isNotEmpty) {
