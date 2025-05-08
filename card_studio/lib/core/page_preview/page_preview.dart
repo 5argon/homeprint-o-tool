@@ -16,7 +16,7 @@ import 'card_area.dart';
 /// This renders just 1 page and how many cards can fit depends on the layout struct.
 /// [cards] is an array of array. The first layer is a row. The second layer is each card
 /// in the row (e.g. column). Overflows are discarded.
-class PagePreview extends StatelessWidget {
+class PagePreview extends StatefulWidget {
   final LayoutData layoutData;
   final RowColCards cards;
   final bool layout;
@@ -28,9 +28,6 @@ class PagePreview extends StatelessWidget {
   final String? baseDirectory;
   final ProjectSettings projectSettings;
 
-  late int horizontalCards;
-  late int verticalCards;
-
   PagePreview({
     required this.layoutData,
     required this.cards,
@@ -40,9 +37,21 @@ class PagePreview extends StatelessWidget {
     required this.projectSettings,
     required this.hideInnerCutLine,
     required this.back,
-  }) {
-    final cardCount =
-        calculateCardCountPerPage(layoutData, projectSettings.cardSize);
+  });
+
+  @override
+  State<PagePreview> createState() => _PagePreviewState();
+}
+
+class _PagePreviewState extends State<PagePreview> {
+  late int horizontalCards;
+  late int verticalCards;
+
+  @override
+  void initState() {
+    super.initState();
+    final cardCount = calculateCardCountPerPage(
+        widget.layoutData, widget.projectSettings.cardSize);
     horizontalCards = cardCount.columns;
     verticalCards = cardCount.rows;
   }
@@ -55,7 +64,7 @@ class PagePreview extends StatelessWidget {
         child: Text("(No card can fit in this page.)"),
       );
     }
-    final ld = layoutData;
+    final ld = widget.layoutData;
 
     const flexMultiplier = 10000000;
     int marginFlex =
@@ -90,11 +99,11 @@ class PagePreview extends StatelessWidget {
         flex: guideCornerFlex,
         child: LayoutHelper(
           color: Colors.grey,
-          visible: layout,
+          visible: widget.layout,
           flashing: false,
         ));
 
-    final cardSize = projectSettings.cardSize;
+    final cardSize = widget.projectSettings.cardSize;
 
     double horizontalBleedEachCard = horizontalAllEachCardCm - cardSize.widthCm;
     double horizontalActualEachCard =
@@ -121,7 +130,7 @@ class PagePreview extends StatelessWidget {
             children: [
               LayoutHelper(
                 color: Colors.blue,
-                visible: layout,
+                visible: widget.layout,
                 flashing: false,
               ),
               ParallelGuide(
@@ -134,8 +143,8 @@ class PagePreview extends StatelessWidget {
       List<Widget> realCards = [];
       for (var j = 0; j < horizontalCards; j++) {
         CardFace? card;
-        if (cards.length > i && cards[i].length > j) {
-          card = cards[i][j];
+        if (widget.cards.length > i && widget.cards[i].length > j) {
+          card = widget.cards[i][j];
         }
 
         final cardArea = CardArea(
@@ -143,16 +152,16 @@ class PagePreview extends StatelessWidget {
           verticalSpace: verticalSpace,
           guideHorizontal: guideHorizontal,
           guideVertical: guideVertical,
-          baseDirectory: baseDirectory,
-          projectSettings: projectSettings,
+          baseDirectory: widget.baseDirectory,
+          projectSettings: widget.projectSettings,
           card: card,
           cardSize: cardSize,
-          layoutMode: layout,
-          previewCutLine: previewCutLine,
-          showHorizontalInnerCutLine: !hideInnerCutLine,
-          showVerticalInnerCutLine: !hideInnerCutLine,
-          back: back,
-          backStrategy: layoutData.backArrangement,
+          layoutMode: widget.layout,
+          previewCutLine: widget.previewCutLine,
+          showHorizontalInnerCutLine: !widget.hideInnerCutLine,
+          showVerticalInnerCutLine: !widget.hideInnerCutLine,
+          back: widget.back,
+          backStrategy: widget.layoutData.backArrangement,
         );
         Widget entireCardArea =
             Expanded(flex: cardFlexHorizontal, child: cardArea);
@@ -175,7 +184,7 @@ class PagePreview extends StatelessWidget {
         flex: guideCornerSecondFlex,
         child: LayoutHelper(
           color: Colors.blue,
-          visible: layout,
+          visible: widget.layout,
           flashing: false,
         ));
     Widget guideCard = Expanded(
@@ -184,7 +193,7 @@ class PagePreview extends StatelessWidget {
           children: [
             LayoutHelper(
               color: Colors.blue,
-              visible: layout,
+              visible: widget.layout,
               flashing: false,
             ),
             ParallelGuide(
@@ -198,7 +207,7 @@ class PagePreview extends StatelessWidget {
         flex: marginFlex,
         child: LayoutHelper(
           color: Colors.grey,
-          visible: layout,
+          visible: widget.layout,
           flashing: false,
         ));
 
