@@ -30,8 +30,21 @@ class CardPage extends StatelessWidget {
     this.onSkipIncludesChanged,
   });
 
+  // Calculate total missing files across all card groups
+  int _calculateTotalMissingFiles() {
+    int totalMissing = 0;
+    for (var group in definedCards) {
+      final integrityCheckResult =
+          group.checkIntegrity(basePath, linkedCardFaces);
+      totalMissing += integrityCheckResult.missingFileCount;
+    }
+    return totalMissing;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final totalMissingFiles = _calculateTotalMissingFiles();
+
     final sortAllButton = Tooltip(
       message:
           "Sort all groups and also cards inside based on name alphabetically.",
@@ -154,6 +167,30 @@ class CardPage extends StatelessWidget {
       child: const Text('Create Group'),
     );
 
+    // Warning widget for missing files
+    final missingFilesWarning = totalMissingFiles > 0
+        ? Tooltip(
+            message: "Some cards have missing image files",
+            child: Row(
+              children: [
+                Icon(
+                  Icons.warning,
+                  color: Theme.of(context).colorScheme.error,
+                  size: 20,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  "$totalMissingFiles missing file${totalMissingFiles == 1 ? '' : 's'}",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : SizedBox.shrink(); // No warning if there are no missing files
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -161,14 +198,15 @@ class CardPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                createGroupButton,
-                SizedBox(
-                  width: 8,
-                ),
-                sortAllButton,
-                SizedBox(
-                  width: 8,
+                Row(
+                  spacing: 16,
+                  children: [
+                    createGroupButton,
+                    sortAllButton,
+                    missingFilesWarning,
+                  ],
                 ),
               ],
             ),

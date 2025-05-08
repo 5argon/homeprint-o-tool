@@ -23,8 +23,24 @@ class LinkedCardFacePage extends StatelessWidget {
       required this.onLinkedCardFacesChange,
       required this.onDefinedCardsChange});
 
+  // Calculate total number of missing files in linked card faces
+  int _calculateTotalMissingFiles() {
+    int totalMissing = 0;
+    for (var linkedCardFace in linkedCardFaces) {
+      if (linkedCardFace.relativeFilePath.isNotEmpty) {
+        final fileExists = !linkedCardFace.isImageMissing(basePath);
+        if (!fileExists) {
+          totalMissing++;
+        }
+      }
+    }
+    return totalMissing;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final totalMissingFiles = _calculateTotalMissingFiles();
+
     final createLinkedCardFaceButton = ElevatedButton(
       onPressed: () {
         final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -42,10 +58,41 @@ class LinkedCardFacePage extends StatelessWidget {
       },
       child: const Text('Create Linked Card Face'),
     );
+
+    // Warning widget for missing files
+    final missingFilesWarning = totalMissingFiles > 0
+        ? Tooltip(
+            message: "Some linked card faces have missing image files",
+            child: Row(
+              children: [
+                Icon(
+                  Icons.warning,
+                  color: Theme.of(context).colorScheme.error,
+                  size: 20,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  "$totalMissingFiles missing file${totalMissingFiles == 1 ? '' : 's'}",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : SizedBox.shrink(); // No warning if there are no missing files
+
     final topRow = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        createLinkedCardFaceButton,
+        Row(
+          spacing: 16,
+          children: [
+            createLinkedCardFaceButton,
+            missingFilesWarning,
+          ],
+        ),
         HelpButton(title: "Linked Card Face", paragraphs: [
           "Normally a card in Cards page consists of 2 faces : The front and back face. Linked card face is a standalone card faces, neither front nor back face, and cannot be printed on its own. Any card's face can link to these linked card faces instead of having its own independent face. Doing so it is possible to update many card faces in the project at once by altering the linked card face.",
           "This feature is mainly used for card backs that are the same throughout the project. You can correct content area or edit a single source image for the change to propagate to all cards that are linked.",

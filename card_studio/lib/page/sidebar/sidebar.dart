@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
 import 'package:homeprint_o_tool/page/sidebar/loaded_project_display.dart';
 import 'package:homeprint_o_tool/core/form/help_button.dart';
@@ -39,6 +40,8 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final linkedCardFaces = this.linkedCardFaces;
+    final baseDirectory = this.baseDirectory;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -136,11 +139,11 @@ class Sidebar extends StatelessWidget {
             ),
             CircleAvatar(
               radius: 20,
-              backgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               child: Text(
                 cardCount.toString(),
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           ],
@@ -179,21 +182,102 @@ class Sidebar extends StatelessWidget {
           ],
         );
 
+        // Check for missing files in linked card faces
+        int linkedCardFaceMissingFileCount = 0;
+        if (linkedCardFaces != null && baseDirectory != null) {
+          for (var linkedCardFace in linkedCardFaces) {
+            if (linkedCardFace.relativeFilePath.isNotEmpty) {
+              final fileExists = linkedCardFace.isImageMissing(baseDirectory);
+              if (!fileExists) {
+                linkedCardFaceMissingFileCount++;
+              }
+            }
+          }
+        }
+
+        // Check for missing files in card groups
+        int cardGroupsMissingFileCount = 0;
+        if (definedCards != null &&
+            baseDirectory != null &&
+            linkedCardFaces != null) {
+          for (var group in definedCards!) {
+            final integrityCheck =
+                group.checkIntegrity(baseDirectory!, linkedCardFaces!);
+            cardGroupsMissingFileCount += integrityCheck.missingFileCount;
+          }
+        }
+
+        // Create a warning badge for linked card faces
+        final linkedCardFaceLabel = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Linked Card Face"),
+            if (linkedCardFaceMissingFileCount > 0)
+              Tooltip(
+                message:
+                    "$linkedCardFaceMissingFileCount missing file${linkedCardFaceMissingFileCount == 1 ? '' : 's'}",
+                child: Container(
+                  margin: EdgeInsets.only(left: 6),
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.error,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    linkedCardFaceMissingFileCount.toString(),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onError,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+
+        // Create a warning badge for cards
+        final cardsLabel = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Cards"),
+            if (cardGroupsMissingFileCount > 0)
+              Tooltip(
+                message:
+                    "$cardGroupsMissingFileCount missing file${cardGroupsMissingFileCount == 1 ? '' : 's'}",
+                child: Container(
+                  margin: EdgeInsets.only(left: 6),
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.error,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    cardGroupsMissingFileCount.toString(),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onError,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+
         final addedSidebarWhenProjectLoaded = <Widget>[
           buildResponsiveNavigationDestination(
             icon: Icon(Icons.settings),
             label: "Project Settings",
             isCompact: isCompact,
           ),
-          buildResponsiveNavigationDestination(
+          NavigationDrawerDestination(
             icon: Icon(Icons.link),
-            label: "Linked Card Face",
-            isCompact: isCompact,
+            label: linkedCardFaceLabel,
           ),
-          buildResponsiveNavigationDestination(
+          NavigationDrawerDestination(
             icon: Icon(Icons.style),
-            label: "Cards",
-            isCompact: isCompact,
+            label: cardsLabel,
           ),
           Divider(
             indent: 20,
@@ -223,7 +307,7 @@ class Sidebar extends StatelessWidget {
         }
 
         return SizedBox(
-          width: isCompact ? 220 : 220,
+          width: isCompact ? 230 : 230,
           child: NavigationDrawer(
             onDestinationSelected: (i) => {
               onSelectedIndexChanged(i),
@@ -247,6 +331,8 @@ class Sidebar extends StatelessWidget {
   final bool hasChanges;
   final Future? fullScreenDisableFuture;
   final Includes includes;
+  final LinkedCardFaces? linkedCardFaces;
+  final DefinedCards? definedCards;
 
   Sidebar({
     required this.selectedIndex,
@@ -260,5 +346,7 @@ class Sidebar extends StatelessWidget {
     required this.onExport,
     required this.fullScreenDisableFuture,
     required this.includes,
+    this.linkedCardFaces,
+    this.definedCards,
   });
 }

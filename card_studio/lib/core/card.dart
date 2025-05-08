@@ -213,6 +213,29 @@ class DuplexCard {
   }
 }
 
+/// Remote destination to pull card graphic from.
+class Remote {
+  RemoteType type;
+  String url;
+  String? token;
+
+  Remote(this.type, this.url, this.token);
+  Remote.fromJson(Map<String, dynamic> json)
+      : type = RemoteType.values.byName(json['type']),
+        url = json['url'],
+        token = json['token'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type.name,
+      'url': url,
+      'token': token,
+    };
+  }
+}
+
+enum RemoteType { unknown, googleDrive }
+
 class CardFace {
   /// Relative to project's base directory. Not starting with a slash.
   late String relativeFilePath;
@@ -241,6 +264,8 @@ class CardFace {
   /// This means this object is defined separately in the Linked Card Face tab.
   late bool isLinkedCardFace;
 
+  late Remote? remote;
+
   CardFace(
       this.relativeFilePath,
       this.contentCenterOffset,
@@ -250,7 +275,8 @@ class CardFace {
       this.useDefaultContentCenterOffset,
       this.useDefaultContentExpand,
       this.useDefaultRotation,
-      this.isLinkedCardFace)
+      this.isLinkedCardFace,
+      this.remote)
       : uuid = Uuid().v4();
 
   CardFace.withRelativeFilePath(String relativeFilePath,
@@ -265,6 +291,7 @@ class CardFace {
           true,
           true,
           isLinked,
+          null,
         );
 
   CardFace.emptyLinked() : this.withRelativeFilePath("", isLinked: true);
@@ -280,6 +307,7 @@ class CardFace {
       useDefaultContentExpand,
       useDefaultRotation,
       isLinkedCardFace,
+      remote,
     );
     // Constructor always assign a new UUID, reassign the same UUID.
     newCard.uuid = uuid;
@@ -296,20 +324,21 @@ class CardFace {
             cardFace.useDefaultContentCenterOffset,
             cardFace.useDefaultContentExpand,
             cardFace.useDefaultRotation,
-            cardFace.isLinkedCardFace);
+            cardFace.isLinkedCardFace,
+            cardFace.remote);
 
   CardFace copyIncludingUuid() {
     final newCard = CardFace(
-      relativeFilePath,
-      contentCenterOffset,
-      contentExpand,
-      rotation,
-      name,
-      useDefaultContentCenterOffset,
-      useDefaultContentExpand,
-      useDefaultRotation,
-      isLinkedCardFace,
-    );
+        relativeFilePath,
+        contentCenterOffset,
+        contentExpand,
+        rotation,
+        name,
+        useDefaultContentCenterOffset,
+        useDefaultContentExpand,
+        useDefaultRotation,
+        isLinkedCardFace,
+        remote);
     // Constructor always assign a new UUID, reassign the same UUID.
     newCard.uuid = uuid;
     return newCard;

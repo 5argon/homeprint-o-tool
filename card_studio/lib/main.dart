@@ -401,6 +401,8 @@ class _MyHomePageState extends State<MyHomePage> {
         onExport: onExport,
         fullScreenDisableFuture: fullScreenDisableFuture,
         includes: _includes,
+        linkedCardFaces: _linkedCardFaces,
+        definedCards: _definedCards,
       );
       return Scaffold(
         body: SafeArea(
