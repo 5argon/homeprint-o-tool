@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:homeprint_o_tool/core/card.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/form/help_button.dart';
 
 import '../../core/project_settings.dart';

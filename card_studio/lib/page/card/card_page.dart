@@ -1,9 +1,9 @@
+import 'package:homeprint_o_tool/core/card_group.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/card/group_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
 
-import '../../core/card.dart';
 import '../../core/save_file.dart';
 
 class CardPage extends StatelessWidget {

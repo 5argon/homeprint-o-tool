@@ -1,7 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:path/path.dart' as p;
-import '../../core/card.dart';
 import '../../core/form/linked_card_face_dropdown.dart';
 import '../../core/project_settings.dart';
 import 'single_card_preview.dart';
@@ -124,7 +124,7 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                 // Left side: Card preview
                 Expanded(
                   flex: 1,
-                  child: Container(
+                  child: SizedBox(
                     height: 230,
                     child: SingleCardPreview(
                       bleedFactor: useDefaultContentExpand

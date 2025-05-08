@@ -1,4 +1,4 @@
-import 'package:homeprint_o_tool/core/card.dart';
+import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 
 class LayoutData {

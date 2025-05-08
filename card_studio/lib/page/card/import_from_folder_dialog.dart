@@ -1,9 +1,10 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/duplex_card.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
-import '../../core/card.dart';
 import '../../core/form/help_button.dart';
 import '../../core/form/linked_card_face_dropdown.dart';
 import '../../core/save_file.dart';
@@ -14,11 +15,11 @@ class ImportFromFolderDialog extends StatefulWidget {
   final Function(List<DuplexCard> cards) onImport;
 
   const ImportFromFolderDialog({
-    Key? key,
+    super.key,
     required this.basePath,
     required this.linkedCardFaces,
     required this.onImport,
-  }) : super(key: key);
+  });
 
   @override
   ImportFromFolderDialogState createState() => ImportFromFolderDialogState();

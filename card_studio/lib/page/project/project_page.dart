@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/label_and_form.dart';
 import 'package:homeprint_o_tool/page/project/card_size_dropdown.dart';
 import 'package:file_selector/file_selector.dart';
@@ -7,7 +8,6 @@ import '../../core/project_settings.dart';
 import '../../core/form/width_height.dart';
 import '../layout/layout_struct.dart';
 import '../card/content_area_editor.dart';
-import '../../core/card.dart';
 
 class ProjectPage extends StatelessWidget {
   final ProjectSettings projectSettings;
@@ -15,11 +15,11 @@ class ProjectPage extends StatelessWidget {
   final String baseDirectory;
 
   const ProjectPage({
-    Key? key,
+    super.key,
     required this.projectSettings,
     required this.onProjectSettingsChanged,
     required this.baseDirectory,
-  }) : super(key: key);
+  });
 
   void _updateCardSize(double width, double height, PhysicalSizeType unit) {
     final updatedSettings = ProjectSettings(

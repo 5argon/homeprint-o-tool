@@ -13,11 +13,11 @@ class LayoutPageForm extends StatelessWidget {
   final Function(LayoutData ld) onLayoutDataChanged;
 
   const LayoutPageForm({
-    Key? key,
+    super.key,
     required this.layoutData,
     required this.projectSettings,
     required this.onLayoutDataChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

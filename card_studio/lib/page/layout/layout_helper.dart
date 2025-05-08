@@ -5,11 +5,10 @@ class LayoutHelper extends StatelessWidget {
   final bool flashing;
   final Color color;
   const LayoutHelper(
-      {Key? key,
+      {super.key,
       required this.color,
       required this.visible,
-      required this.flashing})
-      : super(key: key);
+      required this.flashing});
 
   @override
   Widget build(BuildContext context) {

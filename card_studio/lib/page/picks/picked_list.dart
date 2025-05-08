@@ -33,7 +33,7 @@ class PickedList extends StatelessWidget {
   final LayoutData layoutData;
 
   const PickedList({
-    Key? key,
+    super.key,
     required this.includes,
     required this.onIncludesChanged,
     required this.basePath,
@@ -41,7 +41,7 @@ class PickedList extends StatelessWidget {
     required this.linkedCardFaces,
     required this.projectSettings,
     required this.layoutData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

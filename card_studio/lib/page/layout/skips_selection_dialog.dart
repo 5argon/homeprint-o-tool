@@ -17,12 +17,12 @@ class SkipsSelectionDialog extends StatefulWidget {
   final Function(List<int>) onSkipsChanged;
 
   const SkipsSelectionDialog({
-    Key? key,
+    super.key,
     required this.rows,
     required this.columns,
     required this.currentSkips,
     required this.onSkipsChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<SkipsSelectionDialog> createState() => _SkipsSelectionDialogState();

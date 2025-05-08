@@ -1,3 +1,4 @@
+import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/page_preview/parallel_guide.dart';
 import 'package:homeprint_o_tool/page/layout/layout_helper.dart';
 import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
@@ -5,7 +6,6 @@ import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
 import '../../page/layout/layout_struct.dart';
-import '../card.dart';
 import '../project_settings.dart';
 import 'card_area.dart';
 

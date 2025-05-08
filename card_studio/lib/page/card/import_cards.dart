@@ -1,5 +1,7 @@
-import 'package:homeprint_o_tool/core/card.dart';
+import 'package:homeprint_o_tool/core/json.dart';
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/duplex_card.dart';
 import 'package:path/path.dart';
 
 class DecodedCardName {
@@ -82,7 +84,7 @@ List<DuplexCard> importCards(
     final decoded = decodeCardName(path);
     final relativePath = decoded.path;
     final decodedCardFace = CardFace(relativePath, Alignment.center, 1.0,
-        Rotation.none, decoded.name, true, true, true, false, null);
+        Rotation.none, decoded.name, true, true, true, false);
     map.update(decoded.name, (card) {
       card.amount = decoded.amount;
       if (decoded.backside) {

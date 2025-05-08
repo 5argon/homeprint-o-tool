@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:path/path.dart' as p;
 
-import '../card.dart';
 import '../save_file.dart';
 
 class LinkedCardFaceDropdown extends StatelessWidget {

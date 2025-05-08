@@ -6,11 +6,11 @@ class ContentAreaCalculator extends StatelessWidget {
   final ValueChanged<double> onCalculated;
 
   const ContentAreaCalculator({
-    Key? key,
+    super.key,
     required this.initialContentWidth,
     required this.initialContentHeight,
     required this.onCalculated,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

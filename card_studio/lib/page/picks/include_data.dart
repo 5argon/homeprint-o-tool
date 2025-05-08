@@ -1,6 +1,6 @@
+import 'package:homeprint_o_tool/core/card_group.dart';
+import 'package:homeprint_o_tool/core/duplex_card.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
-
-import '../../core/card.dart';
 
 typedef Includes = List<IncludeItem>;
 

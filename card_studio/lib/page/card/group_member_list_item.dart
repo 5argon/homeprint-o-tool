@@ -1,3 +1,4 @@
+import 'package:homeprint_o_tool/core/duplex_card.dart';
 import 'package:homeprint_o_tool/core/layout_const.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
@@ -7,8 +8,6 @@ import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
 import 'package:homeprint_o_tool/core/components/card_preview_overlay_icon.dart';
-
-import '../../core/card.dart';
 
 class GroupMemberListItem extends StatefulWidget {
   final String basePath;

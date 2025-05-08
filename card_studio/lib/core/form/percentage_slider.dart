@@ -5,10 +5,10 @@ class PercentageSlider extends StatefulWidget {
   final ValueChanged<double> onChanged;
 
   const PercentageSlider({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   PercentageSliderState createState() => PercentageSliderState();

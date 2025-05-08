@@ -14,7 +14,7 @@ class AvailableList extends StatelessWidget {
   final Function(Includes) onIncludesChanged;
 
   const AvailableList({
-    Key? key,
+    super.key,
     required this.basePath,
     required this.projectSettings,
     required this.definedCards,
@@ -22,7 +22,7 @@ class AvailableList extends StatelessWidget {
     required this.includes,
     required this.skipIncludes,
     required this.onIncludesChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

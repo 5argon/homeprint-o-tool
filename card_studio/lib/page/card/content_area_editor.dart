@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 
-import '../../core/card.dart';
+import '../../core/json.dart';
 import '../../core/form/percentage_slider.dart';
 import 'single_card_preview.dart';
 
@@ -12,12 +13,12 @@ class ContentAreaEditorDialog extends StatefulWidget {
   final double initialContentExpand;
 
   const ContentAreaEditorDialog({
-    Key? key,
+    super.key,
     required this.basePath,
     required this.cardFace,
     required this.cardSize,
     required this.initialContentExpand,
-  }) : super(key: key);
+  });
 
   @override
   ContentAreaEditorDialogState createState() => ContentAreaEditorDialogState();

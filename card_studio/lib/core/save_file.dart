@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
-import 'card.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/card_group.dart';
 import 'layout_const.dart';
 import 'project_settings.dart';
 import 'package:path/path.dart' as p;

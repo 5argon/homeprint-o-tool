@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:homeprint_o_tool/core/card.dart';
+import 'package:homeprint_o_tool/core/json.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
@@ -28,7 +29,7 @@ class CardArea extends StatefulWidget {
     required this.showHorizontalInnerCutLine,
     required this.back,
     required this.backStrategy,
-  }) {}
+  });
 
   /// Card is centered in this area. It takes this much space horizontally. (Max 1.0)
   final double horizontalSpace;

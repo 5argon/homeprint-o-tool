@@ -10,10 +10,10 @@ class LayoutDebugDisplay extends StatelessWidget {
   final ProjectSettings projectSettings;
 
   const LayoutDebugDisplay({
-    Key? key,
+    super.key,
     required this.layoutData,
     required this.projectSettings,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -5,10 +5,10 @@ class HelpButton extends StatelessWidget {
   final List<String> paragraphs;
 
   const HelpButton({
-    Key? key,
+    super.key,
     required this.title,
     required this.paragraphs,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

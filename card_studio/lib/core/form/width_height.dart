@@ -10,14 +10,14 @@ class WidthHeightInput extends StatelessWidget {
   final String heightLabel;
 
   const WidthHeightInput({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     required this.unit,
     required this.onChanged,
     this.widthLabel = "Width",
     this.heightLabel = "Height",
-  }) : super(key: key);
+  });
 
   void _onWidthSubmitted(String value) {
     final newWidth = double.tryParse(value) ?? width;

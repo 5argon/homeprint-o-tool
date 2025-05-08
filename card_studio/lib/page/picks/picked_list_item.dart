@@ -17,7 +17,7 @@ class PickedListItem extends StatelessWidget {
   final IncludePosition includePosition;
 
   const PickedListItem({
-    Key? key,
+    super.key,
     required this.includeItem,
     required this.onRemove,
     required this.basePath,
@@ -26,7 +26,7 @@ class PickedListItem extends StatelessWidget {
     required this.projectSettings,
     required this.includes,
     required this.includePosition,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -107,11 +107,10 @@ class _PageAndIndexDisplay extends StatelessWidget {
   final int pageSize;
 
   const _PageAndIndexDisplay({
-    Key? key,
     required this.page,
     required this.index,
     required this.pageSize,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +120,7 @@ class _PageAndIndexDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(

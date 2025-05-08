@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 
-import '../../core/card.dart';
+import '../../core/json.dart';
 
 class SingleCardPreview extends StatefulWidget {
   final double bleedFactor;

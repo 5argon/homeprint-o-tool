@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:homeprint_o_tool/core/card.dart';
-import 'package:homeprint_o_tool/core/save_file.dart';
+import 'package:homeprint_o_tool/core/card_face.dart';
 
 /// An overlay icon component that displays on top of card previews
 /// Shows different icons based on card properties:
@@ -10,9 +9,9 @@ class CardPreviewOverlayIcon extends StatelessWidget {
   final CardFace? cardFace;
 
   const CardPreviewOverlayIcon({
-    Key? key,
+    super.key,
     required this.cardFace,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class CardPreviewOverlayIcon extends StatelessWidget {
     String? tooltip;
 
     // Check if it has a linked card face
-    if (cardFace!.isLinkedCardFace) {
+    if (cardFace.isLinkedCardFace) {
       iconData = Icons.link;
       tooltip = "Using Linked Card Face";
     }
