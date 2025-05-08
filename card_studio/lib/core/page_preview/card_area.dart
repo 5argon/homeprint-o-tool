@@ -78,9 +78,13 @@ class _CardAreaState extends State<CardArea> {
       if (f.existsSync()) {
         _getDescriptorFuture = getDescriptor(f);
         fileObject = f;
+      } else {
+        _getDescriptorFuture = Future.value();
+        fileObject = null;
       }
     } else {
       _getDescriptorFuture = Future.value();
+      fileObject = null;
     }
   }
 
@@ -94,9 +98,13 @@ class _CardAreaState extends State<CardArea> {
       if (f.existsSync()) {
         _getDescriptorFuture = getDescriptor(f);
         fileObject = f;
+      } else {
+        _getDescriptorFuture = null;
+        fileObject = null;
       }
     } else {
-      _getDescriptorFuture = Future.value();
+      _getDescriptorFuture = null;
+      fileObject = null;
     }
   }
 

@@ -47,6 +47,18 @@ Future renderRender(
 ) async {
   final bool frontSideOnly =
       frontSideOnlyIncludes(includeItems, linkedCardFaces);
+
+  // Check for cards with missing graphics before proceeding
+  final missingGraphicsResult = checkMissingGraphicsInPickedCards(
+      includeItems, baseDirectory, linkedCardFaces);
+  if (missingGraphicsResult.count > 0) {
+    final bool shouldContinue = await showMissingGraphicsWarningDialog(
+        context, missingGraphicsResult.count);
+    if (!shouldContinue) {
+      return;
+    }
+  }
+
   ExportSettings? settings = await openPreExportDialog(context, frontSideOnly);
   if (settings == null) {
     return;
@@ -295,4 +307,110 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
 
   // final finish3 = DateTime.timestamp();
   return uint8List;
+}
+
+/// Result of checking for missing graphics in picked cards
+class MissingGraphicsResult {
+  final int count;
+
+  MissingGraphicsResult(this.count);
+}
+
+/// Checks if any picked cards have missing graphics files
+MissingGraphicsResult checkMissingGraphicsInPickedCards(Includes includeItems,
+    String baseDirectory, LinkedCardFaces linkedCardFaces) {
+  int missingGraphicsCount = 0;
+
+  for (var includeItem in includeItems) {
+    if (includeItem.cardGroup != null) {
+      // Check all cards in the group that are included
+      for (var card in includeItem.cardGroup!.cards) {
+        // Check front face
+        final frontFace = card.getFront(linkedCardFaces);
+        if (frontFace != null && frontFace.relativeFilePath.isNotEmpty) {
+          if (frontFace.isImageMissing(baseDirectory)) {
+            missingGraphicsCount++;
+          }
+        }
+
+        // Check back face
+        final backFace = card.getBack(linkedCardFaces);
+        if (backFace != null && backFace.relativeFilePath.isNotEmpty) {
+          if (backFace.isImageMissing(baseDirectory)) {
+            missingGraphicsCount++;
+          }
+        }
+      }
+    } else if (includeItem.cardEach != null) {
+      // Check individual card
+      final card = includeItem.cardEach!;
+
+      // Check front face
+      final frontFace = card.getFront(linkedCardFaces);
+      if (frontFace != null && frontFace.relativeFilePath.isNotEmpty) {
+        if (frontFace.isImageMissing(baseDirectory)) {
+          missingGraphicsCount++;
+        }
+      }
+
+      // Check back face
+      final backFace = card.getBack(linkedCardFaces);
+      if (backFace != null && backFace.relativeFilePath.isNotEmpty) {
+        if (backFace.isImageMissing(baseDirectory)) {
+          missingGraphicsCount++;
+        }
+      }
+    }
+  }
+
+  return MissingGraphicsResult(missingGraphicsCount);
+}
+
+/// Shows a warning dialog if there are missing graphics in picked cards
+Future<bool> showMissingGraphicsWarningDialog(
+    BuildContext context, int missingGraphicsCount) async {
+  return await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.warning, color: Colors.orange),
+                SizedBox(width: 10),
+                Text('Missing Graphics'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Warning: $missingGraphicsCount picked card${missingGraphicsCount == 1 ? '' : 's'} '
+                  'with missing graphics detected.',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+                Text(
+                    'These cards will appear with placeholder graphics in the exported sheets. '
+                    'Do you want to proceed with the export anyway?'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false); // Don't continue
+                },
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true); // Continue anyway
+                },
+                child: Text('Export Anyway'),
+              ),
+            ],
+          );
+        },
+      ) ??
+      false; // Default to false if dialog is dismissed
 }
