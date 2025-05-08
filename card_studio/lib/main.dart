@@ -173,6 +173,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     projectSettings: _projectSettings,
                     definedCards: _definedCards,
                     linkedCardFaces: _linkedCardFaces,
+                    includes: _includes,
+                    skipIncludes: _skipIncludes,
+                    onIncludesChanged: (includes) {
+                      setState(() {
+                        _includes = includes;
+                      });
+                    },
+                    onSkipIncludesChanged: (skipIncludes) {
+                      setState(() {
+                        _skipIncludes = skipIncludes;
+                      });
+                    },
                     onDefinedCardsChange: (definedCards) {
                       setState(() {
                         _definedCards = definedCards;

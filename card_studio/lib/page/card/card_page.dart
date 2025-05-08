@@ -1,6 +1,7 @@
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/card/group_list_item.dart';
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/page/picks/include_data.dart';
 
 import '../../core/card.dart';
 import '../../core/save_file.dart';
@@ -11,13 +12,23 @@ class CardPage extends StatelessWidget {
   final DefinedCards definedCards;
   final LinkedCardFaces linkedCardFaces;
   final Function(DefinedCards definedCards) onDefinedCardsChange;
-  CardPage(
-      {super.key,
-      required this.basePath,
-      required this.projectSettings,
-      required this.definedCards,
-      required this.linkedCardFaces,
-      required this.onDefinedCardsChange});
+  final Includes includes;
+  final Includes skipIncludes;
+  final Function(Includes)? onIncludesChanged;
+  final Function(Includes)? onSkipIncludesChanged;
+
+  CardPage({
+    super.key,
+    required this.basePath,
+    required this.projectSettings,
+    required this.definedCards,
+    required this.linkedCardFaces,
+    required this.onDefinedCardsChange,
+    required this.includes,
+    required this.skipIncludes,
+    this.onIncludesChanged,
+    this.onSkipIncludesChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +90,10 @@ class CardPage extends StatelessWidget {
         cardSize: projectSettings.cardSize,
         linkedCardFaces: linkedCardFaces,
         projectSettings: projectSettings,
+        includes: includes,
+        skipIncludes: skipIncludes,
+        onIncludesChanged: onIncludesChanged,
+        onSkipIncludesChanged: onSkipIncludesChanged,
         onCardGroupChange: (cardGroup) {
           final newDefinedCards = definedCards;
           newDefinedCards[i] = cardGroup;

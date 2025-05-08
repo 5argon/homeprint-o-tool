@@ -3,6 +3,7 @@ import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/card/group_member_list_item.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/page/picks/include_data.dart';
 
 import '../../core/card.dart';
 import 'import_from_folder_dialog.dart';
@@ -16,17 +17,26 @@ class GroupListItem extends StatelessWidget {
   final ProjectSettings projectSettings;
   final Function(CardGroup cardGroup) onCardGroupChange;
   final Function() onDelete;
+  final Includes includes;
+  final Includes skipIncludes;
+  final Function(Includes includes)? onIncludesChanged;
+  final Function(Includes skipIncludes)? onSkipIncludesChanged;
 
-  GroupListItem(
-      {super.key,
-      required this.includeMode,
-      required this.basePath,
-      required this.cardGroup,
-      required this.cardSize,
-      required this.linkedCardFaces,
-      required this.projectSettings,
-      required this.onCardGroupChange,
-      required this.onDelete});
+  GroupListItem({
+    super.key,
+    required this.includeMode,
+    required this.basePath,
+    required this.cardGroup,
+    required this.cardSize,
+    required this.linkedCardFaces,
+    required this.projectSettings,
+    required this.onCardGroupChange,
+    required this.onDelete,
+    required this.includes,
+    required this.skipIncludes,
+    this.onIncludesChanged,
+    this.onSkipIncludesChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +222,11 @@ class GroupListItem extends StatelessWidget {
             newCardGroup.cards.removeAt(i);
             onCardGroupChange(newCardGroup);
           },
-          order: i + 1));
+          order: i + 1,
+          includes: includes,
+          skipIncludes: skipIncludes,
+          onIncludesChanged: onIncludesChanged,
+          onSkipIncludesChanged: onSkipIncludesChanged));
     }
 
     var itemHeader = Row(
