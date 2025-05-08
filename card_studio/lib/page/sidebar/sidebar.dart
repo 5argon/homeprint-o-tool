@@ -98,7 +98,7 @@ class Sidebar extends StatelessWidget {
           ],
         );
 
-        final sidebarChildren = <Widget>[
+        final headerItems = <Widget>[
           newButton,
           loadButton,
         ];
@@ -122,7 +122,7 @@ class Sidebar extends StatelessWidget {
 
         // Only show the project section if a project is loaded.
         if (baseDirectory != null) {
-          sidebarChildren.addAll(projectChildren);
+          headerItems.addAll(projectChildren);
         }
 
         // Cannot review and cannot export if no includes.
@@ -288,7 +288,7 @@ class Sidebar extends StatelessWidget {
           ],
         );
 
-        final addedSidebarWhenProjectLoaded = <Widget>[
+        final mainItems = <Widget>[
           buildResponsiveNavigationDestination(
             icon: Icon(Icons.settings),
             label: "Project Settings",
@@ -325,18 +325,43 @@ class Sidebar extends StatelessWidget {
           ),
         ];
 
+        // The final content to show in the sidebar
+        final List<Widget> sidebarContent = [...headerItems];
+
+        // Only add main items if a project is loaded
         if (baseDirectory != null) {
-          sidebarChildren.addAll(addedSidebarWhenProjectLoaded);
+          sidebarContent.addAll(mainItems);
         }
 
         return SizedBox(
           width: isCompact ? 230 : 230,
-          child: NavigationDrawer(
-            onDestinationSelected: (i) => {
-              onSelectedIndexChanged(i),
-            },
-            selectedIndex: effectiveSelectedIndex,
-            children: sidebarChildren,
+          height: double.infinity,
+          child: Column(
+            children: [
+              // Main content in a scrollable area
+              Expanded(
+                child: NavigationDrawer(
+                  onDestinationSelected: (i) => {onSelectedIndexChanged(i)},
+                  selectedIndex: effectiveSelectedIndex,
+                  children: sidebarContent,
+                ),
+              ),
+              // About link fixed at the bottom
+              InkWell(
+                onTap: () => onSelectedIndexChanged(6), // About page index is 6
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.info_outline, size: 16),
+                      const SizedBox(width: 10),
+                      Text("About", style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

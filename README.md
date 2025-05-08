@@ -4,7 +4,6 @@ A desktop software that creates duplex "uncut sheet" image files out of individu
 
 It only creates `.png` files of the front side and back side of the uncut sheets. If you need them in other formats like `.pdf`, you must process them further on your own. Please be aware of how different printers and printing softwares pair up duplex pages so you don't ended up having wrong card back pairings when they are different.
 
-Not just for printing at home. Some local, less professional print shop acutally has capable printers, but refuses to take in a bunch of individual card images with bleeds and different card backs, and you ask them to make into double sided cards. They understandably only used to their regular service of making business cards in bulk where they look the same with solid color bleeds and don't want any unnecesary hassle of manufacturing card games with more rooms for errors like wrong card back pairing. With this app instead of giving up, you can talk with them about bringing a ready-to-print uncut sheet file and they just print and cut, they might be more willing to do since that's even less work than business cards making that they have to layout on their own. I have managed to turn one regular print shop around here into my personal custom content printing service with this app.
 
 ## Walkthrough
 

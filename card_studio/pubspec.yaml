@@ -18,6 +18,7 @@ dependencies:
   widgets_to_image: any
   image: ^4.1.7
   file_selector: ^1.0.3
+  url_launcher: ^6.2.2
 
 dev_dependencies:
   flutter_test:

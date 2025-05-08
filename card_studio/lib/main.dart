@@ -1,6 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/card.dart';
 import 'package:homeprint_o_tool/core/layout_const.dart';
+import 'package:homeprint_o_tool/page/about/about_page.dart';
 import 'package:homeprint_o_tool/page/picks/picks_page.dart';
 import 'package:homeprint_o_tool/page/linked_card_face/linked_card_face_page.dart';
 import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
@@ -242,6 +243,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     return reviewPage;
                   }
                   return Text("Need base directory to render cards.");
+                case 6:
+                  return AboutPage();
                 default:
                   return wipPage;
               }
