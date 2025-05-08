@@ -133,20 +133,15 @@ class _MyHomePageState extends State<MyHomePage> {
               }
               switch (_selectedIndex) {
                 case 0:
-                  var projectSettingsPage = ProjectPage(
+                  // Pass baseDirectory directly to ProjectPage instead of through Navigator
+                  return ProjectPage(
                     projectSettings: _projectSettings,
                     onProjectSettingsChanged: (projectSettings) {
                       setState(() {
                         _projectSettings = projectSettings;
                       });
                     },
-                  );
-                  // Pass the baseDirectory as route settings so ProjectPage can access it
-                  return Navigator(
-                    onGenerateRoute: (_) => MaterialPageRoute(
-                      builder: (_) => projectSettingsPage,
-                      settings: RouteSettings(arguments: baseDirectory),
-                    ),
+                    baseDirectory: baseDirectory,
                   );
                 case 1:
                   {

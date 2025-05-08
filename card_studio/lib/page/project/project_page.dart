@@ -12,11 +12,13 @@ import '../../core/card.dart';
 class ProjectPage extends StatelessWidget {
   final ProjectSettings projectSettings;
   final Function(ProjectSettings) onProjectSettingsChanged;
+  final String baseDirectory;
 
   const ProjectPage({
     Key? key,
     required this.projectSettings,
     required this.onProjectSettingsChanged,
+    required this.baseDirectory,
   }) : super(key: key);
 
   void _updateCardSize(double width, double height, PhysicalSizeType unit) {
@@ -65,10 +67,8 @@ class ProjectPage extends StatelessWidget {
       style: TextStyle(fontWeight: FontWeight.bold),
     );
 
-    // ContentAreaEditorDialog requires a basePath
-    final String? baseDirectory =
-        ModalRoute.of(context)?.settings.arguments as String?;
-    final basePath = baseDirectory ?? ".";
+    // Use the baseDirectory prop directly instead of ModalRoute
+    final basePath = baseDirectory;
 
     final defaultContentArea = LabelAndForm(
       label: "Default Content Area",
