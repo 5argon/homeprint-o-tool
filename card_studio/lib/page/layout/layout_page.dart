@@ -1,3 +1,4 @@
+import 'package:homeprint_o_tool/core/layout_const.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/layout/layout_debug_display.dart';
 
@@ -35,7 +36,7 @@ class LayoutPage extends StatelessWidget {
       ),
     );
 
-    var leftSide = Padding(
+    var leftSideTop = Padding(
       padding: EdgeInsets.all(lrPreviewPadding),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -47,51 +48,73 @@ class LayoutPage extends StatelessWidget {
       ),
     );
 
-    return Column(
-      children: [
-        Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(4)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: SizedBox(
-              height: 400,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  leftSide,
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: LayoutDebugDisplay(
-                              layoutData: layoutData,
-                              projectSettings: projectSettings),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
+    var rightSideTop = Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: LayoutDebugDisplay(
+            layoutData: layoutData, projectSettings: projectSettings),
+      ),
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool isWideScreen = constraints.maxWidth > 700;
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: SizedBox(
+                    height: isWideScreen ? 400 : null,
+                    child: isWideScreen
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              leftSideTop,
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [rightSideTop],
+                              )
+                            ],
+                          )
+                        : Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                height: 300,
+                                child: leftSideTop,
+                              ),
+                              SizedBox(height: 10),
+                              rightSideTop,
+                            ],
+                          ),
+                  ),
+                ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: LayoutPageForm(
+                  projectSettings: projectSettings,
+                  layoutData: layoutData,
+                  onLayoutDataChanged: (ld) {
+                    onLayoutDataChanged(ld);
+                  },
+                ),
+              )
+            ],
           ),
-        ),
-        Flexible(
-            child: LayoutPageForm(
-          projectSettings: projectSettings,
-          layoutData: layoutData,
-          onLayoutDataChanged: (ld) {
-            onLayoutDataChanged(ld);
-          },
-        ))
-      ],
+        );
+      },
     );
   }
 }

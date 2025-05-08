@@ -74,16 +74,15 @@ class LayoutPageForm extends StatelessWidget {
 
     // Create the skips form - shows existing skips and provides button to edit
     final hasSkips = layoutData.skips.isNotEmpty;
-    final skipsText = hasSkips
-        ? "Card positions: ${layoutData.skips.map((i) => i + 1).join(', ')}" // Convert to 1-based indices for display
-        : "None";
 
     final skipsForm = LabelAndForm(
       label: "Skips",
       help:
           "Specify card positions on the page that should be skipped during printing. "
           "Useful for working around faulty printers that consistently make mistakes at "
-          "the same positions. Picked cards are always laid out left-to-right, top-to-bottom.",
+          "the same positions. Picked cards are always laid out left-to-right, top-to-bottom. "
+          "If you have picked some cards already, be aware that this settings may increase amount "
+          "of pages needed and change position of cards in the pages.",
       children: [
         Row(
           children: [
@@ -118,7 +117,7 @@ class LayoutPageForm extends StatelessWidget {
       ],
     );
 
-    final firstColumn = Column(
+    final firstForm = Column(
       children: [
         LabelAndForm(
           label: "Paper Size",
@@ -126,7 +125,6 @@ class LayoutPageForm extends StatelessWidget {
             Column(
               children: [
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     paperSizeDropdown,
                   ],
@@ -144,7 +142,6 @@ class LayoutPageForm extends StatelessWidget {
               "Grey in the preview. Reserve edge area on the paper where printing head cannot reach. This area is completely white, even the cutting guide will be placed next to this margin.",
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 printerMarginInput,
               ],
@@ -190,24 +187,39 @@ class LayoutPageForm extends StatelessWidget {
             "Blue in the preview. Black cut guide lines along the edges will be drawn within this area.",
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               edgeCutGuideInput,
             ],
           ),
         ]);
-    var secondColumn = Column(
+    var secondForm = Column(
       children: [cuttingGuideForm, extraBleedForm, skipsForm],
     );
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          firstColumn,
-          const SizedBox(width: 50),
-          secondColumn,
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Define the breakpoint for switching layout
+          final bool isWideScreen = constraints.maxWidth > 750;
+          return isWideScreen
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    firstForm,
+                    const SizedBox(width: 50),
+                    secondForm,
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    firstForm,
+                    const SizedBox(height: 24),
+                    secondForm,
+                  ],
+                );
+        },
       ),
     );
   }

@@ -6,7 +6,11 @@ class LabelAndForm extends StatelessWidget {
   final List<Widget> children;
   final String? help;
 
-  LabelAndForm({required this.label, required this.children, this.help});
+  LabelAndForm({
+    required this.label,
+    required this.children,
+    this.help,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +42,10 @@ class LabelAndForm extends StatelessWidget {
     }
     return Column(
       children: [
-        Row(children: [labelWithHelp]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [labelWithHelp],
+        ),
         Row(
           children: children,
         ),
