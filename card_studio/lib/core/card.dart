@@ -346,12 +346,11 @@ class CardFace {
     relativeFilePath = json['relativeFilePath'];
     contentCenterOffset = alignmentFromJson(json['contentCenterOffset']);
     useDefaultContentCenterOffset =
-        jsonToBoolOrFalse(json['useDefaultContentCenterOffset']);
+        jsonToBoolOrTrue(json['useDefaultContentCenterOffset']);
     contentExpand = jsonToDouble(json['contentExpand']);
-    useDefaultContentExpand =
-        jsonToBoolOrFalse(json['useDefaultContentExpand']);
+    useDefaultContentExpand = jsonToBoolOrTrue(json['useDefaultContentExpand']);
     rotation = Rotation.values.byName(json['rotation']);
-    useDefaultRotation = jsonToBoolOrFalse(json['useDefaultRotation']);
+    useDefaultRotation = jsonToBoolOrTrue(json['useDefaultRotation']);
     name = json['name'];
     uuid = json['uuid'] ?? Uuid().v4();
   }
@@ -399,6 +398,13 @@ bool jsonToBoolOrFalse(dynamic json) {
     return json;
   }
   return false;
+}
+
+bool jsonToBoolOrTrue(dynamic json) {
+  if (json is bool) {
+    return json;
+  }
+  return true;
 }
 
 Map<String, dynamic> alignmentToJson(Alignment alignment) {

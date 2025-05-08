@@ -6,6 +6,7 @@ import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
+import 'package:homeprint_o_tool/core/components/card_preview_overlay_icon.dart';
 
 import '../../core/card.dart';
 
@@ -265,25 +266,41 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
             SizedBox(
                 width: 100,
                 height: 100,
-                child: SingleCardPreview(
-                  basePath: widget.basePath,
-                  cardSize: widget.cardSize,
-                  bleedFactor: frontFace
-                          ?.effectiveContentExpand(widget.projectSettings) ??
-                      1.0,
-                  cardFace: frontFace,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SingleCardPreview(
+                      basePath: widget.basePath,
+                      cardSize: widget.cardSize,
+                      bleedFactor: frontFace?.effectiveContentExpand(
+                              widget.projectSettings) ??
+                          1.0,
+                      cardFace: frontFace,
+                    ),
+                    CardPreviewOverlayIcon(
+                      cardFace: frontFace,
+                    ),
+                  ],
                 )),
             SizedBox(width: 4),
             SizedBox(
                 width: 100,
                 height: 100,
-                child: SingleCardPreview(
-                  basePath: widget.basePath,
-                  cardSize: widget.cardSize,
-                  bleedFactor: backFace
-                          ?.effectiveContentExpand(widget.projectSettings) ??
-                      1.0,
-                  cardFace: backFace,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SingleCardPreview(
+                      basePath: widget.basePath,
+                      cardSize: widget.cardSize,
+                      bleedFactor: backFace?.effectiveContentExpand(
+                              widget.projectSettings) ??
+                          1.0,
+                      cardFace: backFace,
+                    ),
+                    CardPreviewOverlayIcon(
+                      cardFace: backFace,
+                    ),
+                  ],
                 )),
             SizedBox(width: 16),
             Expanded(

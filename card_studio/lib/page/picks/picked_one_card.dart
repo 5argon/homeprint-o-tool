@@ -5,6 +5,7 @@ import 'package:homeprint_o_tool/page/card/group_member_list_item_one_side.dart'
 import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
+import 'package:homeprint_o_tool/core/components/card_preview_overlay_icon.dart';
 
 import '../../core/card.dart';
 
@@ -117,27 +118,43 @@ class PickedOneCard extends StatelessWidget {
             SizedBox(
                 width: 100,
                 height: 100,
-                child: SingleCardPreview(
-                  basePath: basePath,
-                  cardSize: cardSize,
-                  bleedFactor: cardEach
-                          .getFront(linkedCardFaces)
-                          ?.effectiveContentExpand(projectSettings) ??
-                      1.0,
-                  cardFace: cardEach.getFront(linkedCardFaces),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SingleCardPreview(
+                      basePath: basePath,
+                      cardSize: cardSize,
+                      bleedFactor: cardEach
+                              .getFront(linkedCardFaces)
+                              ?.effectiveContentExpand(projectSettings) ??
+                          1.0,
+                      cardFace: cardEach.getFront(linkedCardFaces),
+                    ),
+                    CardPreviewOverlayIcon(
+                      cardFace: cardEach.getFront(linkedCardFaces),
+                    ),
+                  ],
                 )),
             SizedBox(width: 4),
             SizedBox(
                 width: 100,
                 height: 100,
-                child: SingleCardPreview(
-                  basePath: basePath,
-                  cardSize: cardSize,
-                  bleedFactor: cardEach
-                          .getBack(linkedCardFaces)
-                          ?.effectiveContentExpand(projectSettings) ??
-                      1.0,
-                  cardFace: cardEach.getBack(linkedCardFaces),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SingleCardPreview(
+                      basePath: basePath,
+                      cardSize: cardSize,
+                      bleedFactor: cardEach
+                              .getBack(linkedCardFaces)
+                              ?.effectiveContentExpand(projectSettings) ??
+                          1.0,
+                      cardFace: cardEach.getBack(linkedCardFaces),
+                    ),
+                    CardPreviewOverlayIcon(
+                      cardFace: cardEach.getBack(linkedCardFaces),
+                    ),
+                  ],
                 )),
             SizedBox(width: 16),
             Expanded(
