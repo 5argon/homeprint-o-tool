@@ -141,7 +141,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                     },
                   );
-                  return projectSettingsPage;
+                  // Pass the baseDirectory as route settings so ProjectPage can access it
+                  return Navigator(
+                    onGenerateRoute: (_) => MaterialPageRoute(
+                      builder: (_) => projectSettingsPage,
+                      settings: RouteSettings(arguments: baseDirectory),
+                    ),
+                  );
                 case 1:
                   {
                     var linkedCardFacePage = LinkedCardFacePage(

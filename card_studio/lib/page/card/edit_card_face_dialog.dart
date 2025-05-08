@@ -5,7 +5,7 @@ import '../../core/card.dart';
 import '../../core/form/linked_card_face_dropdown.dart';
 import '../../core/project_settings.dart';
 import 'single_card_preview.dart';
-import 'content-area-editor.dart';
+import 'content_area_editor.dart';
 
 import '../../core/save_file.dart';
 
@@ -194,11 +194,6 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                                       cardFace: tempCard,
                                       cardSize: widget.projectSettings.cardSize,
                                       initialContentExpand: customContentExpand,
-                                      onContentExpandChanged: (value) => {
-                                        setState(() {
-                                          customContentExpand = value;
-                                        })
-                                      },
                                     ),
                                   );
 

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/label_and_form.dart';
 import 'package:homeprint_o_tool/page/project/card_size_dropdown.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:path/path.dart' as p;
 import '../../core/project_settings.dart';
 import '../../core/form/width_height.dart';
 import '../layout/layout_struct.dart';
-import '../../core/form/percentage_slider.dart';
-import '../../core/form/content_area_calculator.dart';
+import '../card/content_area_editor.dart';
+import '../../core/card.dart';
 
 class ProjectPage extends StatelessWidget {
   final ProjectSettings projectSettings;
@@ -37,12 +39,36 @@ class ProjectPage extends StatelessWidget {
     onProjectSettingsChanged(updatedSettings);
   }
 
+  Future<String?> pickExampleGraphic(String basePath) async {
+    final typeGroup = XTypeGroup(
+      label: 'images',
+      extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    );
+    final file = await openFile(
+      acceptedTypeGroups: [typeGroup],
+      initialDirectory: basePath,
+    );
+
+    if (file != null) {
+      // Convert the absolute path to a relative path from the base directory
+      String relativePath = p.relative(file.path, from: basePath);
+      return relativePath;
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    var percentageSlider = PercentageSlider(
-      value: projectSettings.defaultContentExpand,
-      onChanged: _updateContentExpand,
+    // Display the current content area percentage
+    final contentAreaText = Text(
+      "${(projectSettings.defaultContentExpand * 100).toStringAsFixed(1)}%",
+      style: TextStyle(fontWeight: FontWeight.bold),
     );
+
+    // ContentAreaEditorDialog requires a basePath
+    final String? baseDirectory =
+        ModalRoute.of(context)?.settings.arguments as String?;
+    final basePath = baseDirectory ?? ".";
 
     final defaultContentArea = LabelAndForm(
       label: "Default Content Area",
@@ -50,18 +76,41 @@ class ProjectPage extends StatelessWidget {
           "Content Area is a part of card graphics that you want after cutting, expressed in percentage, so it is able to accommodate input graphic of differing sizes in the project at the same time. Outside of Content Area then became bleed for cutting away. At 100%, a rectangle in the shape of Card Size in the above's settings is placed at the center, then enlarged keeping the proportion until one side touches the edge of available card graphic. Each card added to this project starts out with this amount of Content Area, you can input custom percentage per card or reset back to this value. Updating this value later also propagate the change to all cards using the default value.",
       children: [
         ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 300),
-          child: percentageSlider,
+          constraints: const BoxConstraints(maxWidth: 120),
+          child: contentAreaText,
+        ),
+        SizedBox(width: 16),
+        ElevatedButton(
+          onPressed: () async {
+            // First ask user to pick an example graphic
+            final exampleGraphicPath = await pickExampleGraphic(basePath);
+            if (exampleGraphicPath != null) {
+              // Create a temporary CardFace using the selected graphic
+              final tempCardFace =
+                  CardFace.withRelativeFilePath(exampleGraphicPath);
+
+              // Show the content area editor with the temporary CardFace
+              if (context.mounted) {
+                final result = await showDialog<double>(
+                  context: context,
+                  builder: (context) => ContentAreaEditorDialog(
+                    basePath: basePath,
+                    cardFace: tempCardFace,
+                    cardSize: projectSettings.cardSize,
+                    initialContentExpand: projectSettings.defaultContentExpand,
+                  ),
+                );
+
+                // Update the content expand value if the user returned a value
+                if (result != null) {
+                  _updateContentExpand(result);
+                }
+              }
+            }
+          },
+          child: const Text("Setup With Example Graphic"),
         ),
       ],
-    );
-
-    final contentAreaCalculator = ContentAreaCalculator(
-      initialContentWidth: projectSettings.cardSize.width,
-      initialContentHeight: projectSettings.cardSize.height,
-      onCalculated: (calculatedValue) {
-        _updateContentExpand(calculatedValue);
-      },
     );
 
     final cardSizeForm = LabelAndForm(
@@ -91,7 +140,6 @@ class ProjectPage extends StatelessWidget {
           cardSizeForm,
           const SizedBox(height: 24),
           defaultContentArea,
-          contentAreaCalculator,
         ],
       ),
     );

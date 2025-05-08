@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 
@@ -11,7 +10,6 @@ class ContentAreaEditorDialog extends StatefulWidget {
   final CardFace cardFace;
   final SizePhysical cardSize;
   final double initialContentExpand;
-  final Function(double contentExpand) onContentExpandChanged;
 
   const ContentAreaEditorDialog({
     Key? key,
@@ -19,7 +17,6 @@ class ContentAreaEditorDialog extends StatefulWidget {
     required this.cardFace,
     required this.cardSize,
     required this.initialContentExpand,
-    required this.onContentExpandChanged,
   }) : super(key: key);
 
   @override
@@ -312,8 +309,7 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
                   ),
                   onPressed: () {
                     // Make sure to apply the contentExpand value
-                    widget.onContentExpandChanged(contentExpand);
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(contentExpand);
                   },
                   child: Text('Apply'),
                 ),

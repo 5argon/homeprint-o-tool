@@ -27,7 +27,7 @@ CardsPagination calculatePagination(Includes includes, LayoutData layoutData,
       includes.fold(0, (prev, includeItem) => prev + includeItem.count());
   final totalPages = (countRequired / cardCountPerPage).ceil();
   final validSkips =
-      layoutData.skips.where((e) => e <= cardCountPerPage).toList();
+      layoutData.skips.where((e) => e >= 0 && e < cardCountPerPage).toList();
   final totalSkips = validSkips.length * totalPages;
   final totalPagesWithSkips =
       ((countRequired + totalSkips) / cardCountPerPage).ceil();

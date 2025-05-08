@@ -19,7 +19,11 @@ class LayoutData {
 
   BackArrangement backArrangement;
 
+  /// Index of the card in each page that picked cards will always skip that spot.
+  /// Used to sidestep faulty printer that made mistake at the same spot each page.
+  /// Zero-based index. (But user input them as 1-based index in the UI.)
   List<int> skips;
+
   bool removeOneRow;
   bool removeOneColumn;
   Rotation frontPostRotation;
