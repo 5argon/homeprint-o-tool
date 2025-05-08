@@ -184,6 +184,7 @@ class Sidebar extends StatelessWidget {
 
         // Check for missing files in linked card faces
         int linkedCardFaceMissingFileCount = 0;
+        int linkedCardFaceCount = linkedCardFaces?.length ?? 0;
         if (linkedCardFaces != null && baseDirectory != null) {
           for (var linkedCardFace in linkedCardFaces) {
             if (linkedCardFace.relativeFilePath.isNotEmpty) {
@@ -197,68 +198,90 @@ class Sidebar extends StatelessWidget {
 
         // Check for missing files in card groups
         int cardGroupsMissingFileCount = 0;
+        int totalCardCount = 0;
         if (definedCards != null &&
             baseDirectory != null &&
             linkedCardFaces != null) {
           for (var group in definedCards!) {
             final integrityCheck =
-                group.checkIntegrity(baseDirectory!, linkedCardFaces!);
+                group.checkIntegrity(baseDirectory, linkedCardFaces);
             cardGroupsMissingFileCount += integrityCheck.missingFileCount;
+            totalCardCount += group.cards.length;
           }
         }
 
-        // Create a warning badge for linked card faces
+        // Create a label for linked card faces with count and warning if needed
         final linkedCardFaceLabel = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Linked Card Face"),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Linked"),
+                Text("Card Face"),
+              ],
+            ),
+            SizedBox(width: 10),
+            // Show card count in circle
+            CircleAvatar(
+              radius: 12,
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              child: Text(
+                linkedCardFaceCount.toString(),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            // Show warning icon if there are missing files
             if (linkedCardFaceMissingFileCount > 0)
               Tooltip(
                 message:
                     "$linkedCardFaceMissingFileCount missing file${linkedCardFaceMissingFileCount == 1 ? '' : 's'}",
                 child: Container(
                   margin: EdgeInsets.only(left: 6),
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
+                  child: Icon(
+                    Icons.warning,
                     color: Theme.of(context).colorScheme.error,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    linkedCardFaceMissingFileCount.toString(),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onError,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    size: 18,
                   ),
                 ),
               ),
           ],
         );
 
-        // Create a warning badge for cards
+        // Create a label for cards with count and warning if needed
         final cardsLabel = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text("Cards"),
+            SizedBox(width: 10),
+            // Show card count in circle
+            CircleAvatar(
+              radius: 12,
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              child: Text(
+                totalCardCount.toString(),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            // Show warning icon if there are missing files
             if (cardGroupsMissingFileCount > 0)
               Tooltip(
                 message:
                     "$cardGroupsMissingFileCount missing file${cardGroupsMissingFileCount == 1 ? '' : 's'}",
                 child: Container(
                   margin: EdgeInsets.only(left: 6),
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
+                  child: Icon(
+                    Icons.warning,
                     color: Theme.of(context).colorScheme.error,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    cardGroupsMissingFileCount.toString(),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onError,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    size: 18,
                   ),
                 ),
               ),
