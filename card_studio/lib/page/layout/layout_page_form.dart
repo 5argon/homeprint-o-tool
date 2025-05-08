@@ -3,6 +3,8 @@ import 'package:homeprint_o_tool/core/label_and_form.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:homeprint_o_tool/page/layout/paper_size_dropdown.dart';
+import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
+import 'package:homeprint_o_tool/page/layout/skips_selection_dialog.dart';
 import '../../core/form/width_height.dart';
 
 class LayoutPageForm extends StatelessWidget {
@@ -19,6 +21,10 @@ class LayoutPageForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get rows and columns per page for the current layout
+    final cardCountPerPage =
+        calculateCardCountPerPage(layoutData, projectSettings.cardSize);
+
     final paperSizeDropdown = PaperSizeDropdown(
       size: layoutData.paperSize,
       onSizeChanged: (size) {
@@ -64,6 +70,52 @@ class LayoutPageForm extends StatelessWidget {
         layoutData.edgeCutGuideSize = SizePhysical(width, height, unit);
         onLayoutDataChanged(layoutData);
       },
+    );
+
+    // Create the skips form - shows existing skips and provides button to edit
+    final hasSkips = layoutData.skips.isNotEmpty;
+    final skipsText = hasSkips
+        ? "Card positions: ${layoutData.skips.map((i) => i + 1).join(', ')}" // Convert to 1-based indices for display
+        : "None";
+
+    final skipsForm = LabelAndForm(
+      label: "Skips",
+      help:
+          "Specify card positions on the page that should be skipped during printing. "
+          "Useful for working around faulty printers that consistently make mistakes at "
+          "the same positions. Picked cards are always laid out left-to-right, top-to-bottom.",
+      children: [
+        Row(
+          children: [
+            if (hasSkips)
+              ElevatedButton(
+                  onPressed: () {
+                    layoutData.skips = [];
+                    onLayoutDataChanged(layoutData);
+                  },
+                  child: const Text("Clear Active Skips")),
+            if (hasSkips) const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: () {
+                // Open the skips selection dialog
+                showDialog(
+                  context: context,
+                  builder: (context) => SkipsSelectionDialog(
+                    rows: cardCountPerPage.rows,
+                    columns: cardCountPerPage.columns,
+                    currentSkips: layoutData.skips,
+                    onSkipsChanged: (newSkips) {
+                      layoutData.skips = newSkips;
+                      onLayoutDataChanged(layoutData);
+                    },
+                  ),
+                );
+              },
+              child: const Text("Select"),
+            ),
+          ],
+        ),
+      ],
     );
 
     final firstColumn = Column(
@@ -145,10 +197,7 @@ class LayoutPageForm extends StatelessWidget {
           ),
         ]);
     var secondColumn = Column(
-      children: [
-        cuttingGuideForm,
-        extraBleedForm,
-      ],
+      children: [cuttingGuideForm, extraBleedForm, skipsForm],
     );
     return Padding(
       padding: const EdgeInsets.all(16.0),
