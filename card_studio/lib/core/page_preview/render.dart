@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
@@ -23,12 +25,16 @@ class ExportSettings {
   final String template;
   final String frontSuffix;
   final String backSuffix;
+  final Rotation frontRotation;
+  final Rotation backRotation;
 
   ExportSettings({
     required this.prefix,
     required this.template,
     required this.frontSuffix,
     required this.backSuffix,
+    required this.frontRotation,
+    required this.backRotation,
   });
 }
 
@@ -97,6 +103,7 @@ Future renderRender(
       settings.frontSuffix,
       settings.backSuffix,
       i,
+      settings.frontRotation,
     );
     onFrontBackUpdate(ExportingFrontBack.back);
     await renderOneSide(
@@ -114,6 +121,7 @@ Future renderRender(
       settings.frontSuffix,
       settings.backSuffix,
       i,
+      settings.backRotation,
     );
   }
 }
@@ -132,7 +140,8 @@ Future<void> renderOneSide(
     String template,
     String frontSuffix,
     String backSuffix,
-    int pageNumber) async {
+    int pageNumber,
+    Rotation rotation) async {
   var toRender = PagePreview(
     layoutData: layoutData,
     cards: cardsOnePage,
@@ -146,13 +155,44 @@ Future<void> renderOneSide(
 
   // Replace placeholders in the template
   final fileName = template
-      .replaceAll("{prefix}", "export")
+      .replaceAll("{prefix}", prefix)
       .replaceAll("{page}", (pageNumber + 1).toString())
       .replaceAll("{side}", back ? backSuffix : frontSuffix);
 
   final imageUint = await createImageBytesFromWidget(
       flutterView, toRender, pixelWidth, pixelHeight);
-  await savePng(imageUint, directory, fileName);
+
+  // Apply rotation if needed
+  Uint8List finalImageData = imageUint;
+  if (rotation != Rotation.none) {
+    // Process the image rotation
+    final img = await decodeImageFromList(imageUint);
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+
+    if (rotation == Rotation.clockwise90) {
+      // Rotate 90 degrees clockwise
+      canvas.translate(img.height.toDouble(), 0);
+      canvas.rotate(pi / 2);
+      canvas.drawImage(img, Offset.zero, Paint());
+    } else if (rotation == Rotation.counterClockwise90) {
+      // Rotate 90 degrees counter-clockwise
+      canvas.translate(0, img.width.toDouble());
+      canvas.rotate(-pi / 2);
+      canvas.drawImage(img, Offset.zero, Paint());
+    }
+
+    final picture = recorder.endRecording();
+    final width = rotation == Rotation.none ? img.width : img.height;
+    final height = rotation == Rotation.none ? img.height : img.width;
+
+    final rotatedImage = await picture.toImage(width, height);
+    final byteData =
+        await rotatedImage.toByteData(format: ui.ImageByteFormat.png);
+    finalImageData = byteData!.buffer.asUint8List();
+  }
+
+  await savePng(finalImageData, directory, fileName);
 }
 
 Future<ExportSettings?> openPreExportDialog(
@@ -161,6 +201,8 @@ Future<ExportSettings?> openPreExportDialog(
   String tempTemplate = "{prefix}_{page}_{side}";
   String tempFrontSuffix = "A";
   String tempBackSuffix = "B";
+  Rotation tempFrontRotation = Rotation.none;
+  Rotation tempBackRotation = Rotation.none;
 
   final Widget noBacksideText = Container(
     padding: EdgeInsets.all(10),
@@ -226,6 +268,54 @@ Future<ExportSettings?> openPreExportDialog(
                   tempBackSuffix = value;
                 },
               ),
+              SizedBox(height: 16),
+              DropdownButtonFormField<Rotation>(
+                value: tempFrontRotation,
+                decoration: InputDecoration(labelText: "Front Post-Rotation"),
+                items: [
+                  DropdownMenuItem(
+                    value: Rotation.none,
+                    child: Text("None"),
+                  ),
+                  DropdownMenuItem(
+                    value: Rotation.clockwise90,
+                    child: Text("Clockwise 90"),
+                  ),
+                  DropdownMenuItem(
+                    value: Rotation.counterClockwise90,
+                    child: Text("Counter-clockwise 90"),
+                  ),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    tempFrontRotation = value;
+                  }
+                },
+              ),
+              SizedBox(height: 8),
+              DropdownButtonFormField<Rotation>(
+                value: tempBackRotation,
+                decoration: InputDecoration(labelText: "Back Post-Rotation"),
+                items: [
+                  DropdownMenuItem(
+                    value: Rotation.none,
+                    child: Text("None"),
+                  ),
+                  DropdownMenuItem(
+                    value: Rotation.clockwise90,
+                    child: Text("Clockwise 90"),
+                  ),
+                  DropdownMenuItem(
+                    value: Rotation.counterClockwise90,
+                    child: Text("Counter-clockwise 90"),
+                  ),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    tempBackRotation = value;
+                  }
+                },
+              ),
             ],
           ),
         ),
@@ -244,6 +334,8 @@ Future<ExportSettings?> openPreExportDialog(
                   template: tempTemplate,
                   frontSuffix: tempFrontSuffix,
                   backSuffix: tempBackSuffix,
+                  frontRotation: tempFrontRotation,
+                  backRotation: tempBackRotation,
                 ),
               ); // Confirm
             },
