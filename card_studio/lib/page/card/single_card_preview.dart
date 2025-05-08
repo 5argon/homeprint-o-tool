@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/components/full_screen_card_preview.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
@@ -14,6 +15,8 @@ class SingleCardPreview extends StatefulWidget {
   final SizePhysical cardSize;
   final CardFace? cardFace;
   final Function(double width, double height)? onImageDescriptorLoaded;
+  final bool showBorder; // Whether to show the border around the card
+  final bool disableClick; // Whether to disable the click to fullscreen feature
 
   SingleCardPreview({
     super.key,
@@ -22,6 +25,8 @@ class SingleCardPreview extends StatefulWidget {
     required this.basePath,
     required this.cardFace,
     this.onImageDescriptorLoaded,
+    this.showBorder = true,
+    this.disableClick = false,
   });
 
   @override
@@ -161,11 +166,36 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
             final imageFitBox = Container(
                 width: cardShapeInBoxWidth,
                 height: cardShapeInBoxHeight,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.red, width: 1)));
-            return Stack(
+                decoration: widget.showBorder
+                    ? BoxDecoration(
+                        border: Border.all(color: Colors.red, width: 1))
+                    : null);
+
+            Widget previewStack = Stack(
                 alignment: AlignmentDirectional.center,
                 children: [image, imageFitBox]);
+
+            // If clicking is enabled, wrap the stack in a GestureDetector
+            if (!widget.disableClick &&
+                cardEachSingle.relativeFilePath.isNotEmpty) {
+              return GestureDetector(
+                onTap: () {
+                  FullScreenCardPreview.show(
+                    context,
+                    basePath: widget.basePath,
+                    cardSize: widget.cardSize,
+                    bleedFactor: widget.bleedFactor,
+                    cardFace: cardEachSingle,
+                  );
+                },
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: previewStack,
+                ),
+              );
+            }
+
+            return previewStack;
           },
         );
       },
