@@ -109,7 +109,8 @@ class CardFace {
   }
 
   bool isImageMissing(String baseDirectory) {
-    final f = File(p.join(baseDirectory, relativeFilePath));
+    final path = p.join(baseDirectory, relativeFilePath);
+    final f = File(path);
     return !f.existsSync();
   }
 

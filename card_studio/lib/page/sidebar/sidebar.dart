@@ -188,7 +188,7 @@ class Sidebar extends StatelessWidget {
         if (linkedCardFaces != null && baseDirectory != null) {
           for (var linkedCardFace in linkedCardFaces) {
             if (linkedCardFace.relativeFilePath.isNotEmpty) {
-              final fileExists = linkedCardFace.isImageMissing(baseDirectory);
+              final fileExists = !linkedCardFace.isImageMissing(baseDirectory);
               if (!fileExists) {
                 linkedCardFaceMissingFileCount++;
               }

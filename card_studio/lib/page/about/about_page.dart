@@ -72,10 +72,10 @@ class AboutPage extends StatelessWidget {
                 children: [
                   const Text("GitHub: "),
                   GestureDetector(
-                    onTap: () =>
-                        _launchURL('https://github.com/5argon/CardStudio'),
+                    onTap: () => _launchURL(
+                        'https://github.com/5argon/homeprint-o-tool'),
                     child: Text(
-                      "github.com/5argon/CardStudio",
+                      "github.com/5argon/homeprint-o-tool",
                       style: linkStyle,
                     ),
                   ),
