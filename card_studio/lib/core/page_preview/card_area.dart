@@ -79,10 +79,12 @@ class _CardAreaState extends State<CardArea> {
         _getDescriptorFuture = getDescriptor(f);
         fileObject = f;
       } else {
-        _getDescriptorFuture = Future.value();
+        // Shows missing image warning.
+        _getDescriptorFuture = null;
         fileObject = null;
       }
     } else {
+      // Shows white.
       _getDescriptorFuture = Future.value();
       fileObject = null;
     }
@@ -103,7 +105,7 @@ class _CardAreaState extends State<CardArea> {
         fileObject = null;
       }
     } else {
-      _getDescriptorFuture = null;
+      _getDescriptorFuture = Future.value();
       fileObject = null;
     }
   }

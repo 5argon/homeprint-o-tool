@@ -57,6 +57,15 @@ class _PagePreviewState extends State<PagePreview> {
   }
 
   @override
+  void didUpdateWidget(covariant PagePreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final cardCount = calculateCardCountPerPage(
+        widget.layoutData, widget.projectSettings.cardSize);
+    horizontalCards = cardCount.columns;
+    verticalCards = cardCount.rows;
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (horizontalCards <= 0 || verticalCards <= 0) {
       return Padding(
