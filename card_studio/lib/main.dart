@@ -255,20 +255,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
     Widget rendering = FutureBuilder(
         builder: (context, snapshot) {
-          String frontBack =
-              exportingFrontBack == ExportingFrontBack.front ? "Front" : "Back";
-          Widget exporting = Center(
-            child: Text(
-                "Exporting page $exportingCurrentPage of $exportingTotalPage ($frontBack)"),
-          );
           switch (snapshot.connectionState) {
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return exporting;
+              // Show a simple loading indicator while initializing export
+              // The actual progress will be shown in the full-screen dialog
+              return const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text("Preparing export..."),
+                  ],
+                ),
+              );
             default:
-              {
-                return visiblePage;
-              }
+              return visiblePage;
           }
         },
         future: renderingFuture);
@@ -358,30 +361,73 @@ class _MyHomePageState extends State<MyHomePage> {
       if (baseDirectory != null) {
         final flutterView = View.of(context);
         if (context.mounted) {
-          final renderingFuture = renderRender(
-              context,
-              flutterView,
-              _projectSettings,
-              _layoutData,
-              _includes,
-              _skipIncludes,
-              baseDirectory,
-              _linkedCardFaces, (currentPage) {
-            setState(() {
-              exportingCurrentPage = currentPage;
-            });
-          }, (frontBack) {
-            setState(() {
-              exportingFrontBack = frontBack;
-            });
-          }, (totalPage) {
-            setState(() {
-              exportingTotalPage = totalPage;
-            });
-          });
+          // Show a loading indicator while preparing the export
           setState(() {
-            this.renderingFuture = renderingFuture;
+            renderingFuture = Future.value(null);
           });
+
+          try {
+            // Use the updated renderRender function that shows a fullscreen dialog
+            await renderRender(
+                context,
+                flutterView,
+                _projectSettings,
+                _layoutData,
+                _includes,
+                _skipIncludes,
+                baseDirectory,
+                _linkedCardFaces, (currentPage) {
+              // This is now handled inside the dialog
+              exportingCurrentPage = currentPage;
+              // Update state to ensure UI reflecting current export state
+              if (mounted) setState(() {});
+            }, (frontBack) {
+              // This is now handled inside the dialog
+              exportingFrontBack = frontBack;
+              // Update state to ensure UI reflecting current export state
+              if (mounted) setState(() {});
+            }, (totalPage) {
+              // This is now handled inside the dialog
+              exportingTotalPage = totalPage;
+              // Update state to ensure UI reflecting current export state
+              if (mounted) setState(() {});
+            });
+          } catch (e) {
+            // Show error message
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Export failed: ${e.toString()}'),
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 5),
+                  action: SnackBarAction(
+                    label: 'Dismiss',
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    },
+                  ),
+                ),
+              );
+            }
+            print('Export error: $e');
+          } finally {
+            // Clear the rendering future
+            if (mounted) {
+              setState(() {
+                renderingFuture = null;
+              });
+            }
+          }
+        }
+      } else {
+        // No base directory
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please open a project first before exporting'),
+              backgroundColor: Colors.orange,
+            ),
+          );
         }
       }
     }

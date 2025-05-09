@@ -17,6 +17,7 @@ import '../../page/layout/layout_logic.dart';
 import '../../page/layout/layout_struct.dart';
 import '../../page/review/pagination.dart';
 import 'page_preview.dart';
+import 'page_preview_frame.dart';
 
 enum ExportingFrontBack { front, back }
 
@@ -82,49 +83,299 @@ Future renderRender(
   final pixelWidth = layoutData.paperSize.widthInch * layoutData.pixelPerInch;
   final pixelHeight = layoutData.paperSize.heightInch * layoutData.pixelPerInch;
   onTotalPageUpdate(pagination.totalPages);
-  for (var i = 0; i < pagination.totalPages; i++) {
-    onCurrentPageUpdate(i + 1);
-    final cards = cardsAtPage(includeItems, skipIncludeItems, layoutData,
-        projectSettings.cardSize, i + 1, linkedCardFaces);
-    onFrontBackUpdate(ExportingFrontBack.front);
 
-    await renderOneSide(
-      false,
-      layoutData,
-      projectSettings,
-      cards.front,
-      baseDirectory,
-      flutterView,
-      pixelWidth,
-      pixelHeight,
-      directory,
-      settings.prefix,
-      settings.template,
-      settings.frontSuffix,
-      settings.backSuffix,
-      i,
-      settings.frontRotation,
-    );
-    onFrontBackUpdate(ExportingFrontBack.back);
-    await renderOneSide(
-      true,
-      layoutData,
-      projectSettings,
-      cards.back,
-      baseDirectory,
-      flutterView,
-      pixelWidth,
-      pixelHeight,
-      directory,
-      settings.prefix,
-      settings.template,
-      settings.frontSuffix,
-      settings.backSuffix,
-      i,
-      settings.backRotation,
-    );
+  // Create a completer to handle cancellation
+  final completer = Completer<void>();
+  bool isCancelled = false;
+
+  // Store the ongoing dialog controller
+  BuildContext? dialogContext;
+
+  // Function to update the preview dialog
+  void updatePreview(int page, ExportingFrontBack side, PagePreview preview) {
+    if (dialogContext != null &&
+        Navigator.of(dialogContext!, rootNavigator: true).canPop()) {
+      Navigator.of(dialogContext!, rootNavigator: true).pop();
+      dialogContext = null;
+    }
+
+    if (context.mounted && !isCancelled) {
+      // Show new dialog without awaiting
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext ctx) {
+          dialogContext = ctx;
+          return Dialog.fullscreen(
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text('Exporting Uncut Sheets'),
+                leading: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    isCancelled = true;
+                    Navigator.of(ctx).pop();
+                    dialogContext = null;
+                    completer.complete(); // Complete the future when canceled
+                  },
+                ),
+              ),
+              body: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Exporting page $page of ${pagination.totalPages} (${side == ExportingFrontBack.front ? "Front" : "Back"})',
+                              style: Theme.of(ctx).textTheme.titleLarge,
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Theme.of(ctx).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            'Progress: ${((2 * (page - 1) + (side == ExportingFrontBack.front ? 0 : 1)) / (2 * pagination.totalPages) * 100).toStringAsFixed(1)}%',
+                            style: TextStyle(
+                              color:
+                                  Theme.of(ctx).colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    LinearProgressIndicator(
+                      value: (2 * (page - 1) +
+                              (side == ExportingFrontBack.front ? 0 : 1)) /
+                          (2 * pagination.totalPages),
+                      minHeight: 10,
+                    ),
+                    const SizedBox(height: 32),
+                    Expanded(
+                      child: Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: AspectRatio(
+                            aspectRatio:
+                                preview.layoutData.paperSize.widthInch /
+                                    preview.layoutData.paperSize.heightInch,
+                            child: PagePreviewFrame(
+                              child: preview,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ).catchError((error) {
+        // Handle any errors that occur during dialog creation
+        print('Error showing export progress dialog: $error');
+        if (!completer.isCompleted) {
+          completer.completeError(error);
+        }
+      });
+    }
   }
+
+  // Process pages and sides
+  void processExport() async {
+    try {
+      for (var i = 0; i < pagination.totalPages; i++) {
+        if (isCancelled) break;
+
+        onCurrentPageUpdate(i + 1);
+        final cards = cardsAtPage(includeItems, skipIncludeItems, layoutData,
+            projectSettings.cardSize, i + 1, linkedCardFaces);
+
+        // Front side
+        onFrontBackUpdate(ExportingFrontBack.front);
+        if (isCancelled) break;
+
+        // Create a preview for the progress dialog
+        final frontPreview = PagePreview(
+          layoutData: layoutData,
+          cards: cards.front,
+          layout: false,
+          previewCutLine: false,
+          baseDirectory: baseDirectory,
+          projectSettings: projectSettings,
+          hideInnerCutLine: true,
+          back: false,
+        );
+
+        // Update the preview dialog without waiting
+        updatePreview(i + 1, ExportingFrontBack.front, frontPreview);
+
+        if (isCancelled) break;
+        try {
+          await renderOneSide(
+            false,
+            layoutData,
+            projectSettings,
+            cards.front,
+            baseDirectory,
+            flutterView,
+            pixelWidth,
+            pixelHeight,
+            directory,
+            settings.prefix,
+            settings.template,
+            settings.frontSuffix,
+            settings.backSuffix,
+            i,
+            settings.frontRotation,
+          );
+        } catch (e) {
+          print('Error rendering front side of page ${i + 1}: $e');
+          if (isCancelled) break;
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                    'Error rendering front side of page ${i + 1}. Continuing with next page...'),
+              ),
+            );
+          }
+          // Continue with next page
+          continue;
+        }
+
+        // Back side
+        if (isCancelled) break;
+        onFrontBackUpdate(ExportingFrontBack.back);
+
+        // Create a preview for the progress dialog
+        final backPreview = PagePreview(
+          layoutData: layoutData,
+          cards: cards.back,
+          layout: false,
+          previewCutLine: false,
+          baseDirectory: baseDirectory,
+          projectSettings: projectSettings,
+          hideInnerCutLine: true,
+          back: true,
+        );
+
+        // Update the preview dialog without waiting
+        updatePreview(i + 1, ExportingFrontBack.back, backPreview);
+
+        if (isCancelled) break;
+        try {
+          await renderOneSide(
+            true,
+            layoutData,
+            projectSettings,
+            cards.back,
+            baseDirectory,
+            flutterView,
+            pixelWidth,
+            pixelHeight,
+            directory,
+            settings.prefix,
+            settings.template,
+            settings.frontSuffix,
+            settings.backSuffix,
+            i,
+            settings.backRotation,
+          );
+        } catch (e) {
+          print('Error rendering back side of page ${i + 1}: $e');
+          if (isCancelled) break;
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                    'Error rendering back side of page ${i + 1}. Continuing with next page...'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+          // Continue with next page
+          continue;
+        }
+      }
+
+      // Close the dialog if it's still open
+      if (dialogContext != null &&
+          Navigator.of(dialogContext!, rootNavigator: true).canPop()) {
+        Navigator.of(dialogContext!, rootNavigator: true).pop();
+        dialogContext = null;
+      }
+
+      if (!isCancelled && context.mounted) {
+        // Show completion message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Export completed successfully!'),
+          ),
+        );
+      } else if (isCancelled && context.mounted) {
+        // Show cancellation message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Export was cancelled'),
+          ),
+        );
+      }
+
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+    } catch (e) {
+      // Close the dialog if it's still open
+      if (dialogContext != null &&
+          Navigator.of(dialogContext!, rootNavigator: true).canPop()) {
+        Navigator.of(dialogContext!, rootNavigator: true).pop();
+        dialogContext = null;
+      }
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error during export: $e'),
+          ),
+        );
+      }
+      if (!completer.isCompleted) {
+        completer.completeError(e);
+      }
+    }
+  }
+
+  // Start the export process
+  processExport();
+
+  // Wait for completion or cancellation
+  return completer.future;
 }
+
+// The showCurrentPagePreview function has been replaced with the inline updatePreview function
 
 Future<void> renderOneSide(
     bool back,
@@ -142,7 +393,7 @@ Future<void> renderOneSide(
     String backSuffix,
     int pageNumber,
     Rotation rotation) async {
-  var toRender = PagePreview(
+  PagePreview toRender = PagePreview(
     layoutData: layoutData,
     cards: cardsOnePage,
     layout: false,
@@ -159,11 +410,11 @@ Future<void> renderOneSide(
       .replaceAll("{page}", (pageNumber + 1).toString())
       .replaceAll("{side}", back ? backSuffix : frontSuffix);
 
-  final imageUint = await createImageBytesFromWidget(
+  Uint8List imageUint = await createImageBytesFromWidget(
       flutterView, toRender, pixelWidth, pixelHeight);
 
   // Apply rotation if needed
-  Uint8List finalImageData = imageUint;
+  Uint8List finalImageData;
   if (rotation != Rotation.none) {
     // Process the image rotation
     final img = await decodeImageFromList(imageUint);
@@ -190,9 +441,19 @@ Future<void> renderOneSide(
     final byteData =
         await rotatedImage.toByteData(format: ui.ImageByteFormat.png);
     finalImageData = byteData!.buffer.asUint8List();
+
+    // Dispose of the original image to free up memory
+    img.dispose();
+    rotatedImage.dispose();
+  } else {
+    finalImageData = imageUint;
   }
 
   await savePng(finalImageData, directory, fileName);
+
+  // Help trigger garbage collection between pages to reduce memory pressure
+  // This is particularly important for large export jobs with many high-resolution images
+  await Future.delayed(Duration.zero);
 }
 
 Future<ExportSettings?> openPreExportDialog(
@@ -375,29 +636,31 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
     ),
   ).attachToRenderTree(buildOwner);
 
-  // Still can't find reliable way to wait for images to load by code.
-  // Render once and wait for long period of time then render again didn't help,
-  // it seems like the Image widget needs multiple renders to get them to load
-  // and also some time in-between each render. Both number 10 here are arbitrary.
+  // I don't know a reliable way to wait for async image to load in the
+  // preview other than waiting for arbitrary time like this.
+  final int renderIterations = 30;
+  final int delayMs = 5;
 
-  for (var i = 0; i < 40; i++) {
-    buildOwner
-      ..buildScope(rootElement)
-      ..finalizeTree();
-    pipelineOwner
-      ..flushLayout()
-      ..flushCompositingBits()
-      ..flushPaint();
-    await Future.delayed(Duration(milliseconds: 10));
+  for (var i = 0; i < renderIterations; i++) {
+    buildOwner.buildScope(rootElement);
+    buildOwner.finalizeTree();
+    pipelineOwner.flushLayout();
+    pipelineOwner.flushCompositingBits();
+    pipelineOwner.flushPaint();
+
+    // Less delay for initial iterations
+    if (i < 5) {
+      await Future.delayed(Duration(milliseconds: 1));
+    } else {
+      await Future.delayed(Duration(milliseconds: delayMs));
+    }
   }
 
-  // final start3 = DateTime.timestamp();
   final imgg =
       await repaintBoundary.toImage(pixelRatio: flutterView.devicePixelRatio);
   final bd = await imgg.toByteData(format: ui.ImageByteFormat.png);
   final uint8List = bd!.buffer.asUint8List();
 
-  // final finish3 = DateTime.timestamp();
   return uint8List;
 }
 
