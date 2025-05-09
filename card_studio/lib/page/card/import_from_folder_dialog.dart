@@ -177,8 +177,8 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
             title: "Card Importing Algorithms",
             paragraphs: [
               "Supported file types are .png and .jpg",
-              "The -a, -b, -front, -back, -1, -2 suffixes while the rest of the names are the same, are used to pair up the front and back face of cards to be imported.",
-              "If flags such as -2x -3x -4x exists before those front/back face flages, they are used as the quantity of that card. This number should be the same for the front and back face, but if not, it prioritizes quantity number on the front face.",
+              "The -a, -b, -front, -back, -1, -2 suffixes (or with underscores like _a, _b, etc.) while the rest of the names are the same, are used to pair up the front and back face of cards to be imported.",
+              "If flags such as -x2, -x3, -x4 (or with underscores like _x2) exist before those front/back face flags, they are used as the quantity of that card. This number should be the same for the front and back face, but if not, it prioritizes quantity number on the front face.",
               "Missing back faces can be automatically assigned using either your choice of Linked Card Face you have defined, using a file named exactly \"back.png/jpg\" found among the imports, or left them blank.",
             ],
           ),
@@ -233,6 +233,7 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
         await getDirectoryPath(initialDirectory: widget.basePath);
     if (folderPath != null) {
       fallbackBackFile = null; // Reset fallback back file
+      gatheringCards.clear(); // Clear previously gathered cards
 
       // Scan the folder for files
       final directory = Directory(folderPath);
@@ -253,12 +254,29 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
           continue;
         }
 
-        // Extract base name and flags
-        final baseName = fileName.replaceAll(
-            RegExp(r'(-a|-b|-1|-2|-front|-back|-x\d+)$'), '');
-        final quantityMatch = RegExp(r'-x(\d+)').firstMatch(fileName);
+        // Extract base name by removing the face suffix marker at the end
+        String baseName = fileName;
+
+        // Remove file extension first
+        baseName = baseName.substring(0, baseName.lastIndexOf('.'));
+
+        // Remove the face marker suffix (-a, -b, etc.)
+        final faceMarkerPattern = RegExp(r'([-_](a|b|1|2|front|back))$');
+        if (faceMarkerPattern.hasMatch(baseName)) {
+          baseName = baseName.substring(
+              0, faceMarkerPattern.firstMatch(baseName)!.start);
+        }
+
+        // Extract quantity if present
+        final quantityPattern = RegExp(r'[-_]x(\d+)$');
+        final quantityMatch = quantityPattern.firstMatch(baseName);
         final quantity =
             quantityMatch != null ? int.parse(quantityMatch.group(1)!) : 1;
+
+        // Remove quantity suffix from base name if present
+        if (quantityMatch != null) {
+          baseName = baseName.substring(0, quantityMatch.start);
+        }
 
         // Update or create GatheringCard
         final gatheringCard = gatheringCards.putIfAbsent(
@@ -266,11 +284,22 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
           () => GatheringCard(quantity: quantity),
         );
 
-        if (fileName.contains(RegExp(r'(-a|-1|-front)'))) {
+        // Extract the file name without extension to check for face markers
+        final fileNameWithoutExt =
+            fileName.substring(0, fileName.lastIndexOf('.'));
+
+        // Check if the filename ends with any of these patterns
+        final frontPattern = RegExp(r'([-_](a|1|front))$');
+        final backPattern = RegExp(r'([-_](b|2|back))$');
+
+        if (frontPattern.hasMatch(fileNameWithoutExt)) {
           gatheringCard.frontFile = file;
-        } else if (fileName.contains(RegExp(r'(-b|-2|-back)'))) {
+          gatheringCard.quantity =
+              quantity; // Use quantity from front if available
+        } else if (backPattern.hasMatch(fileNameWithoutExt)) {
           gatheringCard.backFile = file;
         } else {
+          // If no face marker is present, default to front
           gatheringCard.frontFile = file;
         }
       }

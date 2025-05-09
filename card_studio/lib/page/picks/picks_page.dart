@@ -179,14 +179,9 @@ class PicksPage extends StatelessWidget {
     var topButtonRow = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(children: [
-          addEachGroupOnceButton,
-          SizedBox(width: 8),
-          clearButton
-        ]),
-        Row(children: [
+        Row(spacing: 16, children: [addEachGroupOnceButton, clearButton]),
+        Row(spacing: 16, children: [
           allCountText,
-          SizedBox(width: 8),
           pageHelp,
         ]),
       ],
