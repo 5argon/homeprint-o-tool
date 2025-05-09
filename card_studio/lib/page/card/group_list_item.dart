@@ -85,16 +85,17 @@ class GroupListItem extends StatelessWidget {
             ],
           );
 
-    final addButton = ElevatedButton(
+    final addButton = ElevatedButton.icon(
       onPressed: () {
         final newCardGroup = cardGroup;
         newCardGroup.cards.insert(0, DuplexCard(null, null, 1, ""));
         onCardGroupChange(newCardGroup);
       },
-      child: const Text('Create New Card'),
+      icon: const Icon(Icons.add_card),
+      label: const Text('Create New Card'),
     );
     final messenger = ScaffoldMessenger.of(context);
-    final importFromFolderButton = ElevatedButton(
+    final importFromFolderButton = ElevatedButton.icon(
       onPressed: () {
         showDialog(
           context: context,
@@ -114,9 +115,10 @@ class GroupListItem extends StatelessWidget {
           },
         );
       },
-      child: const Text('Import From Folder'),
+      icon: const Icon(Icons.folder_open),
+      label: const Text('Import From Folder'),
     );
-    final autoNameCardsButton = ElevatedButton(
+    final autoNameCardsButton = ElevatedButton.icon(
       onPressed: () {
         showDialog(
           context: context,
@@ -202,7 +204,8 @@ class GroupListItem extends StatelessWidget {
           },
         );
       },
-      child: const Text('Auto-Name Cards'),
+      icon: const Icon(Icons.auto_fix_high),
+      label: const Text('Auto-Name Cards'),
     );
     final List<GroupMemberListItem> groupMembers = [];
     for (var i = 0; i < cardGroup.cards.length; i++) {

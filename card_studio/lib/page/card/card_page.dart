@@ -48,7 +48,7 @@ class CardPage extends StatelessWidget {
     final sortAllButton = Tooltip(
       message:
           "Sort all groups and also cards inside based on name alphabetically.",
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
         onPressed: () {
           ScaffoldMessenger.of(context).removeCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -88,7 +88,8 @@ class CardPage extends StatelessWidget {
           }
           onDefinedCardsChange(newDefinedCards);
         },
-        child: const Text('Sort All'),
+        icon: const Icon(Icons.sort_by_alpha),
+        label: const Text('Sort All'),
       ),
     );
 
@@ -143,7 +144,7 @@ class CardPage extends StatelessWidget {
       },
     );
 
-    final createGroupButton = ElevatedButton(
+    final createGroupButton = ElevatedButton.icon(
       onPressed: () {
         final scaffoldMessenger = ScaffoldMessenger.of(context);
         scaffoldMessenger.removeCurrentSnackBar();
@@ -164,7 +165,8 @@ class CardPage extends StatelessWidget {
           curve: Curves.easeInOut,
         );
       },
-      child: const Text('Create Group'),
+      icon: const Icon(Icons.create_new_folder),
+      label: const Text('Create Group'),
     );
 
     // Warning widget for missing files

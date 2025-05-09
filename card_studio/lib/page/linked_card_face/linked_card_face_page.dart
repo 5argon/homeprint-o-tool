@@ -41,7 +41,7 @@ class LinkedCardFacePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final totalMissingFiles = _calculateTotalMissingFiles();
 
-    final createLinkedCardFaceButton = ElevatedButton(
+    final createLinkedCardFaceButton = ElevatedButton.icon(
       onPressed: () {
         final scaffoldMessenger = ScaffoldMessenger.of(context);
         scaffoldMessenger.removeCurrentSnackBar();
@@ -56,7 +56,8 @@ class LinkedCardFacePage extends StatelessWidget {
         newLinkedCardFaces.add(newCard);
         onLinkedCardFacesChange(newLinkedCardFaces);
       },
-      child: const Text('Create Linked Card Face'),
+      icon: const Icon(Icons.add),
+      label: const Text('Create Linked Card Face'),
     );
 
     // Warning widget for missing files

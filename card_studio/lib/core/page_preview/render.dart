@@ -639,7 +639,7 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
   // I don't know a reliable way to wait for async image to load in the
   // preview other than waiting for arbitrary time like this.
   final int renderIterations = 30;
-  final int delayMs = 5;
+  final int delayMs = 20;
 
   for (var i = 0; i < renderIterations; i++) {
     buildOwner.buildScope(rootElement);
