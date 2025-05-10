@@ -236,8 +236,11 @@ class _CardAreaState extends State<CardArea> {
     }
     Widget verticalGuide = Container();
     Widget horizontalGuide = Container();
+    Widget verticalGuideUnder = Container();
+    Widget horizontalGuideUnder = Container();
     Color previewColor = Colors.red;
     Color realColor = Color.fromARGB(60, 255, 255, 255);
+    Color underColor = Colors.black;
 
     if (widget.previewCutLine || widget.showVerticalInnerCutLine) {
       verticalGuide = ParallelGuide(
@@ -253,6 +256,16 @@ class _CardAreaState extends State<CardArea> {
         color: widget.previewCutLine ? previewColor : realColor,
       );
     }
+    horizontalGuideUnder = ParallelGuide(
+      spaceTaken: widget.guideVertical,
+      axis: Axis.horizontal,
+      color: underColor,
+    );
+    verticalGuideUnder = ParallelGuide(
+      spaceTaken: widget.guideHorizontal,
+      axis: Axis.vertical,
+      color: underColor,
+    );
     Widget eachCardFrame = Container();
     if (widget.layoutMode) {
       eachCardFrame = Container(
@@ -266,6 +279,8 @@ class _CardAreaState extends State<CardArea> {
       LayoutHelper(
           color: Colors.orange, visible: widget.layoutMode, flashing: false),
       eachCardFrame,
+      verticalGuideUnder,
+      horizontalGuideUnder,
       imageWidget,
       verticalGuide,
       horizontalGuide
