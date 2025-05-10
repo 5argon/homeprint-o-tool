@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
 import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
@@ -58,61 +59,71 @@ class FullScreenCardPreview extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.zero,
-      child: Container(
-        width: size.width,
-        height: size.height,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(cardName),
-                if (cardFace?.relativeFilePath.isNotEmpty == true)
-                  Text(
-                    fileName,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-              ],
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-          body: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      child: KeyboardListener(
+        focusNode: FocusNode(),
+        autofocus: true,
+        onKeyEvent: (event) {
+          if (event is KeyDownEvent &&
+              event.logicalKey == LogicalKeyboardKey.escape) {
+            Navigator.of(context).pop();
+          }
+        },
+        child: SizedBox(
+          width: size.width,
+          height: size.height,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    constraints: BoxConstraints(
-                      maxWidth: availableWidth,
-                      maxHeight: availableHeight,
-                    ),
-                    alignment: Alignment.center,
-                    child: cardFace != null
-                        ? SingleCardPreview(
-                            basePath: basePath,
-                            cardSize: cardSize,
-                            bleedFactor: bleedFactor,
-                            cardFace: cardFace,
-                            showBorder: true,
-                            disableClick:
-                                true, // Prevent infinite recursion of previews
-                          )
-                        : const Center(child: Text("No image available")),
-                  ),
-                  const SizedBox(height: 16),
+                  Text(cardName),
                   if (cardFace?.relativeFilePath.isNotEmpty == true)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        "Path: ${cardFace!.relativeFilePath}",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                    Text(
+                      fileName,
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                 ],
+              ),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+            body: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      constraints: BoxConstraints(
+                        maxWidth: availableWidth,
+                        maxHeight: availableHeight,
+                      ),
+                      alignment: Alignment.center,
+                      child: cardFace != null
+                          ? SingleCardPreview(
+                              basePath: basePath,
+                              cardSize: cardSize,
+                              bleedFactor: bleedFactor,
+                              cardFace: cardFace,
+                              showBorder: true,
+                              disableClick:
+                                  true, // Prevent infinite recursion of previews
+                            )
+                          : const Center(child: Text("No image available")),
+                    ),
+                    const SizedBox(height: 16),
+                    if (cardFace?.relativeFilePath.isNotEmpty == true)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          "Path: ${cardFace!.relativeFilePath}",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
