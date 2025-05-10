@@ -39,7 +39,7 @@ class ReviewPage extends StatefulWidget {
 
 class _ReviewPageState extends State<ReviewPage> {
   int _page = 1;
-  bool _previewCutLine = true;
+  bool _previewCutLine = false;
   PreviewStyle _previewStyle = PreviewStyle.dual;
 
   @override

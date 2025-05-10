@@ -39,14 +39,119 @@ class GroupListItem extends StatelessWidget {
     this.onSkipIncludesChanged,
   });
 
+  // Check if any card in the group is used in the includes
+  int _countCardsInPicks() {
+    int count = 0;
+
+    // Check if the entire group is directly included
+    final isGroupDirectlyIncluded =
+        includes.any((includeItem) => includeItem.cardGroup == cardGroup);
+    final isGroupDirectlySkipIncluded =
+        skipIncludes.any((includeItem) => includeItem.cardGroup == cardGroup);
+
+    if (isGroupDirectlyIncluded || isGroupDirectlySkipIncluded) {
+      return cardGroup.cards.length; // All cards are included
+    }
+
+    // Count individual cards in includes
+    for (var card in cardGroup.cards) {
+      bool cardAlreadyCounted = false;
+
+      // Check in includes for individual cards
+      for (var includeItem in includes) {
+        if (includeItem.cardGroup != null &&
+            includeItem.cardGroup != cardGroup) {
+          // Check within each card in other groups
+          if (includeItem.cardGroup!.cards.any((c) => c == card)) {
+            count++;
+            cardAlreadyCounted = true;
+            break; // Count each card only once
+          }
+        } else if (includeItem.cardEach == card) {
+          // Direct card reference
+          count++;
+          cardAlreadyCounted = true;
+          break; // Count each card only once
+        }
+      }
+
+      // Check in skipIncludes as well
+      if (!cardAlreadyCounted) {
+        // Only check skipIncludes if not already counted
+        for (var includeItem in skipIncludes) {
+          if (includeItem.cardGroup != null &&
+              includeItem.cardGroup != cardGroup) {
+            if (includeItem.cardGroup!.cards.any((c) => c == card)) {
+              count++;
+              break;
+            }
+          } else if (includeItem.cardEach == card) {
+            count++;
+            break;
+          }
+        }
+      }
+    }
+
+    return count;
+  }
+
+  // Show warning dialog if any card in the group is in the picks list
+  Future<bool> _handleDeleteWithCheck(BuildContext context) async {
+    final pickedCardsCount = _countCardsInPicks();
+
+    if (pickedCardsCount > 0 &&
+        onIncludesChanged != null &&
+        onSkipIncludesChanged != null) {
+      // Show warning dialog
+      final shouldProceed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Warning'),
+          content: Text(
+              'This group contains $pickedCardsCount ${pickedCardsCount == 1 ? 'card' : 'cards'} that ${pickedCardsCount == 1 ? 'is' : 'are'} currently in your Picks list. Deleting the group will clear your Picks list. Do you want to proceed?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete Anyway'),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldProceed == true) {
+        // Clear the picks lists
+        onIncludesChanged!([]);
+        onSkipIncludesChanged!([]);
+
+        // Show a message about clearing the picks list
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Group deleted and Picks list cleared'),
+          ),
+        );
+        return true;
+      }
+      return false;
+    }
+    return true; // No cards in picks, proceed with deletion
+  }
+
   @override
   Widget build(BuildContext context) {
     final integrityCheckResult =
         cardGroup.checkIntegrity(basePath, linkedCardFaces);
 
     final removeButton = IconButton(
-      onPressed: () {
-        onDelete();
+      onPressed: () async {
+        final shouldProceed = await _handleDeleteWithCheck(context);
+        if (shouldProceed) {
+          onDelete();
+        }
       },
       icon: Icon(Icons.delete),
     );
