@@ -28,6 +28,7 @@ class ExportSettings {
   final String backSuffix;
   final Rotation frontRotation;
   final Rotation backRotation;
+  final bool frontSideOnly;
 
   ExportSettings({
     required this.prefix,
@@ -36,6 +37,7 @@ class ExportSettings {
     required this.backSuffix,
     required this.frontRotation,
     required this.backRotation,
+    required this.frontSideOnly,
   });
 }
 
@@ -52,9 +54,6 @@ Future renderRender(
   void Function(ExportingFrontBack) onFrontBackUpdate,
   void Function(int) onTotalPageUpdate,
 ) async {
-  final bool frontSideOnly =
-      frontSideOnlyIncludes(includeItems, linkedCardFaces);
-
   // Check for cards with missing graphics before proceeding
   final missingGraphicsResult = checkMissingGraphicsInPickedCards(
       includeItems, baseDirectory, linkedCardFaces);
@@ -66,7 +65,7 @@ Future renderRender(
     }
   }
 
-  ExportSettings? settings = await openPreExportDialog(context, frontSideOnly);
+  ExportSettings? settings = await openPreExportDialog(context);
   if (settings == null) {
     return;
   }
@@ -145,7 +144,7 @@ Future renderRender(
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
-                            'Progress: ${((2 * (page - 1) + (side == ExportingFrontBack.front ? 0 : 1)) / (2 * pagination.totalPages) * 100).toStringAsFixed(1)}%',
+                            'Progress: ${_calculateProgressPercentage(settings.frontSideOnly, page, pagination.totalPages, side)}%',
                             style: TextStyle(
                               color:
                                   Theme.of(ctx).colorScheme.onPrimaryContainer,
@@ -157,9 +156,11 @@ Future renderRender(
                     ),
                     const SizedBox(height: 16),
                     LinearProgressIndicator(
-                      value: (2 * (page - 1) +
-                              (side == ExportingFrontBack.front ? 0 : 1)) /
-                          (2 * pagination.totalPages),
+                      value: settings.frontSideOnly
+                          ? page / pagination.totalPages
+                          : (2 * (page - 1) +
+                                  (side == ExportingFrontBack.front ? 0 : 1)) /
+                              (2 * pagination.totalPages),
                       minHeight: 10,
                     ),
                     const SizedBox(height: 32),
@@ -266,8 +267,8 @@ Future renderRender(
           continue;
         }
 
-        // Back side
-        if (isCancelled) break;
+        // Back side - skip if frontSideOnly is true
+        if (isCancelled || settings.frontSideOnly) continue;
         onFrontBackUpdate(ExportingFrontBack.back);
 
         // Create a preview for the progress dialog
@@ -377,6 +378,22 @@ Future renderRender(
 
 // The showCurrentPagePreview function has been replaced with the inline updatePreview function
 
+// Calculate the progress percentage for the progress indicator
+String _calculateProgressPercentage(
+    bool frontSideOnly, int page, int totalPages, ExportingFrontBack side) {
+  double progress;
+  if (frontSideOnly) {
+    // If front side only, each page represents one complete step (100% / total pages)
+    progress = page / totalPages * 100;
+  } else {
+    // If both sides, each page has two sides, so we have (2 * total pages) steps
+    progress = ((2 * (page - 1) + (side == ExportingFrontBack.front ? 0 : 1)) /
+            (2 * totalPages)) *
+        100;
+  }
+  return progress.toStringAsFixed(1);
+}
+
 Future<void> renderOneSide(
     bool back,
     LayoutData layoutData,
@@ -456,153 +473,155 @@ Future<void> renderOneSide(
   await Future.delayed(Duration.zero);
 }
 
-Future<ExportSettings?> openPreExportDialog(
-    BuildContext context, bool frontSideOnly) async {
+Future<ExportSettings?> openPreExportDialog(BuildContext context) async {
   String tempPrefix = "export";
   String tempTemplate = "{prefix}_{page}_{side}";
   String tempFrontSuffix = "A";
   String tempBackSuffix = "B";
   Rotation tempFrontRotation = Rotation.none;
   Rotation tempBackRotation = Rotation.none;
-
-  final Widget noBacksideText = Container(
-    padding: EdgeInsets.all(10),
-    margin: EdgeInsets.only(bottom: 10),
-    decoration: BoxDecoration(
-      color: Colors.yellow[100],
-      borderRadius: BorderRadius.circular(8),
-      border: Border.all(color: Colors.yellow[700]!),
-    ),
-    child: Row(
-      children: [
-        Icon(Icons.info, color: Colors.yellow[700]),
-        SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            "Every card you picked has only a front side. Exporting only the front side of each page.",
-            style: TextStyle(color: Colors.black87),
-          ),
-        ),
-      ],
-    ),
-  );
+  bool tempFrontSideOnly = false;
 
   return await showDialog<ExportSettings>(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Export Settings'),
-        content: SizedBox(
-          width: 400,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (frontSideOnly) noBacksideText,
-              TextField(
-                controller: TextEditingController(text: tempTemplate),
-                decoration: InputDecoration(
-                  labelText: "File Name Template",
-                  helperText: "Use {prefix}, {page}, {side} as placeholders.",
-                ),
-                onChanged: (value) {
-                  tempTemplate = value;
-                },
-              ),
-              TextField(
-                controller: TextEditingController(text: tempPrefix),
-                decoration: InputDecoration(labelText: "File Name Prefix"),
-                onChanged: (value) {
-                  tempPrefix = value;
-                },
-              ),
-              TextField(
-                controller: TextEditingController(text: tempFrontSuffix),
-                decoration: InputDecoration(labelText: "Front Side Suffix"),
-                onChanged: (value) {
-                  tempFrontSuffix = value;
-                },
-              ),
-              TextField(
-                controller: TextEditingController(text: tempBackSuffix),
-                decoration: InputDecoration(labelText: "Back Side Suffix"),
-                onChanged: (value) {
-                  tempBackSuffix = value;
-                },
-              ),
-              SizedBox(height: 16),
-              DropdownButtonFormField<Rotation>(
-                value: tempFrontRotation,
-                decoration: InputDecoration(labelText: "Front Post-Rotation"),
-                items: [
-                  DropdownMenuItem(
-                    value: Rotation.none,
-                    child: Text("None"),
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text('Export Settings'),
+            content: SizedBox(
+              width: 400,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CheckboxListTile(
+                    title: Text('Front Side Only'),
+                    value: tempFrontSideOnly,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: (value) {
+                      setState(() {
+                        tempFrontSideOnly = value ?? false;
+                      });
+                    },
                   ),
-                  DropdownMenuItem(
-                    value: Rotation.clockwise90,
-                    child: Text("Clockwise 90"),
+                  TextField(
+                    controller: TextEditingController(text: tempTemplate),
+                    decoration: InputDecoration(
+                      labelText: "File Name Template",
+                      helperText:
+                          "Use {prefix}, {page}, {side} as placeholders.",
+                    ),
+                    onChanged: (value) {
+                      tempTemplate = value;
+                    },
                   ),
-                  DropdownMenuItem(
-                    value: Rotation.counterClockwise90,
-                    child: Text("Counter-clockwise 90"),
+                  TextField(
+                    controller: TextEditingController(text: tempPrefix),
+                    decoration: InputDecoration(labelText: "File Name Prefix"),
+                    onChanged: (value) {
+                      tempPrefix = value;
+                    },
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: tempFrontSuffix),
+                    decoration: InputDecoration(labelText: "Front Side Suffix"),
+                    onChanged: (value) {
+                      tempFrontSuffix = value;
+                    },
+                  ),
+                  TextField(
+                    controller: TextEditingController(text: tempBackSuffix),
+                    decoration: InputDecoration(
+                      labelText: "Back Side Suffix",
+                      enabled: !tempFrontSideOnly,
+                    ),
+                    onChanged: (value) {
+                      tempBackSuffix = value;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  DropdownButtonFormField<Rotation>(
+                    value: tempFrontRotation,
+                    decoration:
+                        InputDecoration(labelText: "Front Post-Rotation"),
+                    items: [
+                      DropdownMenuItem(
+                        value: Rotation.none,
+                        child: Text("None"),
+                      ),
+                      DropdownMenuItem(
+                        value: Rotation.clockwise90,
+                        child: Text("Clockwise 90"),
+                      ),
+                      DropdownMenuItem(
+                        value: Rotation.counterClockwise90,
+                        child: Text("Counter-clockwise 90"),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        tempFrontRotation = value;
+                      }
+                    },
+                  ),
+                  SizedBox(height: 8),
+                  DropdownButtonFormField<Rotation>(
+                    value: tempBackRotation,
+                    decoration: InputDecoration(
+                      labelText: "Back Post-Rotation",
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: Rotation.none,
+                        child: Text("None"),
+                      ),
+                      DropdownMenuItem(
+                        value: Rotation.clockwise90,
+                        child: Text("Clockwise 90"),
+                      ),
+                      DropdownMenuItem(
+                        value: Rotation.counterClockwise90,
+                        child: Text("Counter-clockwise 90"),
+                      ),
+                    ],
+                    onChanged: tempFrontSideOnly
+                        ? null
+                        : (value) {
+                            if (value != null) {
+                              tempBackRotation = value;
+                            }
+                          },
                   ),
                 ],
-                onChanged: (value) {
-                  if (value != null) {
-                    tempFrontRotation = value;
-                  }
-                },
               ),
-              SizedBox(height: 8),
-              DropdownButtonFormField<Rotation>(
-                value: tempBackRotation,
-                decoration: InputDecoration(labelText: "Back Post-Rotation"),
-                items: [
-                  DropdownMenuItem(
-                    value: Rotation.none,
-                    child: Text("None"),
-                  ),
-                  DropdownMenuItem(
-                    value: Rotation.clockwise90,
-                    child: Text("Clockwise 90"),
-                  ),
-                  DropdownMenuItem(
-                    value: Rotation.counterClockwise90,
-                    child: Text("Counter-clockwise 90"),
-                  ),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    tempBackRotation = value;
-                  }
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(null); // Cancel
                 },
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(
+                    ExportSettings(
+                      prefix: tempPrefix,
+                      template: tempTemplate,
+                      frontSuffix: tempFrontSuffix,
+                      backSuffix: tempBackSuffix,
+                      frontRotation: tempFrontRotation,
+                      backRotation: tempBackRotation,
+                      frontSideOnly: tempFrontSideOnly,
+                    ),
+                  ); // Confirm
+                },
+                child: Text('OK'),
               ),
             ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(null); // Cancel
-            },
-            child: Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(
-                ExportSettings(
-                  prefix: tempPrefix,
-                  template: tempTemplate,
-                  frontSuffix: tempFrontSuffix,
-                  backSuffix: tempBackSuffix,
-                  frontRotation: tempFrontRotation,
-                  backRotation: tempBackRotation,
-                ),
-              ); // Confirm
-            },
-            child: Text('OK'),
-          ),
-        ],
+          );
+        },
       );
     },
   );
