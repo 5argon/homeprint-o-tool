@@ -3,6 +3,7 @@ import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/card/group_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
+import 'package:homeprint_o_tool/page/card/import_from_folder_dialog.dart';
 
 import '../../core/save_file.dart';
 
@@ -206,6 +207,8 @@ class CardPage extends StatelessWidget {
                   spacing: 16,
                   children: [
                     createGroupButton,
+                    _buildImportFromFolderButton(
+                        context, listViewScrollController),
                     sortAllButton,
                     missingFilesWarning,
                   ],
@@ -215,6 +218,74 @@ class CardPage extends StatelessWidget {
           ),
           Expanded(child: listView),
         ],
+      ),
+    );
+  }
+
+  Widget _buildImportFromFolderButton(
+      BuildContext context, ScrollController scrollController) {
+    return Tooltip(
+      message:
+          "Create a new group for each imported folder. Create multiple groups if selected a folder of folders.",
+      child: ElevatedButton.icon(
+        onPressed: () {
+          final scaffoldMessenger = ScaffoldMessenger.of(context);
+          scaffoldMessenger.removeCurrentSnackBar();
+
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ImportFromFolderDialog(
+                basePath: basePath,
+                linkedCardFaces: linkedCardFaces,
+                allowFolderOfFolders: true,
+                onImport: (folderName, importedCards) {
+                  // Create a new card group with the name of the folder
+                  if (importedCards.isNotEmpty) {
+                    final newCardGroup = CardGroup(importedCards, folderName);
+                    final newDefinedCards = definedCards;
+                    newDefinedCards.insert(0, newCardGroup);
+                    onDefinedCardsChange(newDefinedCards);
+
+                    // Scroll to top to see the new group
+                    scrollController.animateTo(
+                      scrollController.position.minScrollExtent,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+
+                    scaffoldMessenger.showSnackBar(SnackBar(
+                      content: Text(
+                          "Created group '$folderName' with ${importedCards.length} cards."),
+                    ));
+                  }
+                },
+                onCreateGroups: (cardGroups) {
+                  if (cardGroups.isNotEmpty) {
+                    final newDefinedCards = definedCards;
+                    // Insert at the beginning to make them visible immediately
+                    newDefinedCards.insertAll(0, cardGroups);
+                    onDefinedCardsChange(newDefinedCards);
+
+                    // Scroll to top to see the new groups
+                    scrollController.animateTo(
+                      scrollController.position.minScrollExtent,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+
+                    scaffoldMessenger.showSnackBar(SnackBar(
+                      content: Text(
+                          "Created ${cardGroups.length} groups with ${cardGroups.fold<int>(0, (sum, group) => sum + group.cards.length)} cards total."),
+                    ));
+                  }
+                },
+              );
+            },
+          );
+        },
+        icon: const Icon(Icons.folder_copy),
+        label: const Text('Import Folder(s)'),
       ),
     );
   }

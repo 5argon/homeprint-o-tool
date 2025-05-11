@@ -1,6 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/card_group.dart';
 import 'package:homeprint_o_tool/core/duplex_card.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
@@ -12,13 +13,19 @@ import '../../core/save_file.dart';
 class ImportFromFolderDialog extends StatefulWidget {
   final String basePath;
   final LinkedCardFaces linkedCardFaces;
-  final Function(List<DuplexCard> cards) onImport;
+  final Function(String folderName, List<DuplexCard> cards) onImport;
+  // Optional parameter for creating new groups instead of importing to existing group
+  final Function(List<CardGroup> cardGroups)? onCreateGroups;
+  // Flag to enable folder-of-folders mode
+  final bool allowFolderOfFolders;
 
   const ImportFromFolderDialog({
     super.key,
     required this.basePath,
     required this.linkedCardFaces,
     required this.onImport,
+    this.onCreateGroups,
+    this.allowFolderOfFolders = false,
   });
 
   @override
@@ -37,19 +44,112 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
   File? fallbackBackFile; // Store the "back" file for the new resolution option
   Map<String, GatheringCard> gatheringCards = {};
 
+  // For folder-of-folders mode
+  bool isFolderOfFolders = false;
+  List<Directory> subDirectories = [];
+  Map<String, Map<String, GatheringCard>> folderGatheringCardsMap = {};
+
   @override
   Widget build(BuildContext context) {
-    var browseFolderButton = ElevatedButton(
+    var browseFolderButton = ElevatedButton.icon(
       onPressed: onBrowse,
-      child: const Text("Browse for Folder"),
+      icon: Icon(
+          widget.allowFolderOfFolders ? Icons.folder_copy : Icons.folder_open),
+      label: Text(widget.allowFolderOfFolders
+          ? "Browse for Folder${isFolderOfFolders ? " (Multiple Groups)" : ""}"
+          : "Browse for Folder"),
     );
+
     var importButton = TextButton(
       onPressed: (selectedFolder == null ||
               (missingFaceResolution == "LinkedCardFace" &&
                   selectedLinkedCardFace == null))
           ? null // Disable the button
           : () {
-              // Create DuplexCard objects when the user presses "Import"
+              if (widget.onCreateGroups != null && isFolderOfFolders) {
+                // Process folder-of-folders mode
+                List<CardGroup> newCardGroups = [];
+
+                for (var folderPath in folderGatheringCardsMap.keys) {
+                  String folderName = path.basename(folderPath);
+                  List<DuplexCard> folderCards = [];
+
+                  for (final entry
+                      in folderGatheringCardsMap[folderPath]!.entries) {
+                    final baseName = entry.key;
+                    final gatheringCard = entry.value;
+
+                    final frontFile = gatheringCard.frontFile;
+                    final backFile = gatheringCard.backFile;
+                    final CardFace? frontCard;
+                    if (frontFile != null) {
+                      final relativePath = path.relative(
+                        frontFile.path,
+                        from: widget.basePath,
+                      );
+                      frontCard = CardFace.withRelativeFilePath(
+                        relativePath,
+                        isLinked: false,
+                      );
+                    } else {
+                      // Skip cards without a front face
+                      continue;
+                    }
+
+                    final CardFace? backCard;
+                    if (backFile != null) {
+                      final relativePath = path.relative(
+                        backFile.path,
+                        from: widget.basePath,
+                      );
+                      backCard = CardFace.withRelativeFilePath(
+                        relativePath,
+                        isLinked: false,
+                      );
+                    } else {
+                      if (missingFaceResolution == "ReplaceWithBackFile" &&
+                          fallbackBackFile != null) {
+                        final relativePath = path.relative(
+                          fallbackBackFile!.path,
+                          from: widget.basePath,
+                        );
+                        backCard = CardFace.withRelativeFilePath(
+                          relativePath,
+                          isLinked: false,
+                        );
+                      } else if (missingFaceResolution == "LinkedCardFace" &&
+                          selectedLinkedCardFace != null) {
+                        backCard = selectedLinkedCardFace;
+                      } else {
+                        backCard = null;
+                      }
+                    }
+
+                    final card = DuplexCard(
+                      frontCard,
+                      backCard,
+                      gatheringCard.quantity,
+                      baseName,
+                    );
+                    folderCards.add(card);
+                  }
+
+                  if (folderCards.isNotEmpty) {
+                    newCardGroups.add(CardGroup(folderCards, folderName));
+                  }
+                }
+
+                if (newCardGroups.isNotEmpty) {
+                  widget.onCreateGroups!(newCardGroups);
+                }
+                Navigator.of(context).pop();
+                return;
+              }
+
+              // Regular import mode for single folder
+              final singleFolderName =
+                  selectedFolder!.split(Platform.pathSeparator).last;
+
               importedCards.clear(); // Clear any previously imported cards
               int cardsWithBothSides = 0;
               int cardsWithOnlyFront = 0;
@@ -121,10 +221,12 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
                 this.cardsWithOnlyBack = cardsWithOnlyBack;
               });
 
-              widget.onImport(importedCards);
+              widget.onImport(singleFolderName, importedCards);
               Navigator.of(context).pop();
             },
-      child: const Text("Import"),
+      child: Text(widget.allowFolderOfFolders && isFolderOfFolders
+          ? "Create Groups"
+          : "Import"),
     );
     var radioEmpty = RadioListTile<String>(
       title: const Text("Empty"),
@@ -171,7 +273,9 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
     return AlertDialog(
       title: Row(
         children: [
-          const Text("Import Cards from Folder"),
+          Text(widget.allowFolderOfFolders && isFolderOfFolders
+              ? "Import Multiple Groups from Folders"
+              : "Import Cards from Folder"),
           const Spacer(),
           HelpButton(
             title: "Card Importing Algorithms",
@@ -180,6 +284,8 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
               "The -a, -b, -front, -back, -1, -2 suffixes (or with underscores like _a, _b, etc.) while the rest of the names are the same, are used to pair up the front and back face of cards to be imported.",
               "If flags such as -x2, -x3, -x4 (or with underscores like _x2) exist before those front/back face flags, they are used as the quantity of that card. This number should be the same for the front and back face, but if not, it prioritizes quantity number on the front face.",
               "Missing back faces can be automatically assigned using either your choice of Linked Card Face you have defined, using a file named exactly \"back.png/jpg\" found among the imports, or left them blank.",
+              if (widget.allowFolderOfFolders)
+                "When selecting a folder containing subfolders, each subfolder will become a separate card group named after the folder."
             ],
           ),
         ],
@@ -194,7 +300,13 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
               const SizedBox(height: 16),
               Text("Selected Folder: $selectedFolder"),
               const SizedBox(height: 8),
-              Text("Cards Found: $cardsFound"),
+              if (isFolderOfFolders) ...[
+                Text(
+                    "Found ${subDirectories.length} subfolders to import as groups"),
+                Text("Total cards found: $cardsFound"),
+              ] else ...[
+                Text("Cards Found: $cardsFound"),
+              ],
               Text(
                   "(Duplex: $cardsDuplex, Only Front: $cardsWithOnlyFront, Only Back: $cardsWithOnlyBack)"),
               const SizedBox(height: 16),
@@ -234,10 +346,97 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
     if (folderPath != null) {
       fallbackBackFile = null; // Reset fallback back file
       gatheringCards.clear(); // Clear previously gathered cards
+      folderGatheringCardsMap.clear(); // Clear previous folder maps
+
+      // Scan the folder for files or subdirectories
+      final directory = Directory(folderPath);
+      final entities = directory.listSync();
+
+      // First check if this is a folder with subdirectories and we're allowed to process them
+      if (widget.allowFolderOfFolders) {
+        subDirectories = entities
+            .whereType<Directory>()
+            .where((dir) => !path
+                .basename(dir.path)
+                .startsWith('.')) // Skip hidden directories
+            .toList();
+
+        if (subDirectories.isNotEmpty) {
+          setState(() {
+            isFolderOfFolders = true;
+            selectedFolder = folderPath;
+            cardsFound = 0;
+            cardsDuplex = 0;
+            cardsWithOnlyFront = 0;
+            cardsWithOnlyBack = 0;
+          });
+
+          // Process each subdirectory
+          for (final subDir in subDirectories) {
+            final subDirPath = subDir.path;
+            final files = subDir.listSync().whereType<File>().toList();
+            final subDirGatheringCards = <String, GatheringCard>{};
+            File? subDirBackFile;
+
+            for (final file in files) {
+              final fileName = path.basename(file.path).toLowerCase();
+              final fileExtension = path.extension(fileName);
+
+              // Allow only .png, .jpg, .jpeg files
+              if (!['.png', '.jpg', '.jpeg'].contains(fileExtension)) {
+                continue;
+              }
+
+              // Check for default back file
+              if (fileName == 'back.png' || fileName == 'back.jpg') {
+                subDirBackFile = file;
+                continue;
+              }
+
+              processCardFile(file, subDirGatheringCards);
+            }
+
+            // If no fallback back file found globally, use the one from this directory
+            if (fallbackBackFile == null && subDirBackFile != null) {
+              fallbackBackFile = subDirBackFile;
+            }
+
+            folderGatheringCardsMap[subDirPath] = subDirGatheringCards;
+
+            // Update counts for UI
+            final dirDuplex = subDirGatheringCards.values
+                .where(
+                    (card) => card.frontFile != null && card.backFile != null)
+                .length;
+            final dirFrontOnly = subDirGatheringCards.values
+                .where(
+                    (card) => card.frontFile != null && card.backFile == null)
+                .length;
+            final dirBackOnly = subDirGatheringCards.values
+                .where(
+                    (card) => card.frontFile == null && card.backFile != null)
+                .length;
+
+            setState(() {
+              cardsFound += subDirGatheringCards.length;
+              cardsDuplex += dirDuplex;
+              cardsWithOnlyFront += dirFrontOnly;
+              cardsWithOnlyBack += dirBackOnly;
+            });
+          }
+
+          return;
+        }
+      }
+
+      // If we're here, either it's not a folder of folders or there are no subdirectories
+      setState(() {
+        isFolderOfFolders = false;
+        selectedFolder = folderPath;
+      });
 
       // Scan the folder for files
-      final directory = Directory(folderPath);
-      final files = directory.listSync().whereType<File>().toList();
+      final files = entities.whereType<File>().toList();
 
       for (final file in files) {
         final fileName = path.basename(file.path).toLowerCase();
@@ -254,54 +453,8 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
           continue;
         }
 
-        // Extract base name by removing the face suffix marker at the end
-        String baseName = fileName;
-
-        // Remove file extension first
-        baseName = baseName.substring(0, baseName.lastIndexOf('.'));
-
-        // Remove the face marker suffix (-a, -b, etc.)
-        final faceMarkerPattern = RegExp(r'([-_](a|b|1|2|front|back))$');
-        if (faceMarkerPattern.hasMatch(baseName)) {
-          baseName = baseName.substring(
-              0, faceMarkerPattern.firstMatch(baseName)!.start);
-        }
-
-        // Extract quantity if present
-        final quantityPattern = RegExp(r'[-_]x(\d+)$');
-        final quantityMatch = quantityPattern.firstMatch(baseName);
-        final quantity =
-            quantityMatch != null ? int.parse(quantityMatch.group(1)!) : 1;
-
-        // Remove quantity suffix from base name if present
-        if (quantityMatch != null) {
-          baseName = baseName.substring(0, quantityMatch.start);
-        }
-
-        // Update or create GatheringCard
-        final gatheringCard = gatheringCards.putIfAbsent(
-          baseName,
-          () => GatheringCard(quantity: quantity),
-        );
-
-        // Extract the file name without extension to check for face markers
-        final fileNameWithoutExt =
-            fileName.substring(0, fileName.lastIndexOf('.'));
-
-        // Check if the filename ends with any of these patterns
-        final frontPattern = RegExp(r'([-_](a|1|front))$');
-        final backPattern = RegExp(r'([-_](b|2|back))$');
-
-        if (frontPattern.hasMatch(fileNameWithoutExt)) {
-          gatheringCard.frontFile = file;
-          gatheringCard.quantity =
-              quantity; // Use quantity from front if available
-        } else if (backPattern.hasMatch(fileNameWithoutExt)) {
-          gatheringCard.backFile = file;
-        } else {
-          // If no face marker is present, default to front
-          gatheringCard.frontFile = file;
-        }
+        // Process each card file
+        processCardFile(file, gatheringCards);
       }
 
       // Update state
@@ -318,6 +471,55 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
             .where((card) => card.frontFile == null && card.backFile != null)
             .length;
       });
+    }
+  }
+
+  // Helper method to process a single card file
+  void processCardFile(
+      File file, Map<String, GatheringCard> targetGatheringCards) {
+    final fileName = path.basename(file.path).toLowerCase();
+    // Remove file extension first
+    String baseName = fileName.substring(0, fileName.lastIndexOf('.'));
+
+    // Remove the face marker suffix (-a, -b, etc.)
+    final faceMarkerPattern = RegExp(r'([-_](a|b|1|2|front|back))$');
+    if (faceMarkerPattern.hasMatch(baseName)) {
+      baseName =
+          baseName.substring(0, faceMarkerPattern.firstMatch(baseName)!.start);
+    }
+
+    // Extract quantity if present
+    final quantityPattern = RegExp(r'[-_]x(\d+)$');
+    final quantityMatch = quantityPattern.firstMatch(baseName);
+    final quantity =
+        quantityMatch != null ? int.parse(quantityMatch.group(1)!) : 1;
+
+    // Remove quantity suffix from base name if present
+    if (quantityMatch != null) {
+      baseName = baseName.substring(0, quantityMatch.start);
+    }
+
+    // Update or create GatheringCard
+    final gatheringCard = targetGatheringCards.putIfAbsent(
+      baseName,
+      () => GatheringCard(quantity: quantity),
+    );
+
+    // Extract the file name without extension to check for face markers
+    final fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
+
+    // Check if the filename ends with any of these patterns
+    final frontPattern = RegExp(r'([-_](a|1|front))$');
+    final backPattern = RegExp(r'([-_](b|2|back))$');
+
+    if (frontPattern.hasMatch(fileNameWithoutExt)) {
+      gatheringCard.frontFile = file;
+      gatheringCard.quantity = quantity; // Use quantity from front if available
+    } else if (backPattern.hasMatch(fileNameWithoutExt)) {
+      gatheringCard.backFile = file;
+    } else {
+      // If no face marker is present, default to front
+      gatheringCard.frontFile = file;
     }
   }
 }

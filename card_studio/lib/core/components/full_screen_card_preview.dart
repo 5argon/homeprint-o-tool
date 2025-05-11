@@ -13,12 +13,12 @@ class FullScreenCardPreview extends StatelessWidget {
   final CardFace? cardFace;
 
   const FullScreenCardPreview({
-    Key? key,
+    super.key,
     required this.basePath,
     required this.cardSize,
     required this.bleedFactor,
     required this.cardFace,
-  }) : super(key: key);
+  });
 
   /// Shows a full screen dialog with a card preview
   static Future<void> show(

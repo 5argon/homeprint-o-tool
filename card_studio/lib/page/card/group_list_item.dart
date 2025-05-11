@@ -208,7 +208,7 @@ class GroupListItem extends StatelessWidget {
             return ImportFromFolderDialog(
               basePath: basePath,
               linkedCardFaces: linkedCardFaces,
-              onImport: (importedCards) {
+              onImport: (folderName, importedCards) {
                 final newCardGroup = cardGroup;
                 newCardGroup.cards.addAll(importedCards);
                 onCardGroupChange(newCardGroup);
