@@ -634,11 +634,20 @@ Future savePng(Uint8List imageData, String directory, String fileName) async {
 Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
     Widget widget, double pixelWidth, double pixelHeight) async {
   final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
+  final ViewConfiguration viewConfig = ViewConfiguration(
+    logicalConstraints: BoxConstraints(
+      minWidth: pixelWidth,
+      minHeight: pixelHeight,
+      maxWidth: pixelWidth,
+      maxHeight: pixelHeight,
+    ),
+    devicePixelRatio: 1,
+  );
   final RenderView renderView = RenderView(
     view: flutterView,
     child: RenderPositionedBox(
         alignment: Alignment.center, child: repaintBoundary),
-    configuration: ViewConfiguration.fromView(flutterView),
+    configuration: viewConfig,
   );
 
   final PipelineOwner pipelineOwner = PipelineOwner();
@@ -651,7 +660,7 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
     container: repaintBoundary,
     child: Directionality(
       textDirection: TextDirection.ltr,
-      child: IntrinsicHeight(child: IntrinsicWidth(child: widget)),
+      child: widget,
     ),
   ).attachToRenderTree(buildOwner);
 
@@ -675,8 +684,7 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
     }
   }
 
-  final imgg =
-      await repaintBoundary.toImage(pixelRatio: flutterView.devicePixelRatio);
+  final imgg = await repaintBoundary.toImage(pixelRatio: 1);
   final bd = await imgg.toByteData(format: ui.ImageByteFormat.png);
   final uint8List = bd!.buffer.asUint8List();
 
