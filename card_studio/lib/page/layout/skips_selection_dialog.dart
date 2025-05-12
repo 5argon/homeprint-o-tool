@@ -62,6 +62,15 @@ class _SkipsSelectionDialogState extends State<SkipsSelectionDialog> {
     return index + 1;
   }
 
+  // Invert the current selection of skips
+  void _invertSelection() {
+    setState(() {
+      for (int i = 0; i < _selectedPositions.length; i++) {
+        _selectedPositions[i] = !_selectedPositions[i];
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -114,6 +123,11 @@ class _SkipsSelectionDialogState extends State<SkipsSelectionDialog> {
                       Navigator.of(context).pop();
                     },
                     child: const Text('Cancel'),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    onPressed: _invertSelection,
+                    child: const Text('Invert Selection'),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
