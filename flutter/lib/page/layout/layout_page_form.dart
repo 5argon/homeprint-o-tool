@@ -79,9 +79,8 @@ class LayoutPageForm extends StatelessWidget {
     // Back Side Arrangement form
     final backArrangementForm = LabelAndForm(
       label: "Back Side Arrangement",
-      help:
-          "Determines how cards are positioned on the back side of the page. "
-          "'Inverted Row' places cards on the back side in the same row as front side, but from right to left instead of left to right. "
+      help: "Determines how cards are positioned on the back side of the page. "
+          "For 'Inverted Row', cards in each row of the front side are reordered from right to left instead. This is a default option because most printers that print back side on even-numbered pages expected this in order to pair up the front face and back face, but please make sure it is really the case for your printer. "
           "'Same as Front' places cards on the back side in the same order as the front side.",
       children: [
         Row(
@@ -228,32 +227,69 @@ class LayoutPageForm extends StatelessWidget {
           ),
         ]);
     var secondForm = Column(
-      children: [cuttingGuideForm, extraBleedForm, backArrangementForm, skipsForm],
+      children: [cuttingGuideForm, extraBleedForm],
+    );
+
+    var thirdForm = Column(
+      children: [backArrangementForm, skipsForm],
     );
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // Define the breakpoint for switching layout
-          final bool isWideScreen = constraints.maxWidth > 750;
-          return isWideScreen
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    firstForm,
-                    const SizedBox(width: 50),
-                    secondForm,
-                  ],
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+          // Define the breakpoints for switching layout
+          final bool isWideScreen = constraints.maxWidth > 1100; // 3 columns
+          final bool isMediumScreen = constraints.maxWidth > 750; // 2 columns
+
+          if (isWideScreen) {
+            // 3 columns layout
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                firstForm,
+                const SizedBox(width: 40),
+                secondForm,
+                const SizedBox(width: 40),
+                thirdForm,
+              ],
+            );
+          } else if (isMediumScreen) {
+            // 2 columns layout
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
                   children: [
                     firstForm,
                     const SizedBox(height: 24),
-                    secondForm,
+                    cuttingGuideForm,
                   ],
-                );
+                ),
+                const SizedBox(width: 40),
+                Column(
+                  children: [
+                    extraBleedForm,
+                    backArrangementForm,
+                    skipsForm,
+                  ],
+                ),
+              ],
+            );
+          } else {
+            // Single column layout
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                firstForm,
+                const SizedBox(height: 24),
+                cuttingGuideForm,
+                extraBleedForm,
+                backArrangementForm,
+                skipsForm,
+              ],
+            );
+          }
         },
       ),
     );

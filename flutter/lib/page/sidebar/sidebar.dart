@@ -167,7 +167,7 @@ class Sidebar extends StatelessWidget {
         final printingHelpButton =
             HelpButton(title: "Printing Section", paragraphs: [
           "Settings in this section are for the consumer side of the JSON file. It is recommended to set them up in the order from top to bottom.",
-          "\"Layout\" determines how many cards can fit in a single page and how much room of error they have to cut out the bleed of each card. That is then used in \"Picks\" page. It let you select which and how many cards you want to print, in the unit of card groups that the author of JSON file had prepared, or individually. It can show which page a particular group or card you selected will be landed on. Finally, the \"Post-Processing\" page let you review the resulting uncut sheet image that will be saved, with an optional rotation or flipping of the image.",
+          "\"Layout\" determines how many cards can fit in a single page and how much room of error they have to cut out the bleed of each card. That is then used in \"Picks\" page. It let you select which and how many cards you want to print, in the unit of card groups that the author of JSON file had prepared, or individually. It can show which page a particular group or card you selected will be landed on. Finally, the \"Previeq\" page let you review the resulting uncut sheet image that will be saved. Additional post-processing options are available after pressing the \"Export\" button.",
           "Everything in this section is not saved into the project JSON file when pressing Save in the above section. Loading a different JSON retain the settings. Each time this app reopens, they are reset to default values and must be configured again.",
         ]);
         var printingLabel = Row(
