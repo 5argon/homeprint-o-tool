@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
@@ -20,6 +21,8 @@ class AboutPage extends StatelessWidget {
       decoration: TextDecoration.underline,
     );
 
+    final packageInfo = PackageInfo.fromPlatform();
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Center(
@@ -32,6 +35,20 @@ class AboutPage extends StatelessWidget {
                 "Homeprint O'Tool",
                 style: titleStyle,
               ),
+              const SizedBox(height: 8),
+              FutureBuilder(
+                  future: packageInfo,
+                  builder: (_, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      final info = snapshot.data!;
+                      return Text(
+                        "Version: ${info.version}",
+                        textAlign: TextAlign.center,
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  }),
               const SizedBox(height: 24),
               const Text(
                 "A desktop software that creates duplex uncut sheet image files out of individual card graphics.",
