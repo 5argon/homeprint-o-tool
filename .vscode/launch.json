@@ -5,21 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "card_studio",
-            "cwd": "card_studio",
+            "name": "flutter",
+            "cwd": "flutter",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "card_studio (profile mode)",
-            "cwd": "card_studio",
+            "name": "flutter (profile mode)",
+            "cwd": "flutter",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "card_studio (release mode)",
-            "cwd": "card_studio",
+            "name": "flutter (release mode)",
+            "cwd": "flutter",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
