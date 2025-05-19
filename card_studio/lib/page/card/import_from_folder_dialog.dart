@@ -120,6 +120,16 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
                       } else if (missingFaceResolution == "LinkedCardFace" &&
                           selectedLinkedCardFace != null) {
                         backCard = selectedLinkedCardFace;
+                      } else if (missingFaceResolution == "MirrorFrontFace") {
+                        // Use the same file path as the front face
+                        final relativePath = path.relative(
+                          frontFile.path,
+                          from: widget.basePath,
+                        );
+                        backCard = CardFace.withRelativeFilePath(
+                          relativePath,
+                          isLinked: false,
+                        );
                       } else {
                         backCard = null;
                       }
@@ -200,6 +210,17 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
                   } else if (missingFaceResolution == "LinkedCardFace" &&
                       selectedLinkedCardFace != null) {
                     backCard = selectedLinkedCardFace;
+                  } else if (missingFaceResolution == "MirrorFrontFace" &&
+                      frontFile != null) {
+                    // Use the same file path as the front face
+                    final relativePath = path.relative(
+                      frontFile.path,
+                      from: widget.basePath,
+                    );
+                    backCard = CardFace.withRelativeFilePath(
+                      relativePath,
+                      isLinked: false,
+                    );
                   } else {
                     backCard = null;
                   }
@@ -313,6 +334,16 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
               const Text("Missing back face resolution:"),
               radioEmpty,
               radioBackFile,
+              RadioListTile<String>(
+                title: const Text("Mirror Front Face (Same on Both Sides)"),
+                value: "MirrorFrontFace",
+                groupValue: missingFaceResolution,
+                onChanged: (value) {
+                  setState(() {
+                    missingFaceResolution = value!;
+                  });
+                },
+              ),
               radioLinked,
               // Drop down always visible but disabled if no linked card faces are defined
               LinkedCardFaceDropdown(

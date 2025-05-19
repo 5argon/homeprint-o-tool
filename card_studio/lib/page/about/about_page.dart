@@ -34,7 +34,7 @@ class AboutPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               const Text(
-                "A desktop software that creates duplex \"uncut sheet\" image files out of individual card graphics.",
+                "A desktop software that creates duplex uncut sheet image files out of individual card graphics.",
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -70,7 +70,7 @@ class AboutPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("GitHub: "),
+                  const Text("GitHub / Documentation: "),
                   GestureDetector(
                     onTap: () => _launchURL(
                         'https://github.com/5argon/homeprint-o-tool'),
@@ -83,7 +83,7 @@ class AboutPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               const Text(
-                "For questions, feedback, or issues, please visit the GitHub repository or send an email.",
+                "You can post issues and feature requests on the Issues section in the GitHub repository, or send an email.",
                 textAlign: TextAlign.center,
               ),
             ],

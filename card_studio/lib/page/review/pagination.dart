@@ -22,15 +22,13 @@ CardsPagination calculatePagination(Includes includes, LayoutData layoutData,
   if (cardCountPerPage <= 0) {
     return CardsPagination(0, 0);
   }
-  final countRequired =
-      includes.fold(0, (prev, includeItem) => prev + includeItem.count());
-  final totalPages = (countRequired / cardCountPerPage).ceil();
   final validSkips =
       layoutData.skips.where((e) => e >= 0 && e < cardCountPerPage).toList();
-  final totalSkips = validSkips.length * totalPages;
-  final totalPagesWithSkips =
-      ((countRequired + totalSkips) / cardCountPerPage).ceil();
-  return CardsPagination(totalPagesWithSkips, cardCountPerPage);
+  final cardCountPerPageWithSkips = cardCountPerPage - validSkips.length;
+  final countRequired =
+      includes.fold(0, (prev, includeItem) => prev + includeItem.count());
+  final totalPages = (countRequired / cardCountPerPageWithSkips).ceil();
+  return CardsPagination(totalPages, cardCountPerPageWithSkips);
 }
 
 /// Card can be blank on one side or even both sides. Use null for that.
