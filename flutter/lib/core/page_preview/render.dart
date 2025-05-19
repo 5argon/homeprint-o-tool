@@ -13,11 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
-import '../../page/layout/layout_logic.dart';
-import '../../page/layout/layout_data.dart';
-import '../../page/review/pagination.dart';
-import 'page_preview.dart';
-import 'page_preview_frame.dart';
+import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
+import 'package:homeprint_o_tool/page/review/pagination.dart';
+import 'package:homeprint_o_tool/core/page_preview/page_preview.dart';
+import 'package:homeprint_o_tool/core/page_preview/page_preview_frame.dart';
 
 enum ExportingFrontBack { front, back }
 

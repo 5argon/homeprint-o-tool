@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
-import '../../core/json.dart';
-import '../../core/form/percentage_slider.dart';
-import 'single_card_preview.dart';
+import 'package:homeprint_o_tool/core/json.dart';
+import 'package:homeprint_o_tool/core/form/percentage_slider.dart';
+import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
 
 class ContentAreaEditorDialog extends StatefulWidget {
   final String basePath;

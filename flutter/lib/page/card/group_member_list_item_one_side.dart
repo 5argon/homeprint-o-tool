@@ -2,7 +2,7 @@ import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:flutter/material.dart';
-import 'edit_card_face_dialog.dart';
+import 'package:homeprint_o_tool/page/card/edit_card_face_dialog.dart';
 
 class GroupMemberListItemOneSide extends StatelessWidget {
   final CardFace? cardFace;

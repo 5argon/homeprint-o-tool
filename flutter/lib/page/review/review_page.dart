@@ -6,9 +6,9 @@ import 'package:homeprint_o_tool/page/picks/include_data.dart';
 import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/page_preview/page_preview.dart';
-import '../../core/page_preview/page_preview_frame.dart';
-import '../layout/layout_data.dart';
+import 'package:homeprint_o_tool/core/page_preview/page_preview.dart';
+import 'package:homeprint_o_tool/core/page_preview/page_preview_frame.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
 enum PreviewStyle {
   dual,

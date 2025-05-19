@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../page/layout/layout_data.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
 class WidthHeightInput extends StatelessWidget {
   final double width;

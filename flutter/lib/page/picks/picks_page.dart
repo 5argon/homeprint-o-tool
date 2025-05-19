@@ -6,9 +6,9 @@ import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
 import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
-import 'available_list.dart';
+import 'package:homeprint_o_tool/page/picks/available_list.dart';
 
-import '../../core/save_file.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
 
 class PicksPage extends StatelessWidget {
   final String basePath;

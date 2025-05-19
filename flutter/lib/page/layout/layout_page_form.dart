@@ -6,7 +6,7 @@ import 'package:homeprint_o_tool/page/layout/paper_size_dropdown.dart';
 import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
 import 'package:homeprint_o_tool/page/layout/skips_selection_dialog.dart';
 import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
-import '../../core/form/width_height.dart';
+import 'package:homeprint_o_tool/core/form/width_height.dart';
 
 class LayoutPageForm extends StatelessWidget {
   final LayoutData layoutData;

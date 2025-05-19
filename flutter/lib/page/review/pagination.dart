@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
-import '../picks/include_data.dart';
-import '../layout/layout_logic.dart';
-import '../layout/layout_data.dart';
+import 'package:homeprint_o_tool/page/picks/include_data.dart';
+import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
 class CardsPagination {
   final int totalPages;

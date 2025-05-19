@@ -1,11 +1,11 @@
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/layout/layout_debug_display.dart';
 
-import '../../core/page_preview/page_preview.dart';
-import '../../core/page_preview/page_preview_frame.dart';
-import 'layout_data.dart';
+import 'package:homeprint_o_tool/core/page_preview/page_preview.dart';
+import 'package:homeprint_o_tool/core/page_preview/page_preview_frame.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:flutter/material.dart';
-import 'layout_page_form.dart';
+import 'package:homeprint_o_tool/page/layout/layout_page_form.dart';
 
 class LayoutPage extends StatelessWidget {
   final ProjectSettings projectSettings;

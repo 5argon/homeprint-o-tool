@@ -5,9 +5,9 @@ import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
 import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
-import '../../page/layout/layout_data.dart';
-import '../project_settings.dart';
-import 'card_area.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/page_preview/card_area.dart';
 
 /// Use for both output preview and actual image export. On preview it stretches
 /// to the parent object. On export we can control parent to have the same aspect

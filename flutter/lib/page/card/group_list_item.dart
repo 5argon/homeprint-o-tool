@@ -7,7 +7,7 @@ import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
 
-import 'import_from_folder_dialog.dart';
+import 'package:homeprint_o_tool/page/card/import_from_folder_dialog.dart';
 
 class GroupListItem extends StatelessWidget {
   final bool includeMode;

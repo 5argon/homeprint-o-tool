@@ -1,4 +1,4 @@
-import 'layout_data.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
 /// Find out how many cards fit in a page in a given layout and card size in
 /// terms of rows and columns. (Multiply to get true count.)

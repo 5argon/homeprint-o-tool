@@ -4,10 +4,10 @@ import 'package:homeprint_o_tool/core/label_and_form.dart';
 import 'package:homeprint_o_tool/page/project/card_size_dropdown.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:path/path.dart' as p;
-import '../../core/project_settings.dart';
-import '../../core/form/width_height.dart';
-import '../layout/layout_data.dart';
-import '../card/content_area_editor.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/form/width_height.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
+import 'package:homeprint_o_tool/page/card/content_area_editor.dart';
 
 class ProjectPage extends StatelessWidget {
   final ProjectSettings projectSettings;

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/form/help_button.dart';
 
-import '../../core/project_settings.dart';
-import '../../core/save_file.dart';
-import 'linked_card_face_list_item.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
+import 'package:homeprint_o_tool/page/linked_card_face/linked_card_face_list_item.dart';
 
 class LinkedCardFacePage extends StatelessWidget {
   final String basePath;

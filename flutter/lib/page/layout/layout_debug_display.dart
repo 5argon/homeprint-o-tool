@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../core/project_settings.dart';
-import 'debug_with_warning.dart';
-import '../../core/label_and_form.dart';
-import 'layout_logic.dart';
-import 'layout_data.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/page/layout/debug_with_warning.dart';
+import 'package:homeprint_o_tool/core/label_and_form.dart';
+import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
 class LayoutDebugDisplay extends StatelessWidget {
   final LayoutData layoutData;

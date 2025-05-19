@@ -2,12 +2,12 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:path/path.dart' as p;
-import '../../core/form/linked_card_face_dropdown.dart';
-import '../../core/project_settings.dart';
-import 'single_card_preview.dart';
-import 'content_area_editor.dart';
+import 'package:homeprint_o_tool/core/form/linked_card_face_dropdown.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
+import 'package:homeprint_o_tool/page/card/content_area_editor.dart';
 
-import '../../core/save_file.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
 
 class EditCardFaceDialog extends StatefulWidget {
   final String basePath;

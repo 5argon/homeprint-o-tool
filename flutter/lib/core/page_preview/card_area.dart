@@ -9,8 +9,8 @@ import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 
-import '../../page/layout/layout_helper.dart';
-import 'parallel_guide.dart';
+import 'package:homeprint_o_tool/page/layout/layout_helper.dart';
+import 'package:homeprint_o_tool/core/page_preview/parallel_guide.dart';
 
 class CardArea extends StatefulWidget {
   CardArea({

@@ -13,13 +13,13 @@ import 'package:homeprint_o_tool/page/sidebar/sidebar.dart';
 import 'package:homeprint_o_tool/theme.dart';
 import 'package:provider/provider.dart';
 
-import 'core/page_preview/render.dart';
-import 'core/project_settings.dart';
-import 'core/save_file.dart';
-import 'page/card/card_page.dart';
-import 'page/picks/include_data.dart';
-import 'page/layout/layout_page.dart';
-import 'page/layout/layout_data.dart';
+import 'package:homeprint_o_tool/core/page_preview/render.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
+import 'package:homeprint_o_tool/page/card/card_page.dart';
+import 'package:homeprint_o_tool/page/picks/include_data.dart';
+import 'package:homeprint_o_tool/page/layout/layout_page.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
 void main() {
   runApp(MyApp());

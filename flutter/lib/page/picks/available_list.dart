@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../core/save_file.dart';
-import 'available_list_item.dart';
-import 'include_data.dart';
-import '../../core/project_settings.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
+import 'package:homeprint_o_tool/page/picks/available_list_item.dart';
+import 'package:homeprint_o_tool/page/picks/include_data.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
 
 class AvailableList extends StatelessWidget {
   final String basePath;

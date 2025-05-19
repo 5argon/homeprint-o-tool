@@ -6,9 +6,9 @@ import 'package:homeprint_o_tool/core/duplex_card.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
-import '../../core/form/help_button.dart';
-import '../../core/form/linked_card_face_dropdown.dart';
-import '../../core/save_file.dart';
+import 'package:homeprint_o_tool/core/form/help_button.dart';
+import 'package:homeprint_o_tool/core/form/linked_card_face_dropdown.dart';
+import 'package:homeprint_o_tool/core/save_file.dart';
 
 class ImportFromFolderDialog extends StatefulWidget {
   final String basePath;
@@ -210,8 +210,7 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
                   } else if (missingFaceResolution == "LinkedCardFace" &&
                       selectedLinkedCardFace != null) {
                     backCard = selectedLinkedCardFace;
-                  } else if (missingFaceResolution == "MirrorFrontFace" &&
-                      frontFile != null) {
+                  } else if (missingFaceResolution == "MirrorFrontFace") {
                     // Use the same file path as the front face
                     final relativePath = path.relative(
                       frontFile.path,
