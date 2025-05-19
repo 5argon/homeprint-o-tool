@@ -5,7 +5,7 @@ import 'package:homeprint_o_tool/core/layout_const.dart';
 import 'package:homeprint_o_tool/page/about/about_page.dart';
 import 'package:homeprint_o_tool/page/picks/picks_page.dart';
 import 'package:homeprint_o_tool/page/linked_card_face/linked_card_face_page.dart';
-import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
+import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
 import 'package:homeprint_o_tool/page/project/project_page.dart';
 import 'package:homeprint_o_tool/page/review/review_page.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ import 'core/save_file.dart';
 import 'page/card/card_page.dart';
 import 'page/picks/include_data.dart';
 import 'page/layout/layout_page.dart';
-import 'page/layout/layout_struct.dart';
+import 'page/layout/layout_data.dart';
 
 void main() {
   runApp(MyApp());

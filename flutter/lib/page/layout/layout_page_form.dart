@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/label_and_form.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
-import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:homeprint_o_tool/page/layout/paper_size_dropdown.dart';
 import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
 import 'package:homeprint_o_tool/page/layout/skips_selection_dialog.dart';
+import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
 import '../../core/form/width_height.dart';
 
 class LayoutPageForm extends StatelessWidget {
@@ -74,6 +75,40 @@ class LayoutPageForm extends StatelessWidget {
 
     // Create the skips form - shows existing skips and provides button to edit
     final hasSkips = layoutData.skips.isNotEmpty;
+
+    // Back Side Arrangement form
+    final backArrangementForm = LabelAndForm(
+      label: "Back Side Arrangement",
+      help:
+          "Determines how cards are positioned on the back side of the page. "
+          "'Inverted Row' places cards on the back side in the same row as front side, but from right to left instead of left to right. "
+          "'Same as Front' places cards on the back side in the same order as the front side.",
+      children: [
+        Row(
+          children: [
+            DropdownButton<BackArrangement>(
+              value: layoutData.backArrangement,
+              onChanged: (BackArrangement? newValue) {
+                if (newValue != null) {
+                  layoutData.backArrangement = newValue;
+                  onLayoutDataChanged(layoutData);
+                }
+              },
+              items: [
+                DropdownMenuItem<BackArrangement>(
+                  value: BackArrangement.invertedRow,
+                  child: const Text('Inverted Row'),
+                ),
+                DropdownMenuItem<BackArrangement>(
+                  value: BackArrangement.exact,
+                  child: const Text('Same as Front'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
 
     final skipsForm = LabelAndForm(
       label: "Skips",
@@ -193,7 +228,7 @@ class LayoutPageForm extends StatelessWidget {
           ),
         ]);
     var secondForm = Column(
-      children: [cuttingGuideForm, extraBleedForm, skipsForm],
+      children: [cuttingGuideForm, extraBleedForm, backArrangementForm, skipsForm],
     );
 
     return Padding(

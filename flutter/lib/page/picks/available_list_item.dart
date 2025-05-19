@@ -1,7 +1,7 @@
 import 'package:homeprint_o_tool/core/card_group.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
-import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:flutter/material.dart';
 import 'count_number_in_circle.dart';
 import 'include_data.dart';

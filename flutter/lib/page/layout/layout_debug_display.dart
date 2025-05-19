@@ -3,7 +3,7 @@ import '../../core/project_settings.dart';
 import 'debug_with_warning.dart';
 import '../../core/label_and_form.dart';
 import 'layout_logic.dart';
-import 'layout_struct.dart';
+import 'layout_data.dart';
 
 class LayoutDebugDisplay extends StatelessWidget {
   final LayoutData layoutData;

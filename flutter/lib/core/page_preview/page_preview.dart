@@ -5,7 +5,7 @@ import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
 import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
 
-import '../../page/layout/layout_struct.dart';
+import '../../page/layout/layout_data.dart';
 import '../project_settings.dart';
 import 'card_area.dart';
 
@@ -170,7 +170,7 @@ class _PagePreviewState extends State<PagePreview> {
           showHorizontalInnerCutLine: !widget.hideInnerCutLine,
           showVerticalInnerCutLine: !widget.hideInnerCutLine,
           back: widget.back,
-          backStrategy: widget.layoutData.backArrangement,
+          backArrangement: widget.layoutData.backArrangement,
         );
         Widget entireCardArea =
             Expanded(flex: cardFlexHorizontal, child: cardArea);

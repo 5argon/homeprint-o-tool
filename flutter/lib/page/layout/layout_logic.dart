@@ -1,4 +1,4 @@
-import 'layout_struct.dart';
+import 'layout_data.dart';
 
 /// Find out how many cards fit in a page in a given layout and card size in
 /// terms of rows and columns. (Multiply to get true count.)

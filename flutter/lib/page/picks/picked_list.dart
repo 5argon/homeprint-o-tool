@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/project_settings.dart';
 import '../../core/save_file.dart';
 import '../layout/layout_logic.dart';
-import '../layout/layout_struct.dart';
+import '../layout/layout_data.dart';
 import '../review/pagination.dart';
 import 'picked_list_item.dart';
 import 'include_data.dart';

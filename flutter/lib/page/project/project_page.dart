@@ -6,7 +6,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:path/path.dart' as p;
 import '../../core/project_settings.dart';
 import '../../core/form/width_height.dart';
-import '../layout/layout_struct.dart';
+import '../layout/layout_data.dart';
 import '../card/content_area_editor.dart';
 
 class ProjectPage extends StatelessWidget {

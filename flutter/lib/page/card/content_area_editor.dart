@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
-import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
 import '../../core/json.dart';
 import '../../core/form/percentage_slider.dart';

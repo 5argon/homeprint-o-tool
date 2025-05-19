@@ -3,7 +3,7 @@ import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/card/group_member_list_item_one_side.dart';
 import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
-import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:flutter/material.dart';
 
 class LinkedCardFaceListItem extends StatefulWidget {

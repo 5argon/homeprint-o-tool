@@ -1,4 +1,4 @@
-import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:flutter/material.dart';
 
 import 'json.dart';

@@ -1,5 +1,5 @@
 import 'package:homeprint_o_tool/core/json.dart';
-import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
+import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
 
 class LayoutData {
   SizePhysical paperSize;

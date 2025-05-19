@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
-import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
 /// A dialog that displays a card in full screen.
 /// This component is used to show a larger preview when a user clicks on a card preview.

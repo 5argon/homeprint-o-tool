@@ -4,8 +4,8 @@ import 'dart:ui';
 import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
-import 'package:homeprint_o_tool/page/layout/back_strategy.dart';
-import 'package:homeprint_o_tool/page/layout/layout_struct.dart';
+import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
+import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 
@@ -28,7 +28,7 @@ class CardArea extends StatefulWidget {
     required this.showVerticalInnerCutLine,
     required this.showHorizontalInnerCutLine,
     required this.back,
-    required this.backStrategy,
+    required this.backArrangement,
   });
 
   /// Card is centered in this area. It takes this much space horizontally. (Max 1.0)
@@ -49,7 +49,7 @@ class CardArea extends StatefulWidget {
   final bool showVerticalInnerCutLine;
   final bool showHorizontalInnerCutLine;
   final bool back;
-  final BackArrangement backStrategy;
+  final BackArrangement backArrangement;
 
   @override
   State<CardArea> createState() => _CardAreaState();
@@ -215,7 +215,7 @@ class _CardAreaState extends State<CardArea> {
                       break;
                   }
                   if (widget.back &&
-                      widget.backStrategy == BackArrangement.invertedRow &&
+                      widget.backArrangement == BackArrangement.invertedRow &&
                       card.rotation != Rotation.none) {
                     turns = turns + 2;
                   }

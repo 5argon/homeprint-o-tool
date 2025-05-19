@@ -14,7 +14,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
 import '../../page/layout/layout_logic.dart';
-import '../../page/layout/layout_struct.dart';
+import '../../page/layout/layout_data.dart';
 import '../../page/review/pagination.dart';
 import 'page_preview.dart';
 import 'page_preview_frame.dart';

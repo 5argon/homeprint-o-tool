@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/page_preview/page_preview.dart';
 import '../../core/page_preview/page_preview_frame.dart';
-import '../layout/layout_struct.dart';
+import '../layout/layout_data.dart';
 
 enum PreviewStyle {
   dual,
