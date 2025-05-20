@@ -27,6 +27,8 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
   late double contentExpand;
   late TextEditingController contentWidthController;
   late TextEditingController contentHeightController;
+  late FocusNode contentWidthFocusNode;
+  late FocusNode contentHeightFocusNode;
   double? imageWidth;
   double? imageHeight;
   bool _updatingFields = false; // Flag to prevent recursive updates
@@ -37,6 +39,21 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
     contentExpand = widget.initialContentExpand;
     contentWidthController = TextEditingController();
     contentHeightController = TextEditingController();
+    contentWidthFocusNode = FocusNode();
+    contentHeightFocusNode = FocusNode();
+
+    // Add focus listeners to validate on defocus
+    contentWidthFocusNode.addListener(() {
+      if (!contentWidthFocusNode.hasFocus) {
+        _validateAndUpdateFromWidth();
+      }
+    });
+
+    contentHeightFocusNode.addListener(() {
+      if (!contentHeightFocusNode.hasFocus) {
+        _validateAndUpdateFromHeight();
+      }
+    });
 
     // Load image dimensions when initialized
     _loadImageDimensions();
@@ -46,6 +63,8 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
   void dispose() {
     contentWidthController.dispose();
     contentHeightController.dispose();
+    contentWidthFocusNode.dispose();
+    contentHeightFocusNode.dispose();
     super.dispose();
   }
 
@@ -268,6 +287,7 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
                         Expanded(
                           child: TextFormField(
                             controller: contentWidthController,
+                            focusNode: contentWidthFocusNode,
                             decoration: InputDecoration(
                               labelText: 'Content Width',
                               border: OutlineInputBorder(),
@@ -286,6 +306,7 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
                         Expanded(
                           child: TextFormField(
                             controller: contentHeightController,
+                            focusNode: contentHeightFocusNode,
                             decoration: InputDecoration(
                               labelText: 'Content Height',
                               border: OutlineInputBorder(),
