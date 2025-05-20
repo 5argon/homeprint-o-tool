@@ -63,7 +63,7 @@ var defaultLayoutData = LayoutData(
 );
 
 var defaultProjectSettings = ProjectSettings(
-    SizePhysical(6.15, 8.8, PhysicalSizeType.centimeter),
+    SizePhysical(6.3, 8.8, PhysicalSizeType.centimeter),
     Alignment.center,
     1.0,
     Rotation.none);
@@ -305,6 +305,8 @@ class _MyHomePageState extends State<MyHomePage> {
           _baseDirectory = saveResult.baseDirectory;
           _previousFileName = saveResult.fileName;
           _includes = [];
+          // On new, go to project settigns.
+          _selectedIndex = 0;
         });
       }
     }
@@ -313,7 +315,6 @@ class _MyHomePageState extends State<MyHomePage> {
       final fut = SaveFile.loadFromFilePicker().then((loadResult) {
         if (loadResult != null) {
           setState(() {
-            _selectedIndex = 2;
             _projectSettings = loadResult.saveFile.projectSettings;
             _definedCards = loadResult.saveFile.cardGroups;
             _linkedCardFaces = loadResult.saveFile.linkedCardFaces;
@@ -321,6 +322,8 @@ class _MyHomePageState extends State<MyHomePage> {
             _previousFileName = loadResult.fileName;
             _includes = [];
             _skipIncludes = [];
+            // On load, go to cards tab.
+            _selectedIndex = 2;
           });
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
