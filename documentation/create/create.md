@@ -50,7 +50,7 @@ In this image, the advantage of Default Content Area in percentage is demonstrat
 
 The Back Face is then set to **link** to the Linked Card Face we created earlier. There are convenient buttons to instantly link to card face #1 or #2 defined in the Linked Card Face tab. So bring the card face you think you will reuse the most up to those indexes.
 
-## Creating cards in batch
+## Create multiple cards by importing
 
 In sizable project you will want to use "Import From Folder" feature to create many cards at once, potentially also assigning their back face strategically.
 
@@ -58,12 +58,22 @@ To do this, you must catalog your graphic in folders nicely and name them carefu
 
 For this tutorial, we will just select the folder with 5 cat graphics and 1 basil graphic, which wasn't that well-organized to begin with as the program is going to misunderstood the basil as an actual 6th card. But it's fine, we can delete that later and still save a lot of work.
 
-[Import from Folder](create.md)
+![Import from Folder](image/import-from-folder.png)
 
-The import dialog will report what it found before you commit to the import. In this case it is going to create 6 cards, and it didn't automatically find any back face to pair with automatically. (It could do so with a pair of suffixes such as `-front` `-back` `-a` `-b`, again, you can read the details in the help button inside the program.) But I can still use the Missing Back Face Resolution section below so it use the basil Linked Card Face for every cards.
+The import dialog will report what it found before you commit to the import. In this case it is going to create 6 cards, and it didn't automatically find any back face for each. (It could do so with a pair of suffixes such as `-front` `-back` `-a` `-b`, again, you can read the details in the help button inside the program.) But I can still use the Missing Back Face Resolution section below so it use the basil Linked Card Face for every cards.
 
 ![Import Result](image/import-from-folder-result.png)
 
 We have created 6 cards in one go with every back face linked to the Linked Card Face, and they are also automatically named from the file's name. The Card Name can be helpful for someone printing from your project. That card with basil as the front face is a mistake because it was stored in the same folder as the rest, I can go ahead and delete it.
 
-They all use Default Content Area after the import, and so I can inspect and adjust any cat that is looking too small in the frame and use a custom content area just for that one.
+They all use Default Content Area after the import, and so I can inspect and adjust any cat that is looking too small in the frame and use a lower percentage of content area just for that one.
+
+![Custom Content Area](image/custom-content-area.png)
+
+## Copies
+
+When user prints your project, they often do so by "picking" the whole group. Picking a group will cause all cards inside it to be pushed into the layout. The copies can be changed so it pushes that card consecutively more times per one pick of the group.
+
+User can also pick any card inside a group individually. That will ignore the Copies settings and always push in 1 copy of that card per pick.
+
+For demonstration purpose of Copies feature in [Project Printing Walkthrough](../print/print.md), I'll set the copies of the mackarel colored cat to 2 and then save the changes into the JSON file.
