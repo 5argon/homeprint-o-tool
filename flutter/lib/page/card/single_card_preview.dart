@@ -120,18 +120,6 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
             final frameWidth = constraints.maxWidth;
             final frameHeight = constraints.maxHeight;
 
-            double cardInBoxWidth;
-            double cardInBoxHeight;
-            final widthTouchingFrame =
-                (imageFileWidth / imageFileHeight) * frameHeight >= frameWidth;
-            if (widthTouchingFrame) {
-              cardInBoxWidth = frameWidth;
-              cardInBoxHeight = imageFileHeight / imageFileWidth * frameWidth;
-            } else {
-              cardInBoxWidth = imageFileWidth / imageFileHeight * frameHeight;
-              cardInBoxHeight = frameHeight;
-            }
-
             double cardShapeWidth;
             double cardShapeHeight;
             if (cardEachSingle.rotation == Rotation.none) {
@@ -142,17 +130,44 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
               cardShapeHeight = widget.cardSize.widthCm;
             }
 
-            // Fit card shape inside card in box.
+            // The Image widget always fit the frame, but we need to simulate
+            // an another rectangle that fits inside the Image widget at 100%, and
+            // not fitting if percentage is different.
+
+            // Test if card shape expanded from the center of image would hit
+            // which edge of the image first.
+
+            // The preview is always size maximized proportionally until the image hits the frame.
+            final bool widthTouchFirstGraphicVsFrame =
+                (imageFileWidth / imageFileHeight) * frameHeight >= frameWidth;
+
+            final bool widthTouchFirstRedBoxVsGraphic =
+                (cardShapeWidth / cardShapeHeight) * imageFileHeight >=
+                    imageFileWidth;
+
+            double graphicInFrameWidth;
+            double graphicInFrameHeight;
+            if (widthTouchFirstGraphicVsFrame) {
+              graphicInFrameWidth = frameWidth;
+              graphicInFrameHeight =
+                  imageFileHeight / imageFileWidth * frameWidth;
+            } else {
+              graphicInFrameWidth =
+                  imageFileWidth / imageFileHeight * frameHeight;
+              graphicInFrameHeight = frameHeight;
+            }
+
+            // Fit red box inside the graphic next.
             double cardShapeInBoxWidth;
             double cardShapeInBoxHeight;
-            if (cardShapeWidth > cardShapeHeight) {
-              cardShapeInBoxWidth = cardInBoxWidth;
+            if (widthTouchFirstRedBoxVsGraphic) {
+              cardShapeInBoxWidth = graphicInFrameWidth;
               cardShapeInBoxHeight =
-                  cardShapeHeight / cardShapeWidth * cardInBoxWidth;
+                  cardShapeHeight / cardShapeWidth * graphicInFrameWidth;
             } else {
               cardShapeInBoxWidth =
-                  cardShapeWidth / cardShapeHeight * cardInBoxHeight;
-              cardShapeInBoxHeight = cardInBoxHeight;
+                  cardShapeWidth / cardShapeHeight * graphicInFrameHeight;
+              cardShapeInBoxHeight = graphicInFrameHeight;
             }
 
             cardShapeInBoxWidth = cardShapeInBoxWidth * widget.bleedFactor;
