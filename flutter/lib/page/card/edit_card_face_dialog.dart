@@ -54,6 +54,17 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
     // Determine initial tab and values
     if (widget.forLinkedCardFaceTab) {
       _tabController = TabController(length: 1, vsync: this, initialIndex: 0);
+      // If we have an initial card and we're in the Linked Card Face tab,
+      // ensure we set the tempFilePath if the card has a relative file path
+      if (widget.initialCard != null &&
+          widget.initialCard!.relativeFilePath.isNotEmpty) {
+        initialFilePath = widget.initialCard!.relativeFilePath;
+        tempFilePath = initialFilePath;
+
+        // Initialize content area settings from initial card
+        useDefaultContentExpand = widget.initialCard!.useDefaultContentExpand;
+        customContentExpand = widget.initialCard!.contentExpand;
+      }
     } else if (widget.initialCard != null) {
       if (widget.initialCard!.isLinkedCardFace) {
         // Start with Linked Card Face tab selected
