@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/page/layout/layout_data.dart';
-
-import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/core/form/percentage_slider.dart';
 import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
+import 'package:homeprint_o_tool/core/json.dart'; // For Rotation enum
 
 class ContentAreaEditorDialog extends StatefulWidget {
   final String basePath;
@@ -39,8 +38,15 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
     contentWidthController = TextEditingController();
     contentHeightController = TextEditingController();
 
-    // We'll update these controllers when we get the image dimensions
+    // Load image dimensions when initialized
     _loadImageDimensions();
+  }
+
+  @override
+  void dispose() {
+    contentWidthController.dispose();
+    contentHeightController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadImageDimensions() async {
@@ -62,24 +68,32 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
   }
 
   void _updateContentFieldsFromExpand() {
+    final imageWidth = this.imageWidth;
+    final imageHeight = this.imageHeight;
     if (imageWidth == null || imageHeight == null) return;
 
     _updatingFields = true;
     try {
-      // Calculate content width and height based on the expansion percentage
       double cardWidth = widget.cardSize.widthCm;
       double cardHeight = widget.cardSize.heightCm;
 
-      // Check if card is rotated
       if (widget.cardFace.rotation != Rotation.none) {
         double temp = cardWidth;
         cardWidth = cardHeight;
         cardHeight = temp;
       }
 
-      // Calculate direct content dimensions based on the expansion percentage
-      double contentWidth = imageWidth! * contentExpand;
-      double contentHeight = imageHeight! * contentExpand;
+      double contentWidth;
+      double contentHeight;
+      final widthTouchingFirstIfExpanded =
+          (cardWidth / cardHeight) > (imageWidth / imageHeight);
+      if (widthTouchingFirstIfExpanded) {
+        contentWidth = imageWidth * contentExpand;
+        contentHeight = contentWidth * (cardHeight / cardWidth);
+      } else {
+        contentHeight = imageHeight * contentExpand;
+        contentWidth = contentHeight * (cardWidth / cardHeight);
+      }
 
       // Update text controllers with the calculated dimensions
       contentWidthController.text = contentWidth.toStringAsFixed(1);
@@ -89,110 +103,110 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
     }
   }
 
-  void _updateExpandFromContentDimensions() {
-    if (imageWidth == null || imageHeight == null) return;
+  void _validateAndUpdateFromWidth() {
+    if (_updatingFields || imageWidth == null || imageHeight == null) return;
 
-    double inputContentWidth =
-        double.tryParse(contentWidthController.text) ?? 0;
-    double inputContentHeight =
-        double.tryParse(contentHeightController.text) ?? 0;
-
-    if (inputContentWidth <= 0 || inputContentHeight <= 0) return;
-
-    double cardWidth = widget.cardSize.widthCm;
-    double cardHeight = widget.cardSize.heightCm;
-
-    // Check if card is rotated
-    if (widget.cardFace.rotation != Rotation.none) {
-      double temp = cardWidth;
-      cardWidth = cardHeight;
-      cardHeight = temp;
-    }
-
-    // Calculate expansion percentages for both dimensions
-    double widthExpand = inputContentWidth / imageWidth!;
-    double heightExpand = inputContentHeight / imageHeight!;
-
-    // Use the larger ratio as it will constrain the content area
-    double calculatedExpand =
-        (widthExpand > heightExpand) ? widthExpand : heightExpand;
-
-    // Clamp and update
-    calculatedExpand = calculatedExpand.clamp(0.0, 1.0);
-    setState(() {
-      contentExpand = calculatedExpand;
-    });
-  }
-
-  void _updateWidthBasedOnHeight() {
-    if (imageWidth == null || imageHeight == null || _updatingFields) return;
+    double inputWidth = double.tryParse(contentWidthController.text) ?? 0.0;
+    if (inputWidth <= 0) return;
 
     _updatingFields = true;
     try {
-      double inputContentHeight =
-          double.tryParse(contentHeightController.text) ?? 0;
-      if (inputContentHeight <= 0) return;
-
       double cardWidth = widget.cardSize.widthCm;
       double cardHeight = widget.cardSize.heightCm;
 
-      // Check if card is rotated
       if (widget.cardFace.rotation != Rotation.none) {
         double temp = cardWidth;
         cardWidth = cardHeight;
         cardHeight = temp;
       }
 
-      // Calculate width maintaining aspect ratio
-      double aspectRatio = cardWidth / cardHeight;
-      double newWidth = inputContentHeight * aspectRatio;
+      // Calculate max width at 100% expand
+      final widthTouchingFirstIfExpanded =
+          (cardWidth / cardHeight) > (imageWidth! / imageHeight!);
 
-      contentWidthController.text = newWidth.toStringAsFixed(1);
-
-      // Update the expansion percentage
-      _updateExpandFromContentDimensions();
-    } finally {
-      _updatingFields = false;
-    }
-  }
-
-  void _updateHeightBasedOnWidth() {
-    if (imageWidth == null || imageHeight == null || _updatingFields) return;
-
-    _updatingFields = true;
-    try {
-      double inputContentWidth =
-          double.tryParse(contentWidthController.text) ?? 0;
-      if (inputContentWidth <= 0) return;
-
-      double cardWidth = widget.cardSize.widthCm;
-      double cardHeight = widget.cardSize.heightCm;
-
-      // Check if card is rotated
-      if (widget.cardFace.rotation != Rotation.none) {
-        double temp = cardWidth;
-        cardWidth = cardHeight;
-        cardHeight = temp;
+      double maxWidth;
+      if (widthTouchingFirstIfExpanded) {
+        maxWidth = imageWidth!;
+      } else {
+        double maxHeight = imageHeight!;
+        maxWidth = maxHeight * (cardWidth / cardHeight);
       }
+
+      // Clamp input width to max width
+      inputWidth = inputWidth.clamp(0.0, maxWidth);
+      contentWidthController.text = inputWidth.toStringAsFixed(1);
 
       // Calculate height maintaining aspect ratio
       double aspectRatio = cardHeight / cardWidth;
-      double newHeight = inputContentWidth * aspectRatio;
-
+      double newHeight = inputWidth * aspectRatio;
       contentHeightController.text = newHeight.toStringAsFixed(1);
 
-      // Update the expansion percentage
-      _updateExpandFromContentDimensions();
+      // Update expand percentage
+      double widthExpand = inputWidth / imageWidth!;
+      double heightExpand = newHeight / imageHeight!;
+      double calculatedExpand =
+          widthTouchingFirstIfExpanded ? widthExpand : heightExpand;
+      calculatedExpand = calculatedExpand.clamp(0.0, 1.0);
+
+      setState(() {
+        contentExpand = calculatedExpand;
+      });
     } finally {
       _updatingFields = false;
     }
   }
 
-  @override
-  void dispose() {
-    contentWidthController.dispose();
-    contentHeightController.dispose();
-    super.dispose();
+  void _validateAndUpdateFromHeight() {
+    if (_updatingFields || imageWidth == null || imageHeight == null) return;
+
+    double inputHeight = double.tryParse(contentHeightController.text) ?? 0.0;
+    if (inputHeight <= 0) return;
+
+    _updatingFields = true;
+    try {
+      double cardWidth = widget.cardSize.widthCm;
+      double cardHeight = widget.cardSize.heightCm;
+
+      if (widget.cardFace.rotation != Rotation.none) {
+        double temp = cardWidth;
+        cardWidth = cardHeight;
+        cardHeight = temp;
+      }
+
+      // Calculate max height at 100% expand
+      final widthTouchingFirstIfExpanded =
+          (cardWidth / cardHeight) > (imageWidth! / imageHeight!);
+
+      double maxHeight;
+      if (widthTouchingFirstIfExpanded) {
+        double maxWidth = imageWidth!;
+        maxHeight = maxWidth * (cardHeight / cardWidth);
+      } else {
+        maxHeight = imageHeight!;
+      }
+
+      // Clamp input height to max height
+      inputHeight = inputHeight.clamp(0.0, maxHeight);
+      contentHeightController.text = inputHeight.toStringAsFixed(1);
+
+      // Calculate width maintaining aspect ratio
+      double aspectRatio = cardWidth / cardHeight;
+      double newWidth = inputHeight * aspectRatio;
+      contentWidthController.text = newWidth.toStringAsFixed(1);
+
+      // Update expand percentage
+      double widthExpand = newWidth / imageWidth!;
+      double heightExpand = inputHeight / imageHeight!;
+      double calculatedExpand =
+          widthTouchingFirstIfExpanded ? widthExpand : heightExpand;
+      calculatedExpand = calculatedExpand.clamp(0.0, 1.0);
+
+      setState(() {
+        contentExpand = calculatedExpand;
+      });
+    } finally {
+      _updatingFields = false;
+    }
   }
 
   @override
@@ -205,7 +219,6 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
             icon: Icon(Icons.close),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          // Removed Apply button from here
         ),
         body: Stack(
           children: [
@@ -253,7 +266,7 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
                     Row(
                       children: [
                         Expanded(
-                          child: TextField(
+                          child: TextFormField(
                             controller: contentWidthController,
                             decoration: InputDecoration(
                               labelText: 'Content Width',
@@ -261,15 +274,17 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
                               suffixText: 'px',
                             ),
                             keyboardType: TextInputType.number,
-                            onChanged: (_) {
-                              _updateExpandFromContentDimensions();
-                              _updateHeightBasedOnWidth();
+                            onFieldSubmitted: (_) =>
+                                _validateAndUpdateFromWidth(),
+                            onEditingComplete: () {
+                              _validateAndUpdateFromWidth();
+                              FocusScope.of(context).unfocus();
                             },
                           ),
                         ),
                         SizedBox(width: 16),
                         Expanded(
-                          child: TextField(
+                          child: TextFormField(
                             controller: contentHeightController,
                             decoration: InputDecoration(
                               labelText: 'Content Height',
@@ -277,9 +292,11 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
                               suffixText: 'px',
                             ),
                             keyboardType: TextInputType.number,
-                            onChanged: (_) {
-                              _updateExpandFromContentDimensions();
-                              _updateWidthBasedOnHeight();
+                            onFieldSubmitted: (_) =>
+                                _validateAndUpdateFromHeight(),
+                            onEditingComplete: () {
+                              _validateAndUpdateFromHeight();
+                              FocusScope.of(context).unfocus();
                             },
                           ),
                         ),

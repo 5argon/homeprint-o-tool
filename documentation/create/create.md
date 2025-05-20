@@ -64,6 +64,6 @@ The import dialog will report what it found before you commit to the import. In 
 
 ![Import Result](image/import-from-folder-result.png)
 
-We have created 6 cards in one go with back face neatly linked to the Linked Card Face, and they are also automatically named from the file's name. The Card Name can be helpful for someone printing from your project. That card with basil as the front face is a mistake because it was stored in the same folder as the rest, I can go ahead and delete it.
+We have created 6 cards in one go with every back face linked to the Linked Card Face, and they are also automatically named from the file's name. The Card Name can be helpful for someone printing from your project. That card with basil as the front face is a mistake because it was stored in the same folder as the rest, I can go ahead and delete it.
 
 They all use Default Content Area after the import, and so I can inspect and adjust any cat that is looking too small in the frame and use a custom content area just for that one.

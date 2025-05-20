@@ -120,12 +120,11 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
             final frameWidth = constraints.maxWidth;
             final frameHeight = constraints.maxHeight;
 
-            final moreWidth = imageFileWidth > imageFileHeight;
-
-            // Find a box of card first, then fit a content box inside of that.
             double cardInBoxWidth;
             double cardInBoxHeight;
-            if (moreWidth) {
+            final widthTouchingFrame =
+                (imageFileWidth / imageFileHeight) * frameHeight >= frameWidth;
+            if (widthTouchingFrame) {
               cardInBoxWidth = frameWidth;
               cardInBoxHeight = imageFileHeight / imageFileWidth * frameWidth;
             } else {
