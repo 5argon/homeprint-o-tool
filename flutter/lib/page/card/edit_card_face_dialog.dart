@@ -6,6 +6,7 @@ import 'package:homeprint_o_tool/core/form/linked_card_face_dropdown.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
 import 'package:homeprint_o_tool/page/card/content_area_editor.dart';
+import 'package:homeprint_o_tool/core/json.dart'; // For Rotation enum
 
 import 'package:homeprint_o_tool/core/save_file.dart';
 
@@ -48,6 +49,10 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
   bool useDefaultContentExpand = true;
   double customContentExpand = 1.0;
 
+  // Rotation controls
+  bool useDefaultRotation = true;
+  Rotation customRotation = Rotation.none;
+
   @override
   void initState() {
     super.initState();
@@ -64,6 +69,10 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
         // Initialize content area settings from initial card
         useDefaultContentExpand = widget.initialCard!.useDefaultContentExpand;
         customContentExpand = widget.initialCard!.contentExpand;
+
+        // Initialize rotation settings from initial card
+        useDefaultRotation = widget.initialCard!.useDefaultRotation;
+        customRotation = widget.initialCard!.rotation;
       }
     } else if (widget.initialCard != null) {
       if (widget.initialCard!.isLinkedCardFace) {
@@ -79,6 +88,10 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
         // Initialize content area settings from initial card
         useDefaultContentExpand = widget.initialCard!.useDefaultContentExpand;
         customContentExpand = widget.initialCard!.contentExpand;
+
+        // Initialize rotation settings from initial card
+        useDefaultRotation = widget.initialCard!.useDefaultRotation;
+        customRotation = widget.initialCard!.rotation;
       } else {
         _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
       }
@@ -136,7 +149,7 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                 Expanded(
                   flex: 1,
                   child: SizedBox(
-                    height: 230,
+                    height: 300,
                     child: SingleCardPreview(
                       bleedFactor: useDefaultContentExpand
                           ? widget.projectSettings.defaultContentExpand
@@ -154,6 +167,7 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Content Area Settings
                       Text(
                         "Content Area Settings",
                         style: TextStyle(
@@ -220,6 +234,66 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                           ),
                         ),
                       ],
+
+                      // Rotation Settings
+                      SizedBox(height: 16),
+                      Text(
+                        "Rotation Settings",
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      RadioListTile<bool>(
+                        dense: true,
+                        title: Text(
+                            "Use Default Rotation (${widget.projectSettings.defaultRotation.name})"),
+                        value: true,
+                        groupValue: useDefaultRotation,
+                        onChanged: (value) {
+                          setState(() {
+                            useDefaultRotation = value!;
+                          });
+                        },
+                      ),
+                      RadioListTile<bool>(
+                        dense: true,
+                        title: Text("Use Custom Rotation"),
+                        value: false,
+                        groupValue: useDefaultRotation,
+                        onChanged: (value) {
+                          setState(() {
+                            useDefaultRotation = value!;
+                          });
+                        },
+                      ),
+                      if (!useDefaultRotation) ...[
+                        Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: DropdownButton<Rotation>(
+                            value: customRotation,
+                            items: [
+                              DropdownMenuItem(
+                                value: Rotation.none,
+                                child: Text("None"),
+                              ),
+                              DropdownMenuItem(
+                                value: Rotation.clockwise90,
+                                child: Text("Clockwise 90°"),
+                              ),
+                              DropdownMenuItem(
+                                value: Rotation.counterClockwise90,
+                                child: Text("Counter-clockwise 90°"),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  customRotation = value;
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -251,7 +325,7 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
           ? Text("Edit Linked Card Face")
           : Text("Edit Card Face"),
       content: SizedBox(
-        width: 550, // Increased width for the side-by-side layout
+        width: 650,
         child: DefaultTabController(
           length: widget.forLinkedCardFaceTab ? 1 : 2,
           child: Column(
@@ -266,7 +340,7 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                   ],
                 ),
               SizedBox(
-                height: 350, // Adjusted height
+                height: 450,
                 child: TabBarView(
                   controller: _tabController,
                   children: widget.forLinkedCardFaceTab
@@ -303,12 +377,22 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                 if (!useDefaultContentExpand) {
                   newCard.contentExpand = customContentExpand;
                 }
+                // Update rotation settings
+                newCard.useDefaultRotation = useDefaultRotation;
+                if (!useDefaultRotation) {
+                  newCard.rotation = customRotation;
+                }
               } else {
                 newCard = CardFace.withRelativeFilePath(tempFilePath);
                 // Apply content expand settings to new card
                 newCard.useDefaultContentExpand = useDefaultContentExpand;
                 if (!useDefaultContentExpand) {
                   newCard.contentExpand = customContentExpand;
+                }
+                // Apply rotation settings to new card
+                newCard.useDefaultRotation = useDefaultRotation;
+                if (!useDefaultRotation) {
+                  newCard.rotation = customRotation;
                 }
               }
               widget.onCardFaceChange(newCard);

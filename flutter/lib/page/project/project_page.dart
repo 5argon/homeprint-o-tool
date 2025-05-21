@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/json.dart'; // For Rotation enum
 import 'package:homeprint_o_tool/core/label_and_form.dart';
 import 'package:homeprint_o_tool/page/project/card_size_dropdown.dart';
 import 'package:file_selector/file_selector.dart';
@@ -41,6 +42,16 @@ class ProjectPage extends StatelessWidget {
     onProjectSettingsChanged(updatedSettings);
   }
 
+  void _updateRotation(Rotation value) {
+    final updatedSettings = ProjectSettings(
+      projectSettings.cardSize,
+      projectSettings.defaultContentCenterOffset,
+      projectSettings.defaultContentExpand,
+      value,
+    );
+    onProjectSettingsChanged(updatedSettings);
+  }
+
   Future<String?> pickExampleGraphic(String basePath) async {
     final typeGroup = XTypeGroup(
       label: 'images',
@@ -59,11 +70,28 @@ class ProjectPage extends StatelessWidget {
     return null;
   }
 
+  String _getRotationDisplayName(Rotation rotation) {
+    switch (rotation) {
+      case Rotation.none:
+        return "None";
+      case Rotation.clockwise90:
+        return "Clockwise 90°";
+      case Rotation.counterClockwise90:
+        return "Counter-clockwise 90°";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Display the current content area percentage
     final contentAreaText = Text(
       "${(projectSettings.defaultContentExpand * 100).toStringAsFixed(1)}%",
+      style: TextStyle(fontWeight: FontWeight.bold),
+    );
+
+    // Display the current rotation
+    final rotationText = Text(
+      _getRotationDisplayName(projectSettings.defaultRotation),
       style: TextStyle(fontWeight: FontWeight.bold),
     );
 
@@ -132,6 +160,36 @@ class ProjectPage extends StatelessWidget {
           ),
         ]);
 
+    final defaultRotation = LabelAndForm(
+      label: "Default Rotation",
+      help:
+          "Default rotation to apply to the input graphics so they match the aspect ratio of Card Size. Each card added to this project starts out with this rotation, you can customize rotation per card or reset back to this value. Updating this value later also propagates the change to all cards using the default value.",
+      children: [
+        DropdownButton<Rotation>(
+          value: projectSettings.defaultRotation,
+          items: [
+            DropdownMenuItem(
+              value: Rotation.none,
+              child: Text("None"),
+            ),
+            DropdownMenuItem(
+              value: Rotation.clockwise90,
+              child: Text("Clockwise 90°"),
+            ),
+            DropdownMenuItem(
+              value: Rotation.counterClockwise90,
+              child: Text("Counter-clockwise 90°"),
+            ),
+          ],
+          onChanged: (value) {
+            if (value != null) {
+              _updateRotation(value);
+            }
+          },
+        ),
+      ],
+    );
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -140,6 +198,8 @@ class ProjectPage extends StatelessWidget {
           cardSizeForm,
           const SizedBox(height: 24),
           defaultContentArea,
+          const SizedBox(height: 24),
+          defaultRotation,
         ],
       ),
     );

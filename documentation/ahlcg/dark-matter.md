@@ -1,6 +1,8 @@
 # Dark Matter Campaign
 
-- [**Dark Matter Campaign**](https://mysteriouschanting.wordpress.com/2020/10/17/dark-matter-campaign/)
+A fan-made campaign by Axolotl.
+
+- [**Dark Matter Project Page**](https://mysteriouschanting.wordpress.com/2020/10/17/dark-matter-campaign/)
 
 This is a highly regarded fan-made full campaign. It was released as a 2.5 GB zipped file consisting of a folder of individual card images, and also pre-packed A4-sized uncut sheet PDFs with cutting guides along the edges, just like what you can get from this program.
 
@@ -12,16 +14,16 @@ Also, the project was made with Strange Eons, which at that time has quite pixel
 
 Download the original Dark Matter project from the official link above. Then download this project file and place the file inside the folder. 
 
-- [Project File](https://drive.google.com/file/d/1r0a2g3q4vXk5x7J6Z8j9l4z5e5e5e5e/view?usp=sharing)
+- [Project File](project/dark_matter.json)
 
 This project file contains relative paths starting with `Individual Card Images (with bleed)/` so it does not matter if you rename the outer folder, as long as you don't rename the inner folder.
 
 If you open the project now, you will see a missing card indicator on the Linked Card Face tab. I mentioned I patched in higher resolution card backs. You need to separately download these files and place them **next to** the project's JSON file. 
 
-- [Player Card Back Patch](https://drive.google.com/file/d/1r0a2g3q4vXk5x7J6Z8j9l4z5e5e5e5e/view?usp=sharing)
-- [Encounter Card Back Patch](https://drive.google.com/file/d/1r0a2g3q4vXk5x7J6Z8j9l4z5e5e5e5e/view?usp=sharing)
+- [Player Card Back Patch](project/patch/Player%20Card%20Back%20Patch.png)
+- [Encounter Card Back Patch](project/patch/Encounter%20Card%20Back%20Patch.png)
 
-But wait, Dark Matter has its own expansion called the Science Expansion. So I think why not combine these into the same project as well. Go download the expansion here.
+But wait, Dark Matter has its own expansion called the Science Expansion. Why not combine these into the same project as well. Go download the expansion here.
 
 - [Dark Matter – Science Expansion](https://mysteriouschanting.wordpress.com/2022/10/29/dark-matter-science-expansion/)
 
