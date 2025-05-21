@@ -78,13 +78,13 @@ But you can leave those graphics in their natural rotation (that you don't have 
 
 ![Editing a per-card rotation](image/rotation-fixing-2.png)
 
-Note that the graphic is not rotated after adjusting the settings; the content area box is rotated instead. This let you preview and work the graphic in its best shape and only rotates at the end when it is getting on the page. You still need to be careful which way the rotation of the front face and back face should be, so they are correct in the final product. And since the graphic doesn't rotate in the preview, both counter-clockwise and clockwise rotation appear the same!
+Note that the graphic is not rotated after adjusting the settings; the content area box is rotated instead. This let you preview and work with the graphic in its best shape and only rotates at the end when it is getting on the page. You still need to be careful which way the rotation of the front face and back face should be, so they are correct in the final product. And since the graphic doesn't rotate in the preview, both counter-clockwise and clockwise rotation appear the same!
 
 ### Create multiple cards by importing
 
-In a sizable project you will want to use the "Import From Folder" feature to create many cards at once, potentially also assigning their back face strategically.
+In a sizable project you will want to use the "Import From Folder/Files" feature to create many cards at once, potentially also assigning their back face strategically.
 
-To do this, you must catalog your graphics in folders nicely and name them carefully. The tool contains special rules that extract information from a file name, such as which graphic is supposed to be the back face of which card, or how many copies it should automatically type in for you. To learn about these features, please read help buttons inside the program.
+To do this, you must catalog your graphics in folders and name them carefully. The tool contains special rules that extract information from a file name, such as which graphic is supposed to be the back face of which card, or how many copies it should automatically type in for you. To learn about these features, please read help buttons inside the program.
 
 For this tutorial, we will just select the folder with five cat graphics and one basil graphic, which wasn't that well-organized to begin with as the program is going to misunderstand the basil as an actual sixth card. But it's fine, we can delete that later and still save a lot of work.
 

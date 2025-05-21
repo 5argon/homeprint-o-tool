@@ -42,6 +42,42 @@ class CardPage extends StatelessWidget {
     return totalMissing;
   }
 
+  // Natural sort comparison that correctly sorts numeric values at the start of strings
+  int _compareNatural(String a, String b) {
+    // Regular expression to match a number at the start of a string
+    final numAtStartRegex = RegExp(r'^(\d+)');
+    final aMatch = numAtStartRegex.firstMatch(a);
+    final bMatch = numAtStartRegex.firstMatch(b);
+
+    // If both strings start with numbers, compare them numerically
+    if (aMatch != null && bMatch != null) {
+      final aNum = int.parse(aMatch.group(1)!);
+      final bNum = int.parse(bMatch.group(1)!);
+
+      // If numbers are different, return the comparison result
+      if (aNum != bNum) {
+        return aNum.compareTo(bNum);
+      }
+
+      // If numbers are the same, compare the rest of the strings
+      final aRest = a.substring(aMatch.group(1)!.length);
+      final bRest = b.substring(bMatch.group(1)!.length);
+      return aRest.compareTo(bRest);
+    }
+
+    // If one string starts with a number and the other doesn't,
+    // prioritize the one that starts with a number
+    if (aMatch != null) {
+      return -1;
+    }
+    if (bMatch != null) {
+      return 1;
+    }
+
+    // If neither string starts with a number, use regular string comparison
+    return a.compareTo(b);
+  }
+
   @override
   Widget build(BuildContext context) {
     final totalMissingFiles = _calculateTotalMissingFiles();
@@ -69,7 +105,7 @@ class CardPage extends StatelessWidget {
             } else if (bName == null) {
               return 1;
             } else {
-              return aName.compareTo(bName);
+              return _compareNatural(aName, bName);
             }
           });
           for (var df in newDefinedCards) {
@@ -83,7 +119,7 @@ class CardPage extends StatelessWidget {
               } else if (bName == null) {
                 return 1;
               } else {
-                return aName.compareTo(bName);
+                return _compareNatural(aName, bName);
               }
             });
           }
