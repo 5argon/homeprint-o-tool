@@ -49,19 +49,21 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-var defaultLayoutData = LayoutData(
-  paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
-  marginSize: SizePhysical(0.25, 0.25, PhysicalSizeType.inch),
-  edgeCutGuideSize: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
-  backArrangement: BackArrangement.invertedRow,
-  skips: [],
-  removeOneColumn: false,
-  removeOneRow: false,
-  frontPostRotation: Rotation.none,
-  backPostRotation: Rotation.none,
-);
+// Return a fresh copy of default layout data each time to avoid shared references
+LayoutData getDefaultLayoutData() => LayoutData(
+      paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
+      marginSize: SizePhysical(0.25, 0.25, PhysicalSizeType.inch),
+      edgeCutGuideSize: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),
+      backArrangement: BackArrangement.invertedRow,
+      skips: [],
+      removeOneColumn: false,
+      removeOneRow: false,
+      frontPostRotation: Rotation.none,
+      backPostRotation: Rotation.none,
+    );
 
-var defaultProjectSettings = ProjectSettings(
+// Return a fresh copy of default project settings each time to avoid shared references
+ProjectSettings getDefaultProjectSettings() => ProjectSettings(
     SizePhysical(6.3, 8.8, PhysicalSizeType.centimeter),
     Alignment.center,
     1.0,
@@ -82,14 +84,14 @@ class _MyHomePageState extends State<MyHomePage> {
   String? _previousFileName;
 
   // These three are defined by project.
-  ProjectSettings _projectSettings = defaultProjectSettings;
+  ProjectSettings _projectSettings = getDefaultProjectSettings();
   DefinedCards _definedCards = getDefaultDefinedCards();
   LinkedCardFaces _linkedCardFaces = [];
 
   /// Not stored in the save file.
   Includes _includes = [];
   Includes _skipIncludes = [];
-  LayoutData _layoutData = defaultLayoutData;
+  LayoutData _layoutData = getDefaultLayoutData();
   bool _hasChanges = false;
 
   Future? fullScreenDisableFuture;
@@ -299,13 +301,15 @@ class _MyHomePageState extends State<MyHomePage> {
               "Created a new project. Base directory is now : ${saveResult.baseDirectory}"),
         ));
         setState(() {
-          _projectSettings = defaultProjectSettings;
+          _projectSettings = getDefaultProjectSettings();
           // Create a proper deep copy of the default defined cards to avoid sharing references
           _definedCards = getDefaultDefinedCards();
           _linkedCardFaces = [];
           _baseDirectory = saveResult.baseDirectory;
           _previousFileName = saveResult.fileName;
           _includes = [];
+          _skipIncludes = [];
+          _layoutData = getDefaultLayoutData();
           // On new, go to project settings.
           _selectedIndex = 0;
         });
