@@ -45,11 +45,14 @@ class GroupMemberListItem extends StatefulWidget {
 
 class _GroupMemberListItemState extends State<GroupMemberListItem> {
   late TextEditingController _cardNameController;
+  late TextEditingController _quantityController;
 
   @override
   void initState() {
     super.initState();
     _cardNameController = TextEditingController(text: widget.card.name ?? "");
+    _quantityController =
+        TextEditingController(text: widget.card.amount.toString());
   }
 
   @override
@@ -58,11 +61,15 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
     if (oldWidget.card.name != widget.card.name) {
       _cardNameController.text = widget.card.name ?? "";
     }
+    if (oldWidget.card.amount != widget.card.amount) {
+      _quantityController.text = widget.card.amount.toString();
+    }
   }
 
   @override
   void dispose() {
     _cardNameController.dispose();
+    _quantityController.dispose();
     super.dispose();
   }
 
@@ -166,7 +173,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
       },
     );
     final quantityBox = TextFormField(
-      initialValue: widget.card.amount.toString(),
+      controller: _quantityController,
       decoration: InputDecoration(
         labelText: "Copies",
       ),
