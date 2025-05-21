@@ -29,6 +29,7 @@ class ExportSettings {
   final Rotation frontRotation;
   final Rotation backRotation;
   final bool frontSideOnly;
+  final int pixelPerInch;
 
   ExportSettings({
     required this.prefix,
@@ -38,6 +39,7 @@ class ExportSettings {
     required this.frontRotation,
     required this.backRotation,
     required this.frontSideOnly,
+    required this.pixelPerInch,
   });
 }
 
@@ -65,7 +67,7 @@ Future renderRender(
     }
   }
 
-  ExportSettings? settings = await openPreExportDialog(context);
+  ExportSettings? settings = await openPreExportDialog(context, layoutData);
   if (settings == null) {
     return;
   }
@@ -79,8 +81,9 @@ Future renderRender(
   final pagination = calculatePagination(includeItems, layoutData,
       projectSettings.cardSize, cardCountRowCol.rows, cardCountRowCol.columns);
 
-  final pixelWidth = layoutData.paperSize.widthInch * layoutData.pixelPerInch;
-  final pixelHeight = layoutData.paperSize.heightInch * layoutData.pixelPerInch;
+  final pixelPerInch = settings.pixelPerInch;
+  final pixelWidth = layoutData.paperSize.widthInch * pixelPerInch;
+  final pixelHeight = layoutData.paperSize.heightInch * pixelPerInch;
   onTotalPageUpdate(pagination.totalPages);
 
   // Create a completer to handle cancellation
@@ -473,7 +476,8 @@ Future<void> renderOneSide(
   await Future.delayed(Duration.zero);
 }
 
-Future<ExportSettings?> openPreExportDialog(BuildContext context) async {
+Future<ExportSettings?> openPreExportDialog(
+    BuildContext context, LayoutData layoutData) async {
   String tempPrefix = "export";
   String tempTemplate = "{prefix}_{page}_{side}";
   String tempFrontSuffix = "A";
@@ -481,6 +485,7 @@ Future<ExportSettings?> openPreExportDialog(BuildContext context) async {
   Rotation tempFrontRotation = Rotation.none;
   Rotation tempBackRotation = Rotation.none;
   bool tempFrontSideOnly = false;
+  int tempPixelPerInch = 300; // Default PPI value
 
   return await showDialog<ExportSettings>(
     context: context,
@@ -593,6 +598,51 @@ Future<ExportSettings?> openPreExportDialog(BuildContext context) async {
                             }
                           },
                   ),
+                  SizedBox(height: 16),
+                  Builder(
+                    builder: (context) {
+                      final controller = TextEditingController(
+                          text: tempPixelPerInch.toString());
+                      final focusNode = FocusNode();
+
+                      // Calculate pixel dimensions based on paper size and PPI
+                      final pixelWidth =
+                          layoutData.paperSize.widthInch * tempPixelPerInch;
+                      final pixelHeight =
+                          layoutData.paperSize.heightInch * tempPixelPerInch;
+                      final helperText =
+                          "Paper size: ${layoutData.paperSize.width.toStringAsFixed(1)} × ${layoutData.paperSize.height.toStringAsFixed(1)} ${layoutData.paperSize.unit == PhysicalSizeType.centimeter ? 'cm' : 'in'}\n"
+                          "Output size: ${pixelWidth.round()} × ${pixelHeight.round()} px";
+
+                      void updatePPI(String value) {
+                        int? parsedValue = int.tryParse(value);
+                        if (parsedValue != null && parsedValue > 0) {
+                          setState(() {
+                            tempPixelPerInch = parsedValue;
+                          });
+                        }
+                      }
+
+                      // Add listener to update on focus loss
+                      focusNode.addListener(() {
+                        if (!focusNode.hasFocus) {
+                          updatePPI(controller.text);
+                        }
+                      });
+
+                      return TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          labelText: "Resolution (PPI)",
+                          helperText: helperText,
+                          helperMaxLines: 3,
+                        ),
+                        keyboardType: TextInputType.number,
+                        onSubmitted: updatePPI,
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -614,6 +664,7 @@ Future<ExportSettings?> openPreExportDialog(BuildContext context) async {
                       frontRotation: tempFrontRotation,
                       backRotation: tempBackRotation,
                       frontSideOnly: tempFrontSideOnly,
+                      pixelPerInch: tempPixelPerInch,
                     ),
                   ); // Confirm
                 },

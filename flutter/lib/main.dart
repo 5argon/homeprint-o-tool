@@ -50,7 +50,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 var defaultLayoutData = LayoutData(
-  pixelPerInch: 300,
   paperSize: SizePhysical(21, 29.7, PhysicalSizeType.centimeter),
   marginSize: SizePhysical(0.25, 0.25, PhysicalSizeType.inch),
   edgeCutGuideSize: SizePhysical(0.5, 0.5, PhysicalSizeType.centimeter),

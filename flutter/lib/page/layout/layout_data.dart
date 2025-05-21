@@ -4,9 +4,6 @@ import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
 class LayoutData {
   SizePhysical paperSize;
 
-  /// Transform [paperSize] to output pixels.
-  int pixelPerInch;
-
   /// Reserve area where the printer could not print.
   /// Width refer to margin of horizontal side edge.
   /// Height refer to margin of vertical side edge.
@@ -31,7 +28,6 @@ class LayoutData {
 
   LayoutData({
     required this.paperSize,
-    required this.pixelPerInch,
     required this.marginSize,
     required this.edgeCutGuideSize,
     required this.backArrangement,

@@ -42,7 +42,7 @@ Preview Cut Line brings the cut lines on top of the graphics. It might help you 
 
 ## Export
 
-Press the Export button to bring up a dialog where you can adjust the file name and some basic post processing such as rotating the image. My print shop requires a PDF file where odd pages are rotated counter-clockwise, and even pages are rotated clockwise, to pair up duplex printing correctly. 
+Press the Export button to bring up a dialog where you can adjust the output file naming, pixel per inch value, and some basic post processing such as rotating the image. My print shop requires a PDF file where odd pages are rotated counter-clockwise, and even pages are rotated clockwise, to pair up duplex printing correctly. 
 
 Printing on the back side at exactly the same spot as the front is hard for the printer, especially for home printer, or even a big laser printer at print shop is not quite at the level of card printers that trading card game factory use (offset printers).
 
