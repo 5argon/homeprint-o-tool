@@ -44,9 +44,7 @@ This feature is useful in the context of printing proxies or custom content in c
 
 ## Cards
 
-![Cards Tab](image/cards-tab.png)
-
-A new project comes with one "group" created for you with no card inside. Cards **cannot** be floating outside a group in this program, so you must have at least one group to create a card. This rule simplifies the printing process where user can pick something to print in groups, not cards.
+Cards **cannot** be floating outside a "group" (a virtual folder) in this program, so you must have at least one group to create a card. This rule simplifies the printing process where user can pick something to print in groups, not cards.
 
 ![alt text](image/create-card.png)
 
@@ -78,7 +76,9 @@ But you can leave those graphics in their natural rotation (that you don't have 
 
 ![Editing a per-card rotation](image/rotation-fixing-2.png)
 
-Note that the graphic is not rotated after adjusting the settings; the content area box is rotated instead. This let you preview and work with the graphic in its best shape and only rotates at the end when it is getting on the page. You still need to be careful which way the rotation of the front face and back face should be, so they are correct in the final product. And since the graphic doesn't rotate in the preview, both counter-clockwise and clockwise rotation appear the same!
+Note that the graphic is not rotated after adjusting the settings. The content area box is rotated instead. This lets you work with the graphic in its pre-rotation look. It only rotates for real at the end when it is getting on the page.
+
+You still need to be careful which way the rotation of the front face and back face should be, so they are correct in the final product. Since the graphic doesn't rotate in the preview, both counter-clockwise and clockwise rotations appear the same except the differently colored content area box. So be careful of inconsistent or wrong directions of rotation.
 
 ### Create multiple cards by importing
 
