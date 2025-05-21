@@ -33,6 +33,6 @@ In summary, the downloaded Dark Matter folder should now look like this, with th
 
 ![Dark Matter setup](image/dark-matter-patch.png)
 
-When you open the project, you should see no missing card indicators on the sidebar where it says 2 Linked Card Face and 383 Cards. You can now go into the Picks tab and pick the cards you want to print. We have successfully repacked the uncut sheets with improved card backs.
+When you open the project, you should see no missing card indicators on the sidebar where it says 2 Linked Card Face and 415 Cards. You can now go into the Picks tab and pick the cards you want to print. We have successfully repacked the uncut sheets with improved card backs.
 
 ![Review tab](image/dark-matter-review.png)

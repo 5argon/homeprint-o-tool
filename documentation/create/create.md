@@ -58,9 +58,27 @@ The Back Face is then set to **link** to the Linked Card Face we created earlier
 
 ### Rotation
 
-Graphics are expected to be matching in its shape to Card Size you have set in the project settings, as the content area percentage algorithm works by scaling Card Size-shaped box until it touches the edge as 100%.
+Graphics are expected to be "matching" in its content (not dimension!) to Card Size you have set in the project settings, as the content area percentage algorithm works by scaling Card Size-shaped box until it touches the edge as 100%.
 
-However, you might have an input graphics rotated the other way in a project with both vertical and horizontal cards. If you left them as-is, this is the result of applying the content area.
+In the above's cat example, though the graphic is horizontal in pixel dimension which is not in agreement with vertical Card Size, the cat in the image is sitting quite vertically. In this case we do not require adjusting the rotation.
+
+However, you might have an input graphics with its content rotated the other way mixed in one project. If you left them as-is, the content area will scale the same way and hit the wrong edge.
+
+![Rotation Problem](image/rotation-problem-1.png)
+
+To illustrate the problem, this is what it looks like in the export. The content area is still a Card Size-shaped box cut out from the center of the graphic, but it should have been rotated.
+
+![Rotation Problem](image/rotation-problem-2.png)
+
+Most professional printing services will require you to manually rotate the files before sending to them, you can also do that with this program, and you no longer have to mess with the rotation feature. Be careful about the confusion of which way a graphic should be rotated, regarding the front and the backside.
+
+But you can leave those graphics in their natural rotation (that you don't have to tilt your head to make sense of it) and use the program's rotation feature instead.
+
+![Editing a per-card rotation](image/rotation-fixing-1.png)
+
+![Editing a per-card rotation](image/rotation-fixing-2.png)
+
+Note that the graphic is not rotated after adjusting the settings; the content area box is rotated instead. This let you preview and work the graphic in its best shape and only rotates at the end when it is getting on the page. You still need to be careful which way the rotation of the front face and back face should be, so they are correct in the final product. And since the graphic doesn't rotate in the preview, both counter-clockwise and clockwise rotation appear the same!
 
 ### Create multiple cards by importing
 
