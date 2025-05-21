@@ -14,4 +14,4 @@ The downloaded folder should look like this before you open the project.
 
 ![ages-unwound-folder.png](image/ages-unwound-folder.png)
 
-There is a slight technical difficulty in this project: the act/agenda cards are horizontal and don't agree with the rest of the project! Luckily, this app is capable of soft-rotating them before laying out without you having to go in and rotate the files yourself. (As maybe the case if you are sending these files to services such as MPC for printing.)
+There is a slight technical difficulty in the downloaded files: the act/agenda cards are horizontal and don't agree with the rest of the project! Luckily, this program is capable of soft-rotating them before laying out without you having to go in and rotate the files yourself. (As maybe the case if you are sending these files to services such as MPC for printing.)
