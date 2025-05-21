@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
 import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 
@@ -11,6 +12,7 @@ class FullScreenCardPreview extends StatelessWidget {
   final SizePhysical cardSize;
   final double bleedFactor;
   final CardFace? cardFace;
+  final ProjectSettings projectSettings;
 
   const FullScreenCardPreview({
     super.key,
@@ -18,6 +20,7 @@ class FullScreenCardPreview extends StatelessWidget {
     required this.cardSize,
     required this.bleedFactor,
     required this.cardFace,
+    required this.projectSettings,
   });
 
   /// Shows a full screen dialog with a card preview
@@ -27,6 +30,7 @@ class FullScreenCardPreview extends StatelessWidget {
     required SizePhysical cardSize,
     required double bleedFactor,
     required CardFace? cardFace,
+    required ProjectSettings projectSettings,
   }) {
     return showDialog(
       context: context,
@@ -35,6 +39,7 @@ class FullScreenCardPreview extends StatelessWidget {
         cardSize: cardSize,
         bleedFactor: bleedFactor,
         cardFace: cardFace,
+        projectSettings: projectSettings,
       ),
     );
   }
@@ -107,6 +112,7 @@ class FullScreenCardPreview extends StatelessWidget {
                               cardSize: cardSize,
                               bleedFactor: bleedFactor,
                               cardFace: cardFace,
+                              projectSettings: projectSettings,
                               showBorder: true,
                               disableClick:
                                   true, // Prevent infinite recursion of previews

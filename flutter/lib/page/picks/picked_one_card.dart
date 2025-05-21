@@ -128,6 +128,7 @@ class PickedOneCard extends StatelessWidget {
                               ?.effectiveContentExpand(projectSettings) ??
                           1.0,
                       cardFace: cardEach.getFront(linkedCardFaces),
+                      projectSettings: projectSettings,
                     ),
                     CardPreviewOverlayIcon(
                       cardFace: cardEach.getFront(linkedCardFaces),
@@ -149,6 +150,7 @@ class PickedOneCard extends StatelessWidget {
                               ?.effectiveContentExpand(projectSettings) ??
                           1.0,
                       cardFace: cardEach.getBack(linkedCardFaces),
+                      projectSettings: projectSettings,
                     ),
                     CardPreviewOverlayIcon(
                       cardFace: cardEach.getBack(linkedCardFaces),

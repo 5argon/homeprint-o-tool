@@ -126,6 +126,7 @@ class ProjectPage extends StatelessWidget {
                     cardFace: tempCardFace,
                     cardSize: projectSettings.cardSize,
                     initialContentExpand: projectSettings.defaultContentExpand,
+                    projectSettings: projectSettings,
                   ),
                 );
 

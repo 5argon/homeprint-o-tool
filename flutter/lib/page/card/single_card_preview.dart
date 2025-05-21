@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/components/full_screen_card_preview.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
@@ -17,6 +18,7 @@ class SingleCardPreview extends StatefulWidget {
   final Function(double width, double height)? onImageDescriptorLoaded;
   final bool showBorder; // Whether to show the border around the card
   final bool disableClick; // Whether to disable the click to fullscreen feature
+  final ProjectSettings projectSettings;
 
   SingleCardPreview({
     super.key,
@@ -24,6 +26,7 @@ class SingleCardPreview extends StatefulWidget {
     required this.cardSize,
     required this.basePath,
     required this.cardFace,
+    required this.projectSettings,
     this.onImageDescriptorLoaded,
     this.showBorder = true,
     this.disableClick = false,
@@ -91,8 +94,8 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
 
   @override
   Widget build(BuildContext context) {
-    final cardEachSingle = widget.cardFace;
-    if (cardEachSingle == null) {
+    final cardFace = widget.cardFace;
+    if (cardFace == null) {
       return Container();
     }
 
@@ -122,7 +125,11 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
 
             double cardShapeWidth;
             double cardShapeHeight;
-            if (cardEachSingle.rotation == Rotation.none) {
+            final effectiveRotation = cardFace.useDefaultRotation
+                ? widget.projectSettings.defaultRotation
+                : cardFace.rotation;
+
+            if (effectiveRotation == Rotation.none) {
               cardShapeWidth = widget.cardSize.widthCm;
               cardShapeHeight = widget.cardSize.heightCm;
             } else {
@@ -190,8 +197,7 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
                 children: [image, imageFitBox]);
 
             // If clicking is enabled, wrap the stack in a GestureDetector
-            if (!widget.disableClick &&
-                cardEachSingle.relativeFilePath.isNotEmpty) {
+            if (!widget.disableClick && cardFace.relativeFilePath.isNotEmpty) {
               return GestureDetector(
                 onTap: () {
                   FullScreenCardPreview.show(
@@ -199,7 +205,8 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
                     basePath: widget.basePath,
                     cardSize: widget.cardSize,
                     bleedFactor: widget.bleedFactor,
-                    cardFace: cardEachSingle,
+                    cardFace: cardFace,
+                    projectSettings: widget.projectSettings,
                   );
                 },
                 child: MouseRegion(

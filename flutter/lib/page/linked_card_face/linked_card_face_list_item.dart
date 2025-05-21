@@ -160,6 +160,7 @@ class _LinkedCardFaceListItemState extends State<LinkedCardFaceListItem> {
                   bleedFactor: widget.linkedCardFace
                       .effectiveContentExpand(widget.projectSettings),
                   cardFace: widget.linkedCardFace,
+                  projectSettings: widget.projectSettings,
                 )),
             SizedBox(width: 16),
             Expanded(

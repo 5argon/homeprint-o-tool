@@ -111,6 +111,9 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
 
   @override
   Widget build(BuildContext context) {
+    final previewCardFace = CardFace.withRelativeFilePath(tempFilePath!);
+    previewCardFace.useDefaultRotation = useDefaultRotation;
+    previewCardFace.rotation = customRotation;
     var relativeFilePathTab = Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -156,7 +159,8 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                           : customContentExpand,
                       cardSize: widget.projectSettings.cardSize,
                       basePath: widget.basePath,
-                      cardFace: CardFace.withRelativeFilePath(tempFilePath!),
+                      cardFace: previewCardFace,
+                      projectSettings: widget.projectSettings,
                     ),
                   ),
                 ),
@@ -219,6 +223,7 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                                       cardFace: tempCard,
                                       cardSize: widget.projectSettings.cardSize,
                                       initialContentExpand: customContentExpand,
+                                      projectSettings: widget.projectSettings,
                                     ),
                                   );
 

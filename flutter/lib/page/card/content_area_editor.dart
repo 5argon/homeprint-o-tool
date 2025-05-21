@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:homeprint_o_tool/core/form/percentage_slider.dart';
 import 'package:homeprint_o_tool/page/card/single_card_preview.dart';
@@ -10,6 +11,7 @@ class ContentAreaEditorDialog extends StatefulWidget {
   final CardFace cardFace;
   final SizePhysical cardSize;
   final double initialContentExpand;
+  final ProjectSettings projectSettings;
 
   const ContentAreaEditorDialog({
     super.key,
@@ -17,6 +19,7 @@ class ContentAreaEditorDialog extends StatefulWidget {
     required this.cardFace,
     required this.cardSize,
     required this.initialContentExpand,
+    required this.projectSettings,
   });
 
   @override
@@ -255,6 +258,7 @@ class ContentAreaEditorDialogState extends State<ContentAreaEditorDialog> {
                           cardSize: widget.cardSize,
                           basePath: widget.basePath,
                           cardFace: widget.cardFace,
+                          projectSettings: widget.projectSettings,
                           onImageDescriptorLoaded: (width, height) {
                             _updateContentDimensions(width, height);
                           },

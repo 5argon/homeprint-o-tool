@@ -282,6 +282,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                               widget.projectSettings) ??
                           1.0,
                       cardFace: frontFace,
+                      projectSettings: widget.projectSettings,
                     ),
                     CardPreviewOverlayIcon(
                       cardFace: frontFace,
@@ -302,6 +303,7 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
                               widget.projectSettings) ??
                           1.0,
                       cardFace: backFace,
+                      projectSettings: widget.projectSettings,
                     ),
                     CardPreviewOverlayIcon(
                       cardFace: backFace,
