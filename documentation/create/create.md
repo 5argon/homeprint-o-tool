@@ -58,6 +58,10 @@ The Back Face is then set to **link** to the Linked Card Face we created earlier
 
 ### Rotation
 
+Graphics are expected to be matching in its shape to Card Size you have set in the project settings, as the content area percentage algorithm works by scaling Card Size-shaped box until it touches the edge as 100%.
+
+However, you might have an input graphics rotated the other way in a project with both vertical and horizontal cards. If you left them as-is, this is the result of applying the content area.
+
 ### Create multiple cards by importing
 
 In a sizable project you will want to use the "Import From Folder" feature to create many cards at once, potentially also assigning their back face strategically.

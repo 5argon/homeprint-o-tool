@@ -53,6 +53,18 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
   bool useDefaultRotation = true;
   Rotation customRotation = Rotation.none;
 
+  // Helper method to get nice display names for rotation values
+  String getRotationDisplayName(Rotation rotation) {
+    switch (rotation) {
+      case Rotation.none:
+        return "None";
+      case Rotation.clockwise90:
+        return "Clockwise 90°";
+      case Rotation.counterClockwise90:
+        return "Counter-clockwise 90°";
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -250,7 +262,7 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                       RadioListTile<bool>(
                         dense: true,
                         title: Text(
-                            "Use Default Rotation (${widget.projectSettings.defaultRotation.name})"),
+                            "Use Default Rotation (${getRotationDisplayName(widget.projectSettings.defaultRotation)})"),
                         value: true,
                         groupValue: useDefaultRotation,
                         onChanged: (value) {
@@ -276,18 +288,11 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                           child: DropdownButton<Rotation>(
                             value: customRotation,
                             items: [
-                              DropdownMenuItem(
-                                value: Rotation.none,
-                                child: Text("None"),
-                              ),
-                              DropdownMenuItem(
-                                value: Rotation.clockwise90,
-                                child: Text("Clockwise 90°"),
-                              ),
-                              DropdownMenuItem(
-                                value: Rotation.counterClockwise90,
-                                child: Text("Counter-clockwise 90°"),
-                              ),
+                              for (var rotation in Rotation.values)
+                                DropdownMenuItem(
+                                  value: rotation,
+                                  child: Text(getRotationDisplayName(rotation)),
+                                ),
                             ],
                             onChanged: (value) {
                               if (value != null) {
