@@ -12,7 +12,7 @@ Before creating a project file, collect all the graphics you need in one folder.
 
 You will be directed to the first tab of the Project section, the Project Settings. Setting card size should be the first thing you do since an uncut sheet naturally must share the same cut lines that run along the edge and cannot have differently sized cards on one page. This affects almost all other calculations.
 
-### Content Area & Default Content Area
+### Content Area
 
 One of the reasons I made this program is I want the ease of specifying the part of the graphic I want and push the rest of the graphic out as bleeds. This is called "content area" in this program.
 
@@ -23,6 +23,12 @@ It is in percentages as this program supports laying out graphics of different r
 Because this rectangle is **always placed at the center**, though you can use a variety of aspect ratios and dimensions of graphics with this program, the subject should be relatively centered on the graphic.
 
 The "Default Content Area" **is shared**. Updating the Default Content Area later will also update every card that is using Default Content Area, so it is not just a default starting value, it is a linked value.
+
+### Rotation
+
+It is expected that most of the input graphics are of the same aspect ratio as the Card Size settings, or at least in similar shape. But sometimes there are both horizontal and vertical input graphics in one project. Rotation can be applied card-by-card to the minority of graphics that are not matching with the Card Size's shape.
+
+Because rotation is more often applied on a per-card basis, this Default Rotation option should be left as None in most cases, as you can flip the Card Size to match most of the input graphics instead.
 
 ## Linked Card Face
 
@@ -50,7 +56,9 @@ In this image, the advantage of Default Content Area in percentage is demonstrat
 
 The Back Face is then set to **link** to the Linked Card Face we created earlier. There are convenient buttons to instantly link to card face #1 or #2 defined in the Linked Card Face tab. So bring the card face you think you will reuse the most up to those indexes.
 
-## Create multiple cards by importing
+### Rotation
+
+### Create multiple cards by importing
 
 In a sizable project you will want to use the "Import From Folder" feature to create many cards at once, potentially also assigning their back face strategically.
 
@@ -70,10 +78,10 @@ They all use Default Content Area after the import, and so I can inspect and adj
 
 ![Custom Content Area](image/custom-content-area.png)
 
-## Copies
+### Copies
 
 When a user prints your project, they often do so by "picking" the whole group. Picking a group will cause all cards inside it to be pushed into the layout. The copies can be changed so they push that card consecutively more times per one pick of the group.
 
 Users can also pick any card inside a group individually. That will ignore the Copies settings and always push in one copy of that card per pick.
 
-For demonstration purpose of Copies feature in [Project Printing Walkthrough](../print/print.md), I'll set the copies of the mackerel colored cat to 2 and then save the changes into the JSON file.
+For demonstration purpose of Copies feature in [Project Printing Walkthrough](../print/print.md), I'll set the copies of the mackerel-colored cat to 2 and then save the changes into the JSON file.

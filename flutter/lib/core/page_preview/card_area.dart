@@ -135,8 +135,11 @@ class _CardAreaState extends State<CardArea> {
               }
               return LayoutBuilder(
                 builder: (context, constraints) {
-                  final rotated = card.rotation == Rotation.clockwise90 ||
-                      card.rotation == Rotation.counterClockwise90;
+                  final effectiveRotation = card.useDefaultRotation
+                      ? widget.projectSettings.defaultRotation
+                      : card.rotation;
+                  final rotated = effectiveRotation == Rotation.clockwise90 ||
+                      effectiveRotation == Rotation.counterClockwise90;
 
                   final parentWidth = constraints.maxWidth;
                   final imageWidth =
@@ -203,7 +206,7 @@ class _CardAreaState extends State<CardArea> {
                   );
 
                   int turns;
-                  switch (card.rotation) {
+                  switch (effectiveRotation) {
                     case Rotation.none:
                       turns = 0;
                       break;
@@ -216,7 +219,7 @@ class _CardAreaState extends State<CardArea> {
                   }
                   if (widget.back &&
                       widget.backArrangement == BackArrangement.invertedRow &&
-                      card.rotation != Rotation.none) {
+                      effectiveRotation != Rotation.none) {
                     turns = turns + 2;
                   }
 
