@@ -67,7 +67,8 @@ var defaultProjectSettings = ProjectSettings(
     1.0,
     Rotation.none);
 
-DefinedCards defaultDefinedCards = [CardGroup([], "Default Group")];
+// Return a fresh copy of default cards each time to avoid shared references
+DefinedCards getDefaultDefinedCards() => [CardGroup([], "Default Group")];
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 2;
@@ -82,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // These three are defined by project.
   ProjectSettings _projectSettings = defaultProjectSettings;
-  DefinedCards _definedCards = defaultDefinedCards;
+  DefinedCards _definedCards = getDefaultDefinedCards();
   LinkedCardFaces _linkedCardFaces = [];
 
   /// Not stored in the save file.
@@ -299,12 +300,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ));
         setState(() {
           _projectSettings = defaultProjectSettings;
-          _definedCards = defaultDefinedCards;
+          // Create a proper deep copy of the default defined cards to avoid sharing references
+          _definedCards = getDefaultDefinedCards();
           _linkedCardFaces = [];
           _baseDirectory = saveResult.baseDirectory;
           _previousFileName = saveResult.fileName;
           _includes = [];
-          // On new, go to project settigns.
+          // On new, go to project settings.
           _selectedIndex = 0;
         });
       }
