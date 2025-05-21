@@ -14,7 +14,7 @@ It only creates `.png` files of the front side and back side of the uncut sheets
 ## Walkthrough
 
 - [General Walkthrough](documentation/walkthrough.md)
-- [Special Walkthrough for Arkham Horror: The Card Game players](/documentation/ahlcg.md)
+- [Special Walkthrough for Arkham Horror: The Card Game players](/documentation/ahlcg/ahlcg.md)
 
 ## Project's State
 
