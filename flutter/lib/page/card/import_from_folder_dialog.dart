@@ -62,7 +62,8 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
 
     var importButton = TextButton(
       onPressed: (selectedFolder == null ||
-              (missingFaceResolution == "LinkedCardFace" &&
+              (cardsWithOnlyFront > 0 &&
+                  missingFaceResolution == "LinkedCardFace" &&
                   selectedLinkedCardFace == null))
           ? null // Disable the button
           : () {
@@ -76,7 +77,6 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
 
                   for (final entry
                       in folderGatheringCardsMap[folderPath]!.entries) {
-                    final baseName = entry.key;
                     final gatheringCard = entry.value;
 
                     final frontFile = gatheringCard.frontFile;
@@ -139,7 +139,7 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
                       frontCard,
                       backCard,
                       gatheringCard.quantity,
-                      baseName,
+                      gatheringCard.originalName,
                     );
                     folderCards.add(card);
                   }
@@ -166,7 +166,6 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
               int cardsWithOnlyBack = 0;
 
               for (final entry in gatheringCards.entries) {
-                final baseName = entry.key;
                 final gatheringCard = entry.value;
 
                 final frontFile = gatheringCard.frontFile;
@@ -229,7 +228,7 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
                   frontCard,
                   backCard,
                   gatheringCard.quantity,
-                  baseName,
+                  gatheringCard.originalName,
                 );
                 importedCards.add(card);
               }
@@ -330,32 +329,34 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
               Text(
                   "(Duplex: $cardsDuplex, Only Front: $cardsWithOnlyFront, Only Back: $cardsWithOnlyBack)"),
               const SizedBox(height: 16),
-              const Text("Missing back face resolution:"),
-              radioEmpty,
-              radioBackFile,
-              RadioListTile<String>(
-                title: const Text("Mirror Front Face (Same on Both Sides)"),
-                value: "MirrorFrontFace",
-                groupValue: missingFaceResolution,
-                onChanged: (value) {
-                  setState(() {
-                    missingFaceResolution = value!;
-                  });
-                },
-              ),
-              radioLinked,
-              // Drop down always visible but disabled if no linked card faces are defined
-              LinkedCardFaceDropdown(
-                disabled: !(missingFaceResolution == "LinkedCardFace" &&
-                    widget.linkedCardFaces.isNotEmpty),
-                linkedCardFaces: widget.linkedCardFaces,
-                selectedValue: selectedLinkedCardFace,
-                onChanged: (value) {
-                  setState(() {
-                    selectedLinkedCardFace = value;
-                  });
-                },
-              ),
+              if (cardsWithOnlyFront > 0) ...[
+                const Text("Missing back face resolution:"),
+                radioEmpty,
+                radioBackFile,
+                RadioListTile<String>(
+                  title: const Text("Mirror Front Face (Same on Both Sides)"),
+                  value: "MirrorFrontFace",
+                  groupValue: missingFaceResolution,
+                  onChanged: (value) {
+                    setState(() {
+                      missingFaceResolution = value!;
+                    });
+                  },
+                ),
+                radioLinked,
+                // Drop down always visible but disabled if no linked card faces are defined
+                LinkedCardFaceDropdown(
+                  disabled: !(missingFaceResolution == "LinkedCardFace" &&
+                      widget.linkedCardFaces.isNotEmpty),
+                  linkedCardFaces: widget.linkedCardFaces,
+                  selectedValue: selectedLinkedCardFace,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedLinkedCardFace = value;
+                    });
+                  },
+                ),
+              ],
             ],
           ],
         ),
@@ -507,45 +508,58 @@ class ImportFromFolderDialogState extends State<ImportFromFolderDialog> {
   // Helper method to process a single card file
   void processCardFile(
       File file, Map<String, GatheringCard> targetGatheringCards) {
-    final fileName = path.basename(file.path).toLowerCase();
+    // Get the original filename with original case for display
+    final originalFileName = path.basename(file.path);
+    // Get lowercase version for pattern matching
+    final fileNameLower = originalFileName.toLowerCase();
     // Remove file extension first
-    String baseName = fileName.substring(0, fileName.lastIndexOf('.'));
+    String baseNameLower =
+        fileNameLower.substring(0, fileNameLower.lastIndexOf('.'));
+    // Keep an original case version for the actual card name
+    String baseNameOriginal =
+        originalFileName.substring(0, originalFileName.lastIndexOf('.'));
 
-    // Remove the face marker suffix (-a, -b, etc.)
-    final faceMarkerPattern = RegExp(r'([-_](a|b|1|2|front|back))$');
-    if (faceMarkerPattern.hasMatch(baseName)) {
-      baseName =
-          baseName.substring(0, faceMarkerPattern.firstMatch(baseName)!.start);
+    // Remove the face marker suffix (-a, -b, etc.) from both versions
+    final faceMarkerPattern =
+        RegExp(r'([-_](a|b|1|2|front|back))$', caseSensitive: false);
+    if (faceMarkerPattern.hasMatch(baseNameLower)) {
+      final match = faceMarkerPattern.firstMatch(baseNameLower)!;
+      baseNameLower = baseNameLower.substring(0, match.start);
+      // Also trim the original case version at the same position
+      baseNameOriginal = baseNameOriginal.substring(0, match.start);
     }
 
     // Extract quantity if present
-    final quantityPattern = RegExp(r'[-_]x(\d+)$');
-    final quantityMatch = quantityPattern.firstMatch(baseName);
+    final quantityPattern = RegExp(r'[-_]x(\d+)$', caseSensitive: false);
+    final quantityMatch = quantityPattern.firstMatch(baseNameLower);
     final quantity =
         quantityMatch != null ? int.parse(quantityMatch.group(1)!) : 1;
 
     // Remove quantity suffix from base name if present
     if (quantityMatch != null) {
-      baseName = baseName.substring(0, quantityMatch.start);
+      baseNameLower = baseNameLower.substring(0, quantityMatch.start);
+      // Also trim the original case version at the same position
+      baseNameOriginal = baseNameOriginal.substring(0, quantityMatch.start);
     }
 
-    // Update or create GatheringCard
+    // Update or create GatheringCard - use lowercase for map keys
     final gatheringCard = targetGatheringCards.putIfAbsent(
-      baseName,
-      () => GatheringCard(quantity: quantity),
+      baseNameLower,
+      () => GatheringCard(quantity: quantity, originalName: baseNameOriginal),
     );
 
     // Extract the file name without extension to check for face markers
-    final fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
+    final fileNameWithoutExtLower =
+        fileNameLower.substring(0, fileNameLower.lastIndexOf('.'));
 
     // Check if the filename ends with any of these patterns
-    final frontPattern = RegExp(r'([-_](a|1|front))$');
-    final backPattern = RegExp(r'([-_](b|2|back))$');
+    final frontPattern = RegExp(r'([-_](a|1|front))$', caseSensitive: false);
+    final backPattern = RegExp(r'([-_](b|2|back))$', caseSensitive: false);
 
-    if (frontPattern.hasMatch(fileNameWithoutExt)) {
+    if (frontPattern.hasMatch(fileNameWithoutExtLower)) {
       gatheringCard.frontFile = file;
       gatheringCard.quantity = quantity; // Use quantity from front if available
-    } else if (backPattern.hasMatch(fileNameWithoutExt)) {
+    } else if (backPattern.hasMatch(fileNameWithoutExtLower)) {
       gatheringCard.backFile = file;
     } else {
       // If no face marker is present, default to front
@@ -558,6 +572,11 @@ class GatheringCard {
   File? frontFile;
   File? backFile;
   int quantity;
+  String originalName;
 
-  GatheringCard({this.frontFile, this.backFile, this.quantity = 1});
+  GatheringCard(
+      {this.frontFile,
+      this.backFile,
+      this.quantity = 1,
+      this.originalName = ""});
 }
