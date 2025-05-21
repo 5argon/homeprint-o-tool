@@ -405,21 +405,14 @@ class GroupListItem extends StatelessWidget {
     final inside = Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 8.0,
+          runSpacing: 8.0,
           children: [
             addButton,
-            SizedBox(
-              width: 8,
-            ),
             importFromFolderButton,
-            SizedBox(
-              width: 8,
-            ),
             importFromFilesButton,
-            SizedBox(
-              width: 8,
-            ),
             autoNameCardsButton,
           ],
         ),

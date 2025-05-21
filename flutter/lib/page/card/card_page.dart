@@ -233,22 +233,19 @@ class CardPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 8.0,
+              runSpacing: 8.0,
               children: [
-                Row(
-                  spacing: 16,
-                  children: [
-                    createGroupButton,
-                    _buildImportFromFolderButton(
-                        context, listViewScrollController),
-                    sortAllButton,
-                    missingFilesWarning,
-                  ],
-                ),
+                createGroupButton,
+                _buildImportFromFolderButton(context, listViewScrollController),
+                sortAllButton,
+                missingFilesWarning,
               ],
             ),
           ),
