@@ -184,12 +184,25 @@ class _SingleCardPreviewState extends State<SingleCardPreview> {
               file,
             );
 
+            Color borderColor;
+            switch (effectiveRotation) {
+              case Rotation.none:
+                borderColor = Colors.redAccent.shade400;
+                break;
+              case Rotation.clockwise90:
+                borderColor = Colors.limeAccent.shade400;
+                break;
+              case Rotation.counterClockwise90:
+                borderColor = Colors.tealAccent.shade400;
+                break;
+            }
+
             final imageFitBox = Container(
                 width: cardShapeInBoxWidth,
                 height: cardShapeInBoxHeight,
                 decoration: widget.showBorder
                     ? BoxDecoration(
-                        border: Border.all(color: Colors.red, width: 1))
+                        border: Border.all(color: borderColor, width: 1))
                     : null);
 
             Widget previewStack = Stack(
