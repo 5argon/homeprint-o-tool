@@ -216,12 +216,38 @@ class GroupListItem extends StatelessWidget {
                   content: Text("Imported ${importedCards.length} cards."),
                 ));
               },
+              importMode: ImportMode.folder,
             );
           },
         );
       },
       icon: const Icon(Icons.folder_open),
       label: const Text('Import From Folder'),
+    );
+
+    final importFromFilesButton = ElevatedButton.icon(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return ImportFromFolderDialog(
+              basePath: basePath,
+              linkedCardFaces: linkedCardFaces,
+              onImport: (folderName, importedCards) {
+                final newCardGroup = cardGroup;
+                newCardGroup.cards.addAll(importedCards);
+                onCardGroupChange(newCardGroup);
+                messenger.showSnackBar(SnackBar(
+                  content: Text("Imported ${importedCards.length} cards."),
+                ));
+              },
+              importMode: ImportMode.files,
+            );
+          },
+        );
+      },
+      icon: const Icon(Icons.upload_file),
+      label: const Text('Import From Files'),
     );
     final autoNameCardsButton = ElevatedButton.icon(
       onPressed: () {
@@ -387,6 +413,10 @@ class GroupListItem extends StatelessWidget {
               width: 8,
             ),
             importFromFolderButton,
+            SizedBox(
+              width: 8,
+            ),
+            importFromFilesButton,
             SizedBox(
               width: 8,
             ),
