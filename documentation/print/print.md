@@ -32,7 +32,7 @@ For example, my print shop is expecting this exact arrangement in the PDF file t
 
 ![Duplex arrangement](image/duplex-arrangement.png)
 
-But most of the project I make is vertical. The "combo" to get the final result that makes this print shop happy is using the Inverted Row arrangement on the back page. Then in the export post-processing step, the front page should be rotated counter-clockwise, while the back page is rotated clockwise. Please figure out your own "combo" carefully.
+But most projects I make are vertical. The "combo" to get the final result that makes this print shop happy is using the Inverted Row arrangement on the back page. Then in the export post-processing step, the front page should be rotated counter-clockwise, while the back page is rotated clockwise. Please figure out your own "combo" carefully.
 
 ### Skips
 

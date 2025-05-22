@@ -89,12 +89,6 @@ class ProjectPage extends StatelessWidget {
       style: TextStyle(fontWeight: FontWeight.bold),
     );
 
-    // Display the current rotation
-    final rotationText = Text(
-      _getRotationDisplayName(projectSettings.defaultRotation),
-      style: TextStyle(fontWeight: FontWeight.bold),
-    );
-
     // Use the baseDirectory prop directly instead of ModalRoute
     final basePath = baseDirectory;
 
@@ -171,15 +165,15 @@ class ProjectPage extends StatelessWidget {
           items: [
             DropdownMenuItem(
               value: Rotation.none,
-              child: Text("None"),
+              child: Text(_getRotationDisplayName(Rotation.none)),
             ),
             DropdownMenuItem(
               value: Rotation.clockwise90,
-              child: Text("Clockwise 90°"),
+              child: Text(_getRotationDisplayName(Rotation.clockwise90)),
             ),
             DropdownMenuItem(
               value: Rotation.counterClockwise90,
-              child: Text("Counter-clockwise 90°"),
+              child: Text(_getRotationDisplayName(Rotation.counterClockwise90)),
             ),
           ],
           onChanged: (value) {
