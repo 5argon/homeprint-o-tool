@@ -73,7 +73,7 @@ ProjectSettings getDefaultProjectSettings() => ProjectSettings(
 DefinedCards getDefaultDefinedCards() => [CardGroup([], "Default Group")];
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 6;
 
   /// Prefix this path to all the individual card file name to load image from.
   /// Image cannot load yet without this since they are all relative to this path.
@@ -123,6 +123,12 @@ class _MyHomePageState extends State<MyHomePage> {
           );
 
           final baseDirectory = _baseDirectory;
+
+          // The only page that can be shown without a base directory is the About page.
+          if (_selectedIndex == 6) {
+            return AboutPage();
+          }
+
           if (baseDirectory == null) {
             return needProjectLoaded;
           }

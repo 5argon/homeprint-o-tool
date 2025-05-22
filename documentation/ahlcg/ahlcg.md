@@ -21,7 +21,7 @@ I made four sample projects showcasing custom campaigns made by four different a
 - [Dark Matter Campaign by Axolotl](dark-matter.md)
 - [Ages Unwound Campaign by Olivia Juliet](ages-unwound.md)
 - [Call of the Plaguebearer Campaign by Dr. Jack Science](call-of-the-plaguebearer.md)
-- [Cyclopean Foundations by The Beard](cyclopean-foundations.md)
+- [Cyclopean Foundations Campaign by The Beard](cyclopean-foundations.md)
 
 Again, check out [Mysterious Chanting](https://mysteriouschanting.wordpress.com), [Inexorable Fate](https://inexorablefate.com), and [Arkham Horror Custom Reviews](https://karkhamhorror.neocities.org) for even more content from these and other custom content authors.
 

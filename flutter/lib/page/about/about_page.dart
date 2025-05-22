@@ -57,9 +57,12 @@ class AboutPage extends StatelessWidget {
                       }
                     }),
                 const SizedBox(height: 24),
-                const Text(
-                  "A desktop software that creates duplex uncut sheet image files out of individual card graphics.",
-                  textAlign: TextAlign.center,
+                SizedBox(
+                  width: 450,
+                  child: const Text(
+                    "A desktop software that creates duplex uncut sheet image files out of individual card graphics.",
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 const SizedBox(height: 32),
                 Text(
@@ -77,8 +80,9 @@ class AboutPage extends StatelessWidget {
                   style: subtitleStyle,
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     GestureDetector(
                       onTap: () =>
@@ -96,8 +100,9 @@ class AboutPage extends StatelessWidget {
                   style: subtitleStyle,
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Text("Email: "),
                     GestureDetector(
@@ -110,8 +115,9 @@ class AboutPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Text("GitHub / Documentation: "),
                     GestureDetector(
