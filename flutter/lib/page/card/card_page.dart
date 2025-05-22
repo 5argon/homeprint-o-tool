@@ -42,40 +42,50 @@ class CardPage extends StatelessWidget {
     return totalMissing;
   }
 
-  // Natural sort comparison that correctly sorts numeric values at the start of strings
+  // Natural sort comparison that correctly sorts numeric values anywhere in strings
   int _compareNatural(String a, String b) {
-    // Regular expression to match a number at the start of a string
-    final numAtStartRegex = RegExp(r'^(\d+)');
-    final aMatch = numAtStartRegex.firstMatch(a);
-    final bMatch = numAtStartRegex.firstMatch(b);
+    // Regular expression to match numbers anywhere in a string
+    final numRegex = RegExp(r'(\d+)|([^\d]+)');
+    final aMatches = numRegex.allMatches(a).toList();
+    final bMatches = numRegex.allMatches(b).toList();
 
-    // If both strings start with numbers, compare them numerically
-    if (aMatch != null && bMatch != null) {
-      final aNum = int.parse(aMatch.group(1)!);
-      final bNum = int.parse(bMatch.group(1)!);
+    // Compare each chunk (number or non-number) in sequence
+    final minLength =
+        aMatches.length < bMatches.length ? aMatches.length : bMatches.length;
 
-      // If numbers are different, return the comparison result
-      if (aNum != bNum) {
-        return aNum.compareTo(bNum);
+    for (var i = 0; i < minLength; i++) {
+      final aMatch = aMatches[i];
+      final bMatch = bMatches[i];
+
+      final aChunk = aMatch.group(0)!;
+      final bChunk = bMatch.group(0)!;
+
+      // Check if both chunks are numeric
+      final aIsNumeric = aMatch.group(1) != null;
+      final bIsNumeric = bMatch.group(1) != null;
+
+      if (aIsNumeric && bIsNumeric) {
+        // Compare numerically
+        final aNum = int.parse(aChunk);
+        final bNum = int.parse(bChunk);
+
+        if (aNum != bNum) {
+          return aNum.compareTo(bNum);
+        }
+      } else if (!aIsNumeric && !bIsNumeric) {
+        // Compare strings
+        final comparison = aChunk.compareTo(bChunk);
+        if (comparison != 0) {
+          return comparison;
+        }
+      } else {
+        // If one is numeric and one isn't, sort non-numeric chunks first
+        return aIsNumeric ? 1 : -1;
       }
-
-      // If numbers are the same, compare the rest of the strings
-      final aRest = a.substring(aMatch.group(1)!.length);
-      final bRest = b.substring(bMatch.group(1)!.length);
-      return aRest.compareTo(bRest);
     }
 
-    // If one string starts with a number and the other doesn't,
-    // prioritize the one that starts with a number
-    if (aMatch != null) {
-      return -1;
-    }
-    if (bMatch != null) {
-      return 1;
-    }
-
-    // If neither string starts with a number, use regular string comparison
-    return a.compareTo(b);
+    // If all comparable chunks are equal, the shorter string comes first
+    return aMatches.length.compareTo(bMatches.length);
   }
 
   @override

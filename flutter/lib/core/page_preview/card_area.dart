@@ -118,13 +118,13 @@ class _CardAreaState extends State<CardArea> {
       );
     }
     Widget imageWidget = Container();
-    if (widget.card != null && widget.baseDirectory != null) {
+    final card = widget.card;
+    if (card != null && widget.baseDirectory != null) {
       // final renderChild =
       //     Image.file(File(p.join(baseDirectory, card.relativeFilePath)));
       // imageWidget = Cropper(cropRect: cropRect, renderChild: renderChild);
-      final card = widget.card;
       final fileObject = this.fileObject;
-      if (fileObject != null && card != null) {
+      if (fileObject != null) {
         imageWidget = FutureBuilder(
             builder: (context, snapshot) {
               final descriptorData = snapshot.data;
@@ -269,6 +269,8 @@ class _CardAreaState extends State<CardArea> {
       axis: Axis.vertical,
       color: underColor,
     );
+    final doNotShowGuideUnder =
+        card?.effectiveContentExpand(widget.projectSettings) == 1;
     Widget eachCardFrame = Container();
     if (widget.layoutMode) {
       eachCardFrame = Container(
@@ -282,8 +284,8 @@ class _CardAreaState extends State<CardArea> {
       LayoutHelper(
           color: Colors.orange, visible: widget.layoutMode, flashing: false),
       eachCardFrame,
-      verticalGuideUnder,
-      horizontalGuideUnder,
+      doNotShowGuideUnder ? Container() : verticalGuideUnder,
+      doNotShowGuideUnder ? Container() : horizontalGuideUnder,
       imageWidget,
       verticalGuide,
       horizontalGuide
