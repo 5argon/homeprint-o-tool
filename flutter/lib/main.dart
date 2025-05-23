@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         title: 'Homeprint O\' Tool',
         themeMode: ThemeMode.system,
         theme: theme.light(),
-        darkTheme: theme.light(),
+        darkTheme: theme.dark(),
         home: MyHomePage(),
       ),
     );

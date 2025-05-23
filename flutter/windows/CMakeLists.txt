@@ -4,7 +4,7 @@ project(homeprint_o_tool LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "Homeprint O Tool")
+set(BINARY_NAME "homeprint_o_tool")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
