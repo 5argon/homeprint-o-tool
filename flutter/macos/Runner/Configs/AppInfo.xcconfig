@@ -5,10 +5,11 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
+// NOTE: Using ' character here will causes bug in the build pipeline.
 PRODUCT_NAME = Homeprint O’Tool
 
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = com.5argon.HomeprintOTool
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2023 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 Sirawat Pitaksarit / 5argon. All rights reserved.

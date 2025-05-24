@@ -1,5 +1,5 @@
 name: homeprint_o_tool
-description: A tool to arrange individual card images with bleed into double-sided uncut sheets.
+description: A desktop software that creates duplex uncut sheet image files out of individual graphics.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
