@@ -19,7 +19,7 @@ For this walkthrough, we'll use [this coldtoes's extended bleed edits of the off
 
 Download the entire "Parallels & Challenge Scenarios" folder. While you can rename the downloaded folder, do not rename any folders inside.  Next, download this `.json` project file and place it **inside** the folder.
 
-- [Download the Project File]()
+- [Download the Project File (click the Download Raw File button)](project/parallel_and_challenge_scenarios.json)
 
 Open the program and press "Load JSON" to load that file. There are a few neat things that I've set up in this project.
 
@@ -58,7 +58,7 @@ Remember to print some spares if you are planning to cut them yourself, so any c
 
 Same as the Parallel Investigators, [coldtoes also have made bleed-extended card graphics of the taboo here](https://drive.google.com/drive/folders/1SDoCdT3-b76YQux0KVjHepRFuFKBBOg5). For this example, I've made a project targeting the `Taboo 2.3 2024 Oct 24`. It is constantly changing each year, so if you are reading this when a newer Taboo list has been released, you might have to create a new project file for it.
 
-- [Download the Project File]()
+- [Download the Project File](project/taboo_23.json)
 
 Put the project JSON file inside the taboo folder. You know the drill by now. Except in this project each card has a quantity higher than 1 assigned. Picking a group will usually add two copies of each card.
 
