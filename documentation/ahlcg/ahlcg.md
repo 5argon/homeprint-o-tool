@@ -16,7 +16,7 @@ By the way, you can check out [Mysterious Chanting](https://mysteriouschanting.w
 
 ## Fan-made Campaigns
 
-I made four sample projects showcasing custom campaigns made by four different authors.
+I made four sample projects showcasing custom campaigns made by four different authors. These are true endgame of this program I was aiming for from the start, the ability to plug in a project file and any patches into different distribution formats, without the author having to adjust anything from their side.
 
 - [Dark Matter Campaign by Axolotl](dark-matter.md)
 - [Ages Unwound Campaign by Olivia Juliet](ages-unwound.md)

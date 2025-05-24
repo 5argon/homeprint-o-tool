@@ -31,18 +31,17 @@ class AboutPage extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 600),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 8,
               children: [
                 Image.asset(
                   'assets/about.png',
-                  height: 120,
+                  height: 250,
                   fit: BoxFit.contain,
                 ),
-                const SizedBox(height: 16),
                 Text(
                   "Homeprint O'Tool",
                   style: titleStyle,
                 ),
-                const SizedBox(height: 8),
                 FutureBuilder(
                     future: packageInfo,
                     builder: (_, snapshot) {
@@ -56,7 +55,6 @@ class AboutPage extends StatelessWidget {
                         return const CircularProgressIndicator();
                       }
                     }),
-                const SizedBox(height: 24),
                 SizedBox(
                   width: 450,
                   child: const Text(
@@ -64,22 +62,18 @@ class AboutPage extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 32),
                 Text(
                   "Developer",
                   style: subtitleStyle,
                 ),
-                const SizedBox(height: 8),
                 const Text(
                   "5argon",
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
                 Text(
-                  "Icon Artwork",
+                  "Artwork",
                   style: subtitleStyle,
                 ),
-                const SizedBox(height: 8),
                 Wrap(
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -89,26 +83,6 @@ class AboutPage extends StatelessWidget {
                           _launchURL('https://facebook.com/Sleepy.m.Sloth'),
                       child: Text(
                         "Slothy",
-                        style: linkStyle,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  "Contact",
-                  style: subtitleStyle,
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    const Text("Email: "),
-                    GestureDetector(
-                      onTap: () => _launchURL('mailto:pyasry@gmail.com'),
-                      child: Text(
-                        "pyasry@gmail.com",
                         style: linkStyle,
                       ),
                     ),
@@ -130,7 +104,25 @@ class AboutPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 8),
+                Text(
+                  "Contact",
+                  style: subtitleStyle,
+                ),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    const Text("Email: "),
+                    GestureDetector(
+                      onTap: () => _launchURL('mailto:pyasry@gmail.com'),
+                      child: Text(
+                        "pyasry@gmail.com",
+                        style: linkStyle,
+                      ),
+                    ),
+                  ],
+                ),
                 const Text(
                   "You can post issues and feature requests on the Issues section in the GitHub repository, or send an email.",
                   textAlign: TextAlign.center,
