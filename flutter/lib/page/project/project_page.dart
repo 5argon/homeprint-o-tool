@@ -28,6 +28,7 @@ class ProjectPage extends StatelessWidget {
       projectSettings.defaultContentCenterOffset,
       projectSettings.defaultContentExpand,
       projectSettings.defaultRotation,
+      layoutSettings: projectSettings.layoutSettings,
     );
     onProjectSettingsChanged(updatedSettings);
   }
@@ -38,6 +39,7 @@ class ProjectPage extends StatelessWidget {
       projectSettings.defaultContentCenterOffset,
       value,
       projectSettings.defaultRotation,
+      layoutSettings: projectSettings.layoutSettings,
     );
     onProjectSettingsChanged(updatedSettings);
   }
@@ -48,6 +50,7 @@ class ProjectPage extends StatelessWidget {
       projectSettings.defaultContentCenterOffset,
       projectSettings.defaultContentExpand,
       value,
+      layoutSettings: projectSettings.layoutSettings,
     );
     onProjectSettingsChanged(updatedSettings);
   }
