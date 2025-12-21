@@ -235,7 +235,7 @@ class _CardAreaState extends State<CardArea> {
                             guideVertical: widget.guideVertical,
                             color: Colors.red,
                             // color: widget.previewCutLine ? Colors.red : const Color.fromARGB(60, 255, 255, 255),
-                            strokeWidth: 1.0,
+                            strokeWidth: 2.0,
                             cornerLength: 10,
                           ),
                           child: imageFileWidget
