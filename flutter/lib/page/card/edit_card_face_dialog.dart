@@ -229,6 +229,11 @@ class EditCardFaceDialogState extends State<EditCardFaceDialog>
                                   final tempCard =
                                       CardFace.withRelativeFilePath(
                                           tempFilePath!);
+                                  tempCard.useDefaultRotation =
+                                      useDefaultRotation;
+                                  if (!useDefaultRotation) {
+                                    tempCard.rotation = customRotation;
+                                  }
 
                                   final result = await showDialog<double>(
                                     context: context,
