@@ -2,6 +2,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/core/card_group.dart';
 import 'package:homeprint_o_tool/core/layout_const.dart';
+import 'package:homeprint_o_tool/core/layout_storage.dart';
 import 'package:homeprint_o_tool/page/about/about_page.dart';
 import 'package:homeprint_o_tool/page/picks/picks_page.dart';
 import 'package:homeprint_o_tool/page/linked_card_face/linked_card_face_page.dart';
@@ -67,8 +68,7 @@ ProjectSettings getDefaultProjectSettings() => ProjectSettings(
     SizePhysical(6.3, 8.8, PhysicalSizeType.centimeter),
     Alignment.center,
     1.0,
-    Rotation.none,
-    layoutSettings: getDefaultLayoutData());
+    Rotation.none);
 
 // Return a fresh copy of default cards each time to avoid shared references
 DefinedCards getDefaultDefinedCards() => [CardGroup([], "Default Group")];
@@ -104,6 +104,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   initState() {
     super.initState();
+    // Load layout data from local storage on app start
+    _loadLayoutData();
+  }
+
+  /// Load layout data from local storage.
+  Future<void> _loadLayoutData() async {
+    final loadedLayoutData = await LayoutStorage.loadLayoutData();
+    if (loadedLayoutData != null) {
+      setState(() {
+        _layoutData = loadedLayoutData;
+      });
+    }
   }
 
   @override
@@ -210,6 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       setState(() {
                         _layoutData = ld;
                       });
+                      LayoutStorage.saveLayoutData(ld);
                     },
                     projectSettings: _projectSettings,
                   );
@@ -299,8 +312,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // Append .json if not already.
         final filePathJson =
             !filePath.path.endsWith(".json") ? "$filePath.json" : filePath.path;
-        // Ensure layout settings are saved inside project settings
-        _projectSettings.layoutSettings = _layoutData;
+        // Save layout data to local storage (not in project file)
+        await LayoutStorage.saveLayoutData(_layoutData);
         final saveFile =
             SaveFile(_projectSettings, _linkedCardFaces, _definedCards);
         final saveResult = await saveFile.saveToFile(filePathJson);
@@ -319,8 +332,6 @@ class _MyHomePageState extends State<MyHomePage> {
           _includes = [];
           _skipIncludes = [];
           _layoutData = getDefaultLayoutData();
-          // Keep project settings in sync with UI layout data
-          _projectSettings.layoutSettings = _layoutData;
           // On new, go to project settings.
           _selectedIndex = 0;
         });
@@ -338,8 +349,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _previousFileName = loadResult.fileName;
             _includes = [];
             _skipIncludes = [];
-            // Sync UI layout data from loaded project settings
-            _layoutData = _projectSettings.layoutSettings;
+            // Layout data stays in local storage, not loaded from project file
             // On load, go to cards tab.
             _selectedIndex = 2;
           });
