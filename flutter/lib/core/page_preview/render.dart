@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/json.dart';
+import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
@@ -30,7 +31,7 @@ class ExportSettings {
   final Rotation backRotation;
   final bool frontSideOnly;
   final int pixelPerInch;
-  final bool previewCutLine;
+  final CutGuideStyle cutGuideStyle;
 
   ExportSettings({
     required this.prefix,
@@ -41,7 +42,7 @@ class ExportSettings {
     required this.backRotation,
     required this.frontSideOnly,
     required this.pixelPerInch,
-    required this.previewCutLine,
+    required this.cutGuideStyle,
   });
 }
 
@@ -228,7 +229,7 @@ Future renderRender(
           layoutData: layoutData,
           cards: cards.front,
           layout: false,
-          previewCutLine: settings.previewCutLine,
+          cutGuideStyle: settings.cutGuideStyle,
           baseDirectory: baseDirectory,
           projectSettings: projectSettings,
           hideInnerCutLine: true,
@@ -256,7 +257,7 @@ Future renderRender(
             settings.backSuffix,
             i,
             settings.frontRotation,
-            settings.previewCutLine,
+            settings.cutGuideStyle,
           );
         } catch (e) {
           print('Error rendering front side of page ${i + 1}: $e');
@@ -282,7 +283,7 @@ Future renderRender(
           layoutData: layoutData,
           cards: cards.back,
           layout: false,
-          previewCutLine: settings.previewCutLine,
+          cutGuideStyle: settings.cutGuideStyle,
           baseDirectory: baseDirectory,
           projectSettings: projectSettings,
           hideInnerCutLine: true,
@@ -310,7 +311,7 @@ Future renderRender(
             settings.backSuffix,
             i,
             settings.backRotation,
-            settings.previewCutLine,
+            settings.cutGuideStyle,
           );
         } catch (e) {
           print('Error rendering back side of page ${i + 1}: $e');
@@ -417,12 +418,12 @@ Future<void> renderOneSide(
     String backSuffix,
     int pageNumber,
     Rotation rotation,
-    bool previewCutLine) async {
+    CutGuideStyle cutGuideStyle) async {
   PagePreview toRender = PagePreview(
     layoutData: layoutData,
     cards: cardsOnePage,
     layout: false,
-    previewCutLine: previewCutLine,
+    cutGuideStyle: cutGuideStyle,
     baseDirectory: baseDirectory,
     projectSettings: projectSettings,
     hideInnerCutLine: true,
@@ -490,7 +491,7 @@ Future<ExportSettings?> openPreExportDialog(
   Rotation tempFrontRotation = Rotation.none;
   Rotation tempBackRotation = Rotation.none;
   bool tempFrontSideOnly = false;
-  bool tempPreviewCutLine = false;
+  CutGuideStyle tempCutGuideStyle = CutGuideStyle.none;
   int tempPixelPerInch = 300; // Default PPI value
 
   return await showDialog<ExportSettings>(
@@ -501,7 +502,7 @@ Future<ExportSettings?> openPreExportDialog(
           return AlertDialog(
             title: Text('Export Settings'),
             content: SizedBox(
-              width: 400,
+              width: 500,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -516,17 +517,31 @@ Future<ExportSettings?> openPreExportDialog(
                       });
                     },
                   ),
-                  CheckboxListTile(
-                    title: Text('Show Cut Lines in Export'),
-                    value: tempPreviewCutLine,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                    onChanged: (value) {
-                      setState(() {
-                        tempPreviewCutLine = value ?? false;
-                      });
-                    },
+                  SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Text('Guides on Graphic:',
+                          style: TextStyle(fontSize: 14)),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: SegmentedButton<int>(
+                          segments: [
+                            ButtonSegment(value: 0, label: Text("None")),
+                            ButtonSegment(value: 1, label: Text("Line")),
+                            ButtonSegment(value: 2, label: Text("Corners")),
+                          ],
+                          selected: {tempCutGuideStyle.index},
+                          onSelectionChanged: (Set<int> selection) {
+                            setState(() {
+                              tempCutGuideStyle =
+                                  CutGuideStyle.values[selection.first];
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
+                  SizedBox(height: 16),
                   TextField(
                     controller: TextEditingController(text: tempTemplate),
                     decoration: InputDecoration(
@@ -682,7 +697,7 @@ Future<ExportSettings?> openPreExportDialog(
                       backRotation: tempBackRotation,
                       frontSideOnly: tempFrontSideOnly,
                       pixelPerInch: tempPixelPerInch,
-                      previewCutLine: tempPreviewCutLine,
+                      cutGuideStyle: tempCutGuideStyle,
                     ),
                   ); // Confirm
                 },

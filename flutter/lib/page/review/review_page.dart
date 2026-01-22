@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
+import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
 import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class ReviewPage extends StatefulWidget {
 
 class _ReviewPageState extends State<ReviewPage> {
   int _page = 1;
-  bool _previewCutLine = false;
+  CutGuideStyle _cutGuideStyle = CutGuideStyle.none;
   PreviewStyle _previewStyle = PreviewStyle.dual;
 
   @override
@@ -69,7 +70,7 @@ class _ReviewPageState extends State<ReviewPage> {
         layoutData: widget.layoutData,
         cards: cards.front,
         layout: false,
-        previewCutLine: _previewCutLine,
+        cutGuideStyle: _cutGuideStyle,
         baseDirectory: widget.baseDirectory,
         projectSettings: widget.projectSettings,
         hideInnerCutLine: true,
@@ -82,7 +83,7 @@ class _ReviewPageState extends State<ReviewPage> {
         layoutData: widget.layoutData,
         cards: cards.back,
         layout: false,
-        previewCutLine: _previewCutLine,
+        cutGuideStyle: _cutGuideStyle,
         baseDirectory: widget.baseDirectory,
         projectSettings: widget.projectSettings,
         hideInnerCutLine: true,
@@ -203,14 +204,22 @@ class _ReviewPageState extends State<ReviewPage> {
                   ),
                 ),
                 SizedBox(width: 16),
-                Checkbox(
-                    value: _previewCutLine,
-                    onChanged: (checked) {
+                SizedBox(
+                  width: 330,
+                  child: SegmentedButton(
+                    segments: [
+                      ButtonSegment(value: 0, label: Text("-")),
+                      ButtonSegment(value: 1, label: Text("Line")),
+                      ButtonSegment(value: 2, label: Text("Corners")),
+                    ],
+                    selected: {_cutGuideStyle.index},
+                    onSelectionChanged: (p0) {
                       setState(() {
-                        _previewCutLine = checked ?? false;
+                        _cutGuideStyle = CutGuideStyle.values[p0.first];
                       });
-                    }),
-                Text("Preview Cut Line")
+                    },
+                  ),
+                ),
               ],
             ),
           ),

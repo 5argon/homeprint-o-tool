@@ -1,4 +1,5 @@
 import 'package:homeprint_o_tool/core/project_settings.dart';
+import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
 import 'package:homeprint_o_tool/page/layout/layout_debug_display.dart';
 
 import 'package:homeprint_o_tool/core/page_preview/page_preview.dart';
@@ -27,7 +28,7 @@ class LayoutPage extends StatelessWidget {
         layoutData: layoutData,
         cards: [],
         layout: true,
-        previewCutLine: true,
+        cutGuideStyle: CutGuideStyle.cutLine,
         baseDirectory: null,
         projectSettings: projectSettings,
         hideInnerCutLine: true,

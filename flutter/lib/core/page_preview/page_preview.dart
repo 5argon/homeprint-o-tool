@@ -1,4 +1,5 @@
 import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
 import 'package:homeprint_o_tool/core/page_preview/parallel_guide.dart';
 import 'package:homeprint_o_tool/page/layout/layout_helper.dart';
 import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
@@ -20,7 +21,7 @@ class PagePreview extends StatefulWidget {
   final LayoutData layoutData;
   final RowColCards cards;
   final bool layout;
-  final bool previewCutLine;
+  final CutGuideStyle cutGuideStyle;
   final bool hideInnerCutLine;
   final bool back;
 
@@ -32,7 +33,7 @@ class PagePreview extends StatefulWidget {
     required this.layoutData,
     required this.cards,
     required this.layout,
-    required this.previewCutLine,
+    required this.cutGuideStyle,
     required this.baseDirectory,
     required this.projectSettings,
     required this.hideInnerCutLine,
@@ -166,7 +167,7 @@ class _PagePreviewState extends State<PagePreview> {
           card: card,
           cardSize: cardSize,
           layoutMode: widget.layout,
-          previewCutLine: widget.previewCutLine,
+          cutGuideStyle: widget.cutGuideStyle,
           showHorizontalInnerCutLine: !widget.hideInnerCutLine,
           showVerticalInnerCutLine: !widget.hideInnerCutLine,
           back: widget.back,

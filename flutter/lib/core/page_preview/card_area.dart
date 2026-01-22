@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
 import 'package:homeprint_o_tool/core/page_preview/corner_paint.dart';
+import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
 import 'package:homeprint_o_tool/page/layout/layout_data.dart';
@@ -25,7 +26,7 @@ class CardArea extends StatefulWidget {
     required this.card,
     required this.cardSize,
     required this.layoutMode,
-    required this.previewCutLine,
+    required this.cutGuideStyle,
     required this.showVerticalInnerCutLine,
     required this.showHorizontalInnerCutLine,
     required this.back,
@@ -46,7 +47,7 @@ class CardArea extends StatefulWidget {
   final CardFace? card;
   final SizePhysical cardSize;
   final bool layoutMode;
-  final bool previewCutLine;
+  final CutGuideStyle cutGuideStyle;
   final bool showVerticalInnerCutLine;
   final bool showHorizontalInnerCutLine;
   final bool back;
@@ -229,17 +230,17 @@ class _CardAreaState extends State<CardArea> {
                     child: SizedBox(
                       height: double.infinity,
                       width: double.infinity,
-                      child: CustomPaint(
-                          foregroundPainter: CornerPainter(
-                            guideHorizontal: widget.guideHorizontal,
-                            guideVertical: widget.guideVertical,
-                            color: Colors.red,
-                            // color: widget.previewCutLine ? Colors.red : const Color.fromARGB(60, 255, 255, 255),
-                            strokeWidth: 2.0,
-                            cornerLength: 10,
-                          ),
-                          child: imageFileWidget
-                      ),
+                      child: widget.cutGuideStyle == CutGuideStyle.cutCorners
+                          ? CustomPaint(
+                              foregroundPainter: CornerPainter(
+                                guideHorizontal: widget.guideHorizontal,
+                                guideVertical: widget.guideVertical,
+                                color: Colors.red,
+                                strokeWidth: 2.0,
+                                cornerLength: 10,
+                              ),
+                              child: imageFileWidget)
+                          : imageFileWidget,
                     ),
                   );
                 },
@@ -256,18 +257,20 @@ class _CardAreaState extends State<CardArea> {
     Color realColor = Color.fromARGB(60, 255, 255, 255);
     Color underColor = Colors.black;
 
-    if (widget.previewCutLine || widget.showVerticalInnerCutLine) {
+    bool showCutLines = widget.cutGuideStyle == CutGuideStyle.cutLine;
+
+    if (showCutLines || widget.showVerticalInnerCutLine) {
       verticalGuide = ParallelGuide(
         spaceTaken: widget.guideHorizontal,
         axis: Axis.vertical,
-        color: widget.previewCutLine ? previewColor : realColor,
+        color: showCutLines ? previewColor : realColor,
       );
     }
-    if (widget.previewCutLine || widget.showHorizontalInnerCutLine) {
+    if (showCutLines || widget.showHorizontalInnerCutLine) {
       horizontalGuide = ParallelGuide(
         spaceTaken: widget.guideVertical,
         axis: Axis.horizontal,
-        color: widget.previewCutLine ? previewColor : realColor,
+        color: showCutLines ? previewColor : realColor,
       );
     }
     horizontalGuideUnder = ParallelGuide(
