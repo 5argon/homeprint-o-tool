@@ -64,14 +64,15 @@ class FullScreenCardPreview extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.zero,
-      child: KeyboardListener(
-        focusNode: FocusNode(),
+      child: Focus(
         autofocus: true,
-        onKeyEvent: (event) {
+        onKeyEvent: (node, event) {
           if (event is KeyDownEvent &&
               event.logicalKey == LogicalKeyboardKey.escape) {
             Navigator.of(context).pop();
+            return KeyEventResult.handled;
           }
+          return KeyEventResult.ignored;
         },
         child: SizedBox(
           width: size.width,
