@@ -61,6 +61,8 @@ LayoutData getDefaultLayoutData() => LayoutData(
       removeOneRow: false,
       frontPostRotation: Rotation.none,
       backPostRotation: Rotation.none,
+      generateBleeds: GenerateBleeds.none,
+      generatedBleedPercentage: 0.75,
     );
 
 // Return a fresh copy of default project settings each time to avoid shared references

@@ -1,6 +1,11 @@
 import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
 
+enum GenerateBleeds {
+  none,
+  mirrored,
+}
+
 class LayoutData {
   SizePhysical paperSize;
 
@@ -25,6 +30,11 @@ class LayoutData {
   bool removeOneColumn;
   Rotation frontPostRotation;
   Rotation backPostRotation;
+  GenerateBleeds generateBleeds;
+
+  /// Percentage (0.0 to 1.0) of remaining space to fill with generated bleeds.
+  /// 1.0 means completely fill the space, which would obscure cut lines.
+  double generatedBleedPercentage;
 
   LayoutData({
     required this.paperSize,
@@ -36,6 +46,8 @@ class LayoutData {
     required this.removeOneColumn,
     required this.frontPostRotation,
     required this.backPostRotation,
+    required this.generateBleeds,
+    required this.generatedBleedPercentage,
   });
 
   factory LayoutData.fromJson(Map<String, dynamic> json) {
@@ -54,6 +66,10 @@ class LayoutData {
           Rotation.values.byName(json['frontPostRotation'] ?? 'none'),
       backPostRotation:
           Rotation.values.byName(json['backPostRotation'] ?? 'none'),
+      generateBleeds:
+          GenerateBleeds.values.byName(json['generateBleeds'] ?? 'none'),
+      generatedBleedPercentage:
+          (json['generatedBleedPercentage'] ?? 0.75).toDouble(),
     );
   }
 
@@ -68,6 +84,8 @@ class LayoutData {
       'removeOneColumn': removeOneColumn,
       'frontPostRotation': frontPostRotation.name,
       'backPostRotation': backPostRotation.name,
+      'generateBleeds': generateBleeds.name,
+      'generatedBleedPercentage': generatedBleedPercentage,
     };
   }
 }

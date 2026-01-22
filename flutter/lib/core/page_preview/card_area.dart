@@ -31,6 +31,7 @@ class CardArea extends StatefulWidget {
     required this.showHorizontalInnerCutLine,
     required this.back,
     required this.backArrangement,
+    required this.layoutData,
   });
 
   /// Card is centered in this area. It takes this much space horizontally. (Max 1.0)
@@ -52,6 +53,7 @@ class CardArea extends StatefulWidget {
   final bool showHorizontalInnerCutLine;
   final bool back;
   final BackArrangement backArrangement;
+  final LayoutData layoutData;
 
   @override
   State<CardArea> createState() => _CardAreaState();
@@ -207,6 +209,276 @@ class _CardAreaState extends State<CardArea> {
                     fit: BoxFit.none,
                   );
 
+                  // Implement mirrored bleeds if enabled
+                  Widget finalImageWidget;
+                  if (widget.layoutData.generateBleeds ==
+                      GenerateBleeds.mirrored) {
+                    final generatedBleedLimitPercentage =
+                        widget.layoutData.generatedBleedPercentage;
+                    final scaledImageWidth = imageWidth / finalScale;
+                    final leftRightBleed =
+                        (scaledImageWidth - contentWidth) / 2;
+                    final topBottomBleed =
+                        (imageHeight / finalScale - contentHeight) / 2;
+                    final whiteFromLeftEdge = (parentWidth - contentWidth) / 2;
+                    final whiteFromTopEdge = (parentHeight - contentHeight) / 2;
+                    final topMargin = (parentHeight - contentHeight) / 2;
+                    final bottomMargin = (parentHeight - contentHeight) / 2;
+                    final leftMargin = (parentWidth - contentWidth) / 2;
+                    final rightMargin = (parentWidth - contentWidth) / 2;
+
+                    // Clamp bleeds to not exceed available margin space
+                    final effectiveLeftRightBleed =
+                        leftRightBleed.clamp(0.0, leftMargin);
+                    final effectiveTopBottomBleed =
+                        topBottomBleed.clamp(0.0, topMargin);
+                    var topPiece = (topMargin <= 0)
+                        ? Container()
+                        : Positioned(
+                            left: whiteFromLeftEdge - effectiveLeftRightBleed,
+                            top: (topMargin - effectiveTopBottomBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            width: contentWidth + (effectiveLeftRightBleed * 2),
+                            height: (topMargin - effectiveTopBottomBleed) *
+                                generatedBleedLimitPercentage,
+                            child: Stack(
+                              children: [
+                                Transform(
+                                  transform: Matrix4.identity()
+                                    ..scale(1.0, -1.0),
+                                  alignment: Alignment.center,
+                                  child: Image.file(
+                                    fileObject,
+                                    alignment: Alignment.topCenter,
+                                    width: parentWidth,
+                                    height: parentHeight,
+                                    scale: finalScale,
+                                    fit: BoxFit.none,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                    var bottomPiece = (bottomMargin <= 0)
+                        ? Container()
+                        : Positioned(
+                            left: whiteFromLeftEdge - effectiveLeftRightBleed,
+                            bottom: (bottomMargin - effectiveTopBottomBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            width: contentWidth + (effectiveLeftRightBleed * 2),
+                            height: (bottomMargin - effectiveTopBottomBleed) *
+                                generatedBleedLimitPercentage,
+                            child: Stack(
+                              children: [
+                                Transform(
+                                  transform: Matrix4.identity()
+                                    ..scale(1.0, -1.0),
+                                  alignment: Alignment.center,
+                                  child: Image.file(
+                                    fileObject,
+                                    alignment: Alignment.bottomCenter,
+                                    width: parentWidth,
+                                    height: parentHeight,
+                                    scale: finalScale,
+                                    fit: BoxFit.none,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                    var rightPiece = (rightMargin <= 0)
+                        ? Container()
+                        : Positioned(
+                            right: (rightMargin - effectiveLeftRightBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            top: whiteFromTopEdge - effectiveTopBottomBleed,
+                            width: (rightMargin - effectiveLeftRightBleed) *
+                                generatedBleedLimitPercentage,
+                            height:
+                                contentHeight + (effectiveTopBottomBleed * 2),
+                            child: Stack(
+                              children: [
+                                Transform(
+                                  transform: Matrix4.identity()
+                                    ..scale(-1.0, 1.0),
+                                  alignment: Alignment.center,
+                                  child: Image.file(
+                                    fileObject,
+                                    alignment: Alignment.centerRight,
+                                    width: parentWidth,
+                                    height: parentHeight,
+                                    scale: finalScale,
+                                    fit: BoxFit.none,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                    var leftPiece = (leftMargin <= 0)
+                        ? Container()
+                        : Positioned(
+                            left: (leftMargin - effectiveLeftRightBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            top: whiteFromTopEdge - effectiveTopBottomBleed,
+                            width: (leftMargin - effectiveLeftRightBleed) *
+                                generatedBleedLimitPercentage,
+                            height:
+                                contentHeight + (effectiveTopBottomBleed * 2),
+                            child: Stack(
+                              children: [
+                                Transform(
+                                  transform: Matrix4.identity()
+                                    ..scale(-1.0, 1.0),
+                                  alignment: Alignment.center,
+                                  child: Image.file(
+                                    fileObject,
+                                    alignment: Alignment.centerLeft,
+                                    width: parentWidth,
+                                    height: parentHeight,
+                                    scale: finalScale,
+                                    fit: BoxFit.none,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                    var topLeftPiece = (topMargin <= 0 || leftMargin <= 0)
+                        ? Container()
+                        : Positioned(
+                            left: (leftMargin - effectiveLeftRightBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            top: (topMargin - effectiveTopBottomBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            width: (leftMargin - effectiveLeftRightBleed) *
+                                generatedBleedLimitPercentage,
+                            height: (topMargin - effectiveTopBottomBleed) *
+                                generatedBleedLimitPercentage,
+                            child: Stack(
+                              children: [
+                                Transform(
+                                  transform: Matrix4.identity()
+                                    ..scale(-1.0, -1.0),
+                                  alignment: Alignment.center,
+                                  child: Image.file(
+                                    fileObject,
+                                    alignment: Alignment.topLeft,
+                                    width: parentWidth,
+                                    height: parentHeight,
+                                    scale: finalScale,
+                                    fit: BoxFit.none,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                    var topRightPiece = (topMargin <= 0 || rightMargin <= 0)
+                        ? Container()
+                        : Positioned(
+                            right: (rightMargin - effectiveLeftRightBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            top: (topMargin - effectiveTopBottomBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            width: (rightMargin - effectiveLeftRightBleed) *
+                                generatedBleedLimitPercentage,
+                            height: (topMargin - effectiveTopBottomBleed) *
+                                generatedBleedLimitPercentage,
+                            child: Stack(
+                              children: [
+                                Transform(
+                                  transform: Matrix4.identity()
+                                    ..scale(-1.0, -1.0),
+                                  alignment: Alignment.center,
+                                  child: Image.file(
+                                    fileObject,
+                                    alignment: Alignment.topRight,
+                                    width: parentWidth,
+                                    height: parentHeight,
+                                    scale: finalScale,
+                                    fit: BoxFit.none,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                    var bottomLeftPiece = (bottomMargin <= 0 || leftMargin <= 0)
+                        ? Container()
+                        : Positioned(
+                            left: (leftMargin - effectiveLeftRightBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            bottom: (bottomMargin - effectiveTopBottomBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            width: (leftMargin - effectiveLeftRightBleed) *
+                                generatedBleedLimitPercentage,
+                            height: (bottomMargin - effectiveTopBottomBleed) *
+                                generatedBleedLimitPercentage,
+                            child: Stack(
+                              children: [
+                                Transform(
+                                  transform: Matrix4.identity()
+                                    ..scale(-1.0, -1.0),
+                                  alignment: Alignment.center,
+                                  child: Image.file(
+                                    fileObject,
+                                    alignment: Alignment.bottomLeft,
+                                    width: parentWidth,
+                                    height: parentHeight,
+                                    scale: finalScale,
+                                    fit: BoxFit.none,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                    var bottomRightPiece = (bottomMargin <= 0 ||
+                            rightMargin <= 0)
+                        ? Container()
+                        : Positioned(
+                            right: (rightMargin - effectiveLeftRightBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            bottom: (bottomMargin - effectiveTopBottomBleed) *
+                                (1 - generatedBleedLimitPercentage),
+                            width: (rightMargin - effectiveLeftRightBleed) *
+                                generatedBleedLimitPercentage,
+                            height: (bottomMargin - effectiveTopBottomBleed) *
+                                generatedBleedLimitPercentage,
+                            child: Stack(
+                              children: [
+                                Transform(
+                                  transform: Matrix4.identity()
+                                    ..scale(-1.0, -1.0),
+                                  alignment: Alignment.center,
+                                  child: Image.file(
+                                    fileObject,
+                                    alignment: Alignment.bottomRight,
+                                    width: parentWidth,
+                                    height: parentHeight,
+                                    scale: finalScale,
+                                    fit: BoxFit.none,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+
+                    finalImageWidget = Stack(
+                      fit: StackFit.expand,
+                      clipBehavior: Clip.none,
+                      children: [
+                        topPiece,
+                        bottomPiece,
+                        rightPiece,
+                        leftPiece,
+                        topLeftPiece,
+                        topRightPiece,
+                        bottomLeftPiece,
+                        bottomRightPiece,
+                        imageFileWidget,
+                      ],
+                    );
+                  } else {
+                    finalImageWidget = imageFileWidget;
+                  }
+
                   int turns;
                   switch (effectiveRotation) {
                     case Rotation.none:
@@ -239,8 +511,8 @@ class _CardAreaState extends State<CardArea> {
                                 strokeWidth: 2.0,
                                 cornerLength: 10,
                               ),
-                              child: imageFileWidget)
-                          : imageFileWidget,
+                              child: finalImageWidget)
+                          : finalImageWidget,
                     ),
                   );
                 },

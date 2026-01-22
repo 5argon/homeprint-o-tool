@@ -172,6 +172,7 @@ class _PagePreviewState extends State<PagePreview> {
           showVerticalInnerCutLine: !widget.hideInnerCutLine,
           back: widget.back,
           backArrangement: widget.layoutData.backArrangement,
+          layoutData: widget.layoutData,
         );
         Widget entireCardArea =
             Expanded(flex: cardFlexHorizontal, child: cardArea);

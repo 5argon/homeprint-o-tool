@@ -215,6 +215,80 @@ class LayoutPageForm extends StatelessWidget {
       ],
     );
 
+    final generateBleedsForm = LabelAndForm(
+      label: "Generate Bleeds",
+      help:
+          "Cards may or may not already have bleeds. This setting can extend the bleed by continuing the mirrored effect into the surrounding space. "
+          "The percentage determines how much of the available margin space is filled with generated bleeds. "
+          "At 100%, bleeds would completely fill the space and obscure cut lines between cards.",
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                DropdownButton<GenerateBleeds>(
+                  value: layoutData.generateBleeds,
+                  onChanged: (GenerateBleeds? newValue) {
+                    if (newValue != null) {
+                      layoutData.generateBleeds = newValue;
+                      onLayoutDataChanged(layoutData);
+                    }
+                  },
+                  items: const [
+                    DropdownMenuItem<GenerateBleeds>(
+                      value: GenerateBleeds.none,
+                      child: Text('None'),
+                    ),
+                    DropdownMenuItem<GenerateBleeds>(
+                      value: GenerateBleeds.mirrored,
+                      child: Text('Mirrored'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Visibility(
+              visible: layoutData.generateBleeds == GenerateBleeds.mirrored,
+              maintainSize: true,
+              maintainState: true,
+              maintainAnimation: true,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Row(
+                  children: [
+                    const Text("Remaining space usage:"),
+                    const SizedBox(width: 16),
+                    SizedBox(
+                      width: 200,
+                      child: Slider(
+                        value: layoutData.generatedBleedPercentage,
+                        min: 0.0,
+                        max: 1.0,
+                        divisions: 20,
+                        label:
+                            '${(layoutData.generatedBleedPercentage * 100).round()}%',
+                        onChanged: (double value) {
+                          layoutData.generatedBleedPercentage = value;
+                          onLayoutDataChanged(layoutData);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: 45,
+                      child: Text(
+                          '${(layoutData.generatedBleedPercentage * 100).round()}%'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+
     var cuttingGuideForm = LabelAndForm(
         label: "Cutting Guide Area",
         help:
@@ -227,7 +301,7 @@ class LayoutPageForm extends StatelessWidget {
           ),
         ]);
     var secondForm = Column(
-      children: [cuttingGuideForm, extraBleedForm],
+      children: [cuttingGuideForm, extraBleedForm, generateBleedsForm],
     );
 
     var thirdForm = Column(
@@ -270,6 +344,7 @@ class LayoutPageForm extends StatelessWidget {
                 Column(
                   children: [
                     extraBleedForm,
+                    generateBleedsForm,
                     backArrangementForm,
                     skipsForm,
                   ],
@@ -285,6 +360,7 @@ class LayoutPageForm extends StatelessWidget {
                 const SizedBox(height: 24),
                 cuttingGuideForm,
                 extraBleedForm,
+                generateBleedsForm,
                 backArrangementForm,
                 skipsForm,
               ],
