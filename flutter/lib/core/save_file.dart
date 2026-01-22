@@ -56,7 +56,8 @@ class SaveFile {
   /// Returns file name and directory of the file.
   Future<({String fileName, String baseDirectory})> saveToFile(
       String path) async {
-    var file = File(path);
+    final filePath = path.endsWith('.json') ? path : '$path.json';
+    var file = File(filePath);
     final jsonString = jsonEncode(toJson());
     await file.writeAsString(jsonString);
     final baseDirectory = p.dirname(path);

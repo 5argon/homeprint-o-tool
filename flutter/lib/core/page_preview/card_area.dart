@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/page_preview/corner_paint.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
 import 'package:homeprint_o_tool/page/layout/layout_data.dart';
@@ -228,7 +229,17 @@ class _CardAreaState extends State<CardArea> {
                     child: SizedBox(
                       height: double.infinity,
                       width: double.infinity,
-                      child: imageFileWidget,
+                      child: CustomPaint(
+                          foregroundPainter: CornerPainter(
+                            guideHorizontal: widget.guideHorizontal,
+                            guideVertical: widget.guideVertical,
+                            color: Colors.red,
+                            // color: widget.previewCutLine ? Colors.red : const Color.fromARGB(60, 255, 255, 255),
+                            strokeWidth: 2.0,
+                            cornerLength: 10,
+                          ),
+                          child: imageFileWidget
+                      ),
                     ),
                   );
                 },

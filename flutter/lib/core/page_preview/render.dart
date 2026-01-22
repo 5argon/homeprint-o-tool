@@ -30,6 +30,7 @@ class ExportSettings {
   final Rotation backRotation;
   final bool frontSideOnly;
   final int pixelPerInch;
+  final bool previewCutLine;
 
   ExportSettings({
     required this.prefix,
@@ -40,6 +41,7 @@ class ExportSettings {
     required this.backRotation,
     required this.frontSideOnly,
     required this.pixelPerInch,
+    required this.previewCutLine,
   });
 }
 
@@ -226,7 +228,7 @@ Future renderRender(
           layoutData: layoutData,
           cards: cards.front,
           layout: false,
-          previewCutLine: false,
+          previewCutLine: settings.previewCutLine,
           baseDirectory: baseDirectory,
           projectSettings: projectSettings,
           hideInnerCutLine: true,
@@ -254,6 +256,7 @@ Future renderRender(
             settings.backSuffix,
             i,
             settings.frontRotation,
+            settings.previewCutLine,
           );
         } catch (e) {
           print('Error rendering front side of page ${i + 1}: $e');
@@ -279,7 +282,7 @@ Future renderRender(
           layoutData: layoutData,
           cards: cards.back,
           layout: false,
-          previewCutLine: false,
+          previewCutLine: settings.previewCutLine,
           baseDirectory: baseDirectory,
           projectSettings: projectSettings,
           hideInnerCutLine: true,
@@ -307,6 +310,7 @@ Future renderRender(
             settings.backSuffix,
             i,
             settings.backRotation,
+            settings.previewCutLine,
           );
         } catch (e) {
           print('Error rendering back side of page ${i + 1}: $e');
@@ -412,12 +416,13 @@ Future<void> renderOneSide(
     String frontSuffix,
     String backSuffix,
     int pageNumber,
-    Rotation rotation) async {
+    Rotation rotation,
+    bool previewCutLine) async {
   PagePreview toRender = PagePreview(
     layoutData: layoutData,
     cards: cardsOnePage,
     layout: false,
-    previewCutLine: false,
+    previewCutLine: previewCutLine,
     baseDirectory: baseDirectory,
     projectSettings: projectSettings,
     hideInnerCutLine: true,
@@ -485,6 +490,7 @@ Future<ExportSettings?> openPreExportDialog(
   Rotation tempFrontRotation = Rotation.none;
   Rotation tempBackRotation = Rotation.none;
   bool tempFrontSideOnly = false;
+  bool tempPreviewCutLine = false;
   int tempPixelPerInch = 300; // Default PPI value
 
   return await showDialog<ExportSettings>(
@@ -507,6 +513,17 @@ Future<ExportSettings?> openPreExportDialog(
                     onChanged: (value) {
                       setState(() {
                         tempFrontSideOnly = value ?? false;
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: Text('Show Cut Lines in Export'),
+                    value: tempPreviewCutLine,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: (value) {
+                      setState(() {
+                        tempPreviewCutLine = value ?? false;
                       });
                     },
                   ),
@@ -665,6 +682,7 @@ Future<ExportSettings?> openPreExportDialog(
                       backRotation: tempBackRotation,
                       frontSideOnly: tempFrontSideOnly,
                       pixelPerInch: tempPixelPerInch,
+                      previewCutLine: tempPreviewCutLine,
                     ),
                   ); // Confirm
                 },

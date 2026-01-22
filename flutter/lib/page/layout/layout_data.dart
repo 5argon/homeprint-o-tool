@@ -37,6 +37,39 @@ class LayoutData {
     required this.frontPostRotation,
     required this.backPostRotation,
   });
+
+  factory LayoutData.fromJson(Map<String, dynamic> json) {
+    return LayoutData(
+      paperSize: SizePhysical.fromJson(json['paperSize']),
+      marginSize: SizePhysical.fromJson(json['marginSize']),
+      edgeCutGuideSize: SizePhysical.fromJson(json['edgeCutGuideSize']),
+      backArrangement: BackArrangement.values
+          .byName(json['backArrangement'] ?? 'invertedRow'),
+      skips: (json['skips'] as List<dynamic>? ?? [])
+          .map((e) => e is int ? e : int.tryParse(e.toString()) ?? 0)
+          .toList(),
+      removeOneRow: json['removeOneRow'] ?? false,
+      removeOneColumn: json['removeOneColumn'] ?? false,
+      frontPostRotation:
+          Rotation.values.byName(json['frontPostRotation'] ?? 'none'),
+      backPostRotation:
+          Rotation.values.byName(json['backPostRotation'] ?? 'none'),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'paperSize': paperSize.toJson(),
+      'marginSize': marginSize.toJson(),
+      'edgeCutGuideSize': edgeCutGuideSize.toJson(),
+      'backArrangement': backArrangement.name,
+      'skips': skips,
+      'removeOneRow': removeOneRow,
+      'removeOneColumn': removeOneColumn,
+      'frontPostRotation': frontPostRotation.name,
+      'backPostRotation': backPostRotation.name,
+    };
+  }
 }
 
 enum PhysicalSizeType {
