@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -7,6 +6,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
 import 'package:homeprint_o_tool/core/page_preview/export_dialog.dart';
+import 'package:homeprint_o_tool/core/page_preview/png.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
@@ -236,6 +236,7 @@ Future renderRender(
             i,
             settings.frontRotation,
             settings.cutGuideStyle,
+            pixelPerInch,
           );
         } catch (e) {
           print('Error rendering front side of page ${i + 1}: $e');
@@ -290,6 +291,7 @@ Future renderRender(
             i,
             settings.backRotation,
             settings.cutGuideStyle,
+            pixelPerInch,
           );
         } catch (e) {
           print('Error rendering back side of page ${i + 1}: $e');
@@ -396,7 +398,8 @@ Future<void> renderOneSide(
     String backSuffix,
     int pageNumber,
     Rotation rotation,
-    CutGuideStyle cutGuideStyle) async {
+    CutGuideStyle cutGuideStyle,
+    int pixelPerInch) async {
   PagePreview toRender = PagePreview(
     layoutData: layoutData,
     cards: cardsOnePage,
@@ -453,15 +456,11 @@ Future<void> renderOneSide(
     finalImageData = imageUint;
   }
 
-  await savePng(finalImageData, directory, fileName);
+  await savePng(finalImageData, directory, fileName, pixelPerInch);
 
   // Help trigger garbage collection between pages to reduce memory pressure
   // This is particularly important for large export jobs with many high-resolution images
   await Future.delayed(Duration.zero);
-}
-
-Future savePng(Uint8List imageData, String directory, String fileName) async {
-  await File("$directory/$fileName.png").writeAsBytes(imageData);
 }
 
 Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
