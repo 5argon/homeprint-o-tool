@@ -9,6 +9,7 @@ import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
+import 'package:homeprint_o_tool/core/export_storage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -484,211 +485,234 @@ Future<void> renderOneSide(
 
 Future<ExportSettings?> openPreExportDialog(
     BuildContext context, LayoutData layoutData) async {
-  String tempPrefix = "export";
-  String tempTemplate = "{prefix}_{page}_{side}";
-  String tempFrontSuffix = "A";
-  String tempBackSuffix = "B";
-  Rotation tempFrontRotation = Rotation.none;
-  Rotation tempBackRotation = Rotation.none;
-  bool tempFrontSideOnly = false;
-  CutGuideStyle tempCutGuideStyle = CutGuideStyle.none;
-  int tempPixelPerInch = 300; // Default PPI value
+  // Load saved settings or use defaults
+  final savedSettings = await ExportStorage.loadExportSettings() ??
+      ExportStorage.getDefaultExportSettings();
+
+  String tempPrefix = savedSettings.prefix;
+  String tempTemplate = savedSettings.template;
+  String tempFrontSuffix = savedSettings.frontSuffix;
+  String tempBackSuffix = savedSettings.backSuffix;
+  Rotation tempFrontRotation = savedSettings.frontRotation;
+  Rotation tempBackRotation = savedSettings.backRotation;
+  bool tempFrontSideOnly = savedSettings.frontSideOnly;
+  CutGuideStyle tempCutGuideStyle = savedSettings.cutGuideStyle;
+  int tempPixelPerInch = savedSettings.pixelPerInch;
 
   return await showDialog<ExportSettings>(
     context: context,
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (context, setState) {
-          return AlertDialog(
-            title: Text('Export Settings'),
-            content: SizedBox(
-              width: 500,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CheckboxListTile(
-                    title: Text('Front Side Only'),
-                    value: tempFrontSideOnly,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                    onChanged: (value) {
-                      setState(() {
-                        tempFrontSideOnly = value ?? false;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Text('Guides on Graphic:',
-                          style: TextStyle(fontSize: 14)),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: SegmentedButton<int>(
-                          segments: [
-                            ButtonSegment(value: 0, label: Text("None")),
-                            ButtonSegment(value: 1, label: Text("Line")),
-                            ButtonSegment(value: 2, label: Text("Corners")),
-                          ],
-                          selected: {tempCutGuideStyle.index},
-                          onSelectionChanged: (Set<int> selection) {
+          return PopScope(
+            onPopInvokedWithResult: (didPop, result) {
+              // Save settings whenever dialog is dismissed (including Escape key)
+              if (didPop) {
+                final settings = ExportSettings(
+                  prefix: tempPrefix,
+                  template: tempTemplate,
+                  frontSuffix: tempFrontSuffix,
+                  backSuffix: tempBackSuffix,
+                  frontRotation: tempFrontRotation,
+                  backRotation: tempBackRotation,
+                  frontSideOnly: tempFrontSideOnly,
+                  pixelPerInch: tempPixelPerInch,
+                  cutGuideStyle: tempCutGuideStyle,
+                );
+                ExportStorage.saveExportSettings(settings);
+              }
+            },
+            child: AlertDialog(
+              title: Text('Export Settings'),
+              content: SizedBox(
+                width: 500,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CheckboxListTile(
+                      title: Text('Front Side Only'),
+                      value: tempFrontSideOnly,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
+                      onChanged: (value) {
+                        setState(() {
+                          tempFrontSideOnly = value ?? false;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Text('Guides on Graphic:',
+                            style: TextStyle(fontSize: 14)),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: SegmentedButton<int>(
+                            segments: [
+                              ButtonSegment(value: 0, label: Text("None")),
+                              ButtonSegment(value: 1, label: Text("Line")),
+                              ButtonSegment(value: 2, label: Text("Corners")),
+                            ],
+                            selected: {tempCutGuideStyle.index},
+                            onSelectionChanged: (Set<int> selection) {
+                              setState(() {
+                                tempCutGuideStyle =
+                                    CutGuideStyle.values[selection.first];
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: TextEditingController(text: tempTemplate),
+                      decoration: InputDecoration(
+                        labelText: "File Name Template",
+                        helperText:
+                            "Use {prefix}, {page}, {side} as placeholders.",
+                      ),
+                      onChanged: (value) {
+                        tempTemplate = value;
+                      },
+                    ),
+                    TextField(
+                      controller: TextEditingController(text: tempPrefix),
+                      decoration:
+                          InputDecoration(labelText: "File Name Prefix"),
+                      onChanged: (value) {
+                        tempPrefix = value;
+                      },
+                    ),
+                    TextField(
+                      controller: TextEditingController(text: tempFrontSuffix),
+                      decoration:
+                          InputDecoration(labelText: "Front Side Suffix"),
+                      onChanged: (value) {
+                        tempFrontSuffix = value;
+                      },
+                    ),
+                    TextField(
+                      controller: TextEditingController(text: tempBackSuffix),
+                      decoration: InputDecoration(
+                        labelText: "Back Side Suffix",
+                        enabled: !tempFrontSideOnly,
+                      ),
+                      onChanged: (value) {
+                        tempBackSuffix = value;
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    DropdownButtonFormField<Rotation>(
+                      value: tempFrontRotation,
+                      decoration:
+                          InputDecoration(labelText: "Front Post-Rotation"),
+                      items: [
+                        DropdownMenuItem(
+                          value: Rotation.none,
+                          child: Text("None"),
+                        ),
+                        DropdownMenuItem(
+                          value: Rotation.clockwise90,
+                          child: Text("Clockwise 90"),
+                        ),
+                        DropdownMenuItem(
+                          value: Rotation.counterClockwise90,
+                          child: Text("Counter-clockwise 90"),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          tempFrontRotation = value;
+                        }
+                      },
+                    ),
+                    SizedBox(height: 8),
+                    DropdownButtonFormField<Rotation>(
+                      value: tempBackRotation,
+                      decoration: InputDecoration(
+                        labelText: "Back Post-Rotation",
+                      ),
+                      items: [
+                        DropdownMenuItem(
+                          value: Rotation.none,
+                          child: Text("None"),
+                        ),
+                        DropdownMenuItem(
+                          value: Rotation.clockwise90,
+                          child: Text("Clockwise 90"),
+                        ),
+                        DropdownMenuItem(
+                          value: Rotation.counterClockwise90,
+                          child: Text("Counter-clockwise 90"),
+                        ),
+                      ],
+                      onChanged: tempFrontSideOnly
+                          ? null
+                          : (value) {
+                              if (value != null) {
+                                tempBackRotation = value;
+                              }
+                            },
+                    ),
+                    SizedBox(height: 16),
+                    Builder(
+                      builder: (context) {
+                        final controller = TextEditingController(
+                            text: tempPixelPerInch.toString());
+                        final focusNode = FocusNode();
+
+                        // Calculate pixel dimensions based on paper size and PPI
+                        final pixelWidth =
+                            layoutData.paperSize.widthInch * tempPixelPerInch;
+                        final pixelHeight =
+                            layoutData.paperSize.heightInch * tempPixelPerInch;
+                        final helperText =
+                            "Paper size: ${layoutData.paperSize.width.toStringAsFixed(1)} × ${layoutData.paperSize.height.toStringAsFixed(1)} ${layoutData.paperSize.unit == PhysicalSizeType.centimeter ? 'cm' : 'in'}\n"
+                            "Output size: ${pixelWidth.round()} × ${pixelHeight.round()} px";
+
+                        void updatePPI(String value) {
+                          int? parsedValue = int.tryParse(value);
+                          if (parsedValue != null && parsedValue > 0) {
                             setState(() {
-                              tempCutGuideStyle =
-                                  CutGuideStyle.values[selection.first];
+                              tempPixelPerInch = parsedValue;
                             });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  TextField(
-                    controller: TextEditingController(text: tempTemplate),
-                    decoration: InputDecoration(
-                      labelText: "File Name Template",
-                      helperText:
-                          "Use {prefix}, {page}, {side} as placeholders.",
-                    ),
-                    onChanged: (value) {
-                      tempTemplate = value;
-                    },
-                  ),
-                  TextField(
-                    controller: TextEditingController(text: tempPrefix),
-                    decoration: InputDecoration(labelText: "File Name Prefix"),
-                    onChanged: (value) {
-                      tempPrefix = value;
-                    },
-                  ),
-                  TextField(
-                    controller: TextEditingController(text: tempFrontSuffix),
-                    decoration: InputDecoration(labelText: "Front Side Suffix"),
-                    onChanged: (value) {
-                      tempFrontSuffix = value;
-                    },
-                  ),
-                  TextField(
-                    controller: TextEditingController(text: tempBackSuffix),
-                    decoration: InputDecoration(
-                      labelText: "Back Side Suffix",
-                      enabled: !tempFrontSideOnly,
-                    ),
-                    onChanged: (value) {
-                      tempBackSuffix = value;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  DropdownButtonFormField<Rotation>(
-                    value: tempFrontRotation,
-                    decoration:
-                        InputDecoration(labelText: "Front Post-Rotation"),
-                    items: [
-                      DropdownMenuItem(
-                        value: Rotation.none,
-                        child: Text("None"),
-                      ),
-                      DropdownMenuItem(
-                        value: Rotation.clockwise90,
-                        child: Text("Clockwise 90"),
-                      ),
-                      DropdownMenuItem(
-                        value: Rotation.counterClockwise90,
-                        child: Text("Counter-clockwise 90"),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) {
-                        tempFrontRotation = value;
-                      }
-                    },
-                  ),
-                  SizedBox(height: 8),
-                  DropdownButtonFormField<Rotation>(
-                    value: tempBackRotation,
-                    decoration: InputDecoration(
-                      labelText: "Back Post-Rotation",
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: Rotation.none,
-                        child: Text("None"),
-                      ),
-                      DropdownMenuItem(
-                        value: Rotation.clockwise90,
-                        child: Text("Clockwise 90"),
-                      ),
-                      DropdownMenuItem(
-                        value: Rotation.counterClockwise90,
-                        child: Text("Counter-clockwise 90"),
-                      ),
-                    ],
-                    onChanged: tempFrontSideOnly
-                        ? null
-                        : (value) {
-                            if (value != null) {
-                              tempBackRotation = value;
-                            }
-                          },
-                  ),
-                  SizedBox(height: 16),
-                  Builder(
-                    builder: (context) {
-                      final controller = TextEditingController(
-                          text: tempPixelPerInch.toString());
-                      final focusNode = FocusNode();
-
-                      // Calculate pixel dimensions based on paper size and PPI
-                      final pixelWidth =
-                          layoutData.paperSize.widthInch * tempPixelPerInch;
-                      final pixelHeight =
-                          layoutData.paperSize.heightInch * tempPixelPerInch;
-                      final helperText =
-                          "Paper size: ${layoutData.paperSize.width.toStringAsFixed(1)} × ${layoutData.paperSize.height.toStringAsFixed(1)} ${layoutData.paperSize.unit == PhysicalSizeType.centimeter ? 'cm' : 'in'}\n"
-                          "Output size: ${pixelWidth.round()} × ${pixelHeight.round()} px";
-
-                      void updatePPI(String value) {
-                        int? parsedValue = int.tryParse(value);
-                        if (parsedValue != null && parsedValue > 0) {
-                          setState(() {
-                            tempPixelPerInch = parsedValue;
-                          });
+                          }
                         }
-                      }
 
-                      // Add listener to update on focus loss
-                      focusNode.addListener(() {
-                        if (!focusNode.hasFocus) {
-                          updatePPI(controller.text);
-                        }
-                      });
+                        // Add listener to update on focus loss
+                        focusNode.addListener(() {
+                          if (!focusNode.hasFocus) {
+                            updatePPI(controller.text);
+                          }
+                        });
 
-                      return TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        decoration: InputDecoration(
-                          labelText: "Resolution (PPI)",
-                          helperText: helperText,
-                          helperMaxLines: 3,
-                        ),
-                        keyboardType: TextInputType.number,
-                        onSubmitted: updatePPI,
-                      );
-                    },
-                  ),
-                ],
+                        return TextField(
+                          controller: controller,
+                          focusNode: focusNode,
+                          decoration: InputDecoration(
+                            labelText: "Resolution (PPI)",
+                            helperText: helperText,
+                            helperMaxLines: 3,
+                          ),
+                          keyboardType: TextInputType.number,
+                          onSubmitted: updatePPI,
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(null); // Cancel
-                },
-                child: Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(
-                    ExportSettings(
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(null); // Cancel
+                  },
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final settings = ExportSettings(
                       prefix: tempPrefix,
                       template: tempTemplate,
                       frontSuffix: tempFrontSuffix,
@@ -698,12 +722,13 @@ Future<ExportSettings?> openPreExportDialog(
                       frontSideOnly: tempFrontSideOnly,
                       pixelPerInch: tempPixelPerInch,
                       cutGuideStyle: tempCutGuideStyle,
-                    ),
-                  ); // Confirm
-                },
-                child: Text('OK'),
-              ),
-            ],
+                    );
+                    Navigator.of(context).pop(settings); // Confirm
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            ),
           );
         },
       );
