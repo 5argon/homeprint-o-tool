@@ -79,32 +79,30 @@ class LayoutPageForm extends StatelessWidget {
     // Back Side Arrangement form
     final backArrangementForm = LabelAndForm(
       label: "Back Side Arrangement",
-      help: "Determines how cards are positioned on the back side of the page. "
-          "For 'Inverted Row', cards in each row of the front side are reordered from right to left instead. This is a default option because most printers that print back side on even-numbered pages expected this in order to pair up the front face and back face, but please make sure it is really the case for your printer. "
-          "'Same as Front' places cards on the back side in the same order as the front side.",
+      help:
+          "Determines how cards are positioned on the back side of the page.\n\n"
+          "For 'Inverted Row', cards in each row of the front side are reordered from right to left instead. This is a default option because most printers that print back side on even-numbered pages expected this in order to pair up the front face and back face, but please make sure it is really the case for your printer.\n\n"
+          "'Like Front' places cards on the back side in the same order as the front side.",
       children: [
-        Row(
-          children: [
-            DropdownButton<BackArrangement>(
-              value: layoutData.backArrangement,
-              onChanged: (BackArrangement? newValue) {
-                if (newValue != null) {
-                  layoutData.backArrangement = newValue;
-                  onLayoutDataChanged(layoutData);
-                }
-              },
-              items: [
-                DropdownMenuItem<BackArrangement>(
-                  value: BackArrangement.invertedRow,
-                  child: const Text('Inverted Row'),
-                ),
-                DropdownMenuItem<BackArrangement>(
-                  value: BackArrangement.exact,
-                  child: const Text('Same as Front'),
-                ),
-              ],
-            ),
-          ],
+        SizedBox(
+          width: 300,
+          child: SegmentedButton<BackArrangement>(
+            segments: const [
+              ButtonSegment<BackArrangement>(
+                value: BackArrangement.invertedRow,
+                label: Text('Inverted Row'),
+              ),
+              ButtonSegment<BackArrangement>(
+                value: BackArrangement.exact,
+                label: Text('Like Front'),
+              ),
+            ],
+            selected: {layoutData.backArrangement},
+            onSelectionChanged: (Set<BackArrangement> newSelection) {
+              layoutData.backArrangement = newSelection.first;
+              onLayoutDataChanged(layoutData);
+            },
+          ),
         ),
       ],
     );
@@ -151,6 +149,18 @@ class LayoutPageForm extends StatelessWidget {
       ],
     );
 
+    var cuttingGuideForm = LabelAndForm(
+        label: "Cutting Guide Area",
+        help:
+            "Blue in the preview. Black cut guide lines along the edges will be drawn within this area.",
+        children: [
+          Row(
+            children: [
+              edgeCutGuideInput,
+            ],
+          ),
+        ]);
+
     final firstForm = Column(
       children: [
         LabelAndForm(
@@ -182,71 +192,39 @@ class LayoutPageForm extends StatelessWidget {
             ),
           ],
         ),
+        cuttingGuideForm,
       ],
     );
 
-    final extraBleedForm = LabelAndForm(
-      label: "Extra Bleeds",
+    final bleedsForm = LabelAndForm(
+      label: "Bleeds",
       help:
-          "Each rectangle formed by purple lines in the preview is divided into 9-slice by the red cut lines. Surrounding non-center slices are bleeds of each card to be cut away. By default app tries to fit as many cards as possible, and the leftover space are then distributed for bleeds. This might result in very small bleed area if cards are fitted tightly. Removing a row or a column from that optimal calculation is a simple way to get more room for bleeds to cut the card in that axis.",
-      children: [
-        SizedBox(
-          width: 200,
-          child: CheckboxListTile(
-            title: const Text('Remove One Row'),
-            value: layoutData.removeOneRow,
-            onChanged: (bool? value) {
-              layoutData.removeOneRow = value ?? false;
-              onLayoutDataChanged(layoutData);
-            },
-          ),
-        ),
-        SizedBox(
-          width: 200,
-          child: CheckboxListTile(
-            title: const Text('Remove One Column'),
-            value: layoutData.removeOneColumn,
-            onChanged: (bool? value) {
-              layoutData.removeOneColumn = value ?? false;
-              onLayoutDataChanged(layoutData);
-            },
-          ),
-        ),
-      ],
-    );
-
-    final generateBleedsForm = LabelAndForm(
-      label: "Generate Bleeds",
-      help:
-          "Cards may or may not already have bleeds. This setting can extend the bleed by continuing the mirrored effect into the surrounding space. "
-          "The percentage determines how much of the available margin space is filled with generated bleeds. "
-          "At 100%, bleeds would completely fill the space and obscure cut lines between cards.",
+          "Each rectangle formed by purple lines in the preview is divided into 9-slice by the red cut lines. Surrounding non-center slices are bleeds of each card to be cut away.\n\n"
+          "By default app tries to fit as many cards as possible, and the leftover space are then distributed for bleeds. This might result in very small bleed area if cards are fitted tightly. Removing a row or a column from that optimal calculation is a simple way to get more room for bleeds to cut the card in that axis.\n\n"
+          "Cards may or may not already have bleeds. The 'Extended' option can extend the bleed by continuing with mirrored graphic into the surrounding space. The percentage determines how much of the available margin space is filled with generated bleeds. At 100%, bleeds would completely fill the space and obscure cut lines between cards.",
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                DropdownButton<GenerateBleeds>(
-                  value: layoutData.generateBleeds,
-                  onChanged: (GenerateBleeds? newValue) {
-                    if (newValue != null) {
-                      layoutData.generateBleeds = newValue;
-                      onLayoutDataChanged(layoutData);
-                    }
-                  },
-                  items: const [
-                    DropdownMenuItem<GenerateBleeds>(
-                      value: GenerateBleeds.none,
-                      child: Text('None'),
-                    ),
-                    DropdownMenuItem<GenerateBleeds>(
-                      value: GenerateBleeds.mirrored,
-                      child: Text('Mirrored'),
-                    ),
-                  ],
-                ),
-              ],
+            SizedBox(
+              width: 250,
+              child: SegmentedButton<GenerateBleeds>(
+                segments: const [
+                  ButtonSegment<GenerateBleeds>(
+                    value: GenerateBleeds.none,
+                    label: Text('Default'),
+                  ),
+                  ButtonSegment<GenerateBleeds>(
+                    value: GenerateBleeds.mirrored,
+                    label: Text('Extended'),
+                  ),
+                ],
+                selected: {layoutData.generateBleeds},
+                onSelectionChanged: (Set<GenerateBleeds> newSelection) {
+                  layoutData.generateBleeds = newSelection.first;
+                  onLayoutDataChanged(layoutData);
+                },
+              ),
             ),
             Visibility(
               visible: layoutData.generateBleeds == GenerateBleeds.mirrored,
@@ -254,7 +232,7 @@ class LayoutPageForm extends StatelessWidget {
               maintainState: true,
               maintainAnimation: true,
               child: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
+                padding: const EdgeInsets.only(top: 8.0, left: 16.0),
                 child: Row(
                   children: [
                     const Text("Remaining space usage:"),
@@ -284,24 +262,39 @@ class LayoutPageForm extends StatelessWidget {
                 ),
               ),
             ),
+            Row(
+              children: [
+                SizedBox(
+                  width: 200,
+                  child: CheckboxListTile(
+                    title: const Text('Remove One Row'),
+                    value: layoutData.removeOneRow,
+                    onChanged: (bool? value) {
+                      layoutData.removeOneRow = value ?? false;
+                      onLayoutDataChanged(layoutData);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: 200,
+                  child: CheckboxListTile(
+                    title: const Text('Remove One Column'),
+                    value: layoutData.removeOneColumn,
+                    onChanged: (bool? value) {
+                      layoutData.removeOneColumn = value ?? false;
+                      onLayoutDataChanged(layoutData);
+                    },
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ],
     );
 
-    var cuttingGuideForm = LabelAndForm(
-        label: "Cutting Guide Area",
-        help:
-            "Blue in the preview. Black cut guide lines along the edges will be drawn within this area.",
-        children: [
-          Row(
-            children: [
-              edgeCutGuideInput,
-            ],
-          ),
-        ]);
     var secondForm = Column(
-      children: [cuttingGuideForm, extraBleedForm, generateBleedsForm],
+      children: [bleedsForm],
     );
 
     var thirdForm = Column(
@@ -333,18 +326,11 @@ class LayoutPageForm extends StatelessWidget {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  children: [
-                    firstForm,
-                    const SizedBox(height: 24),
-                    cuttingGuideForm,
-                  ],
-                ),
+                firstForm,
                 const SizedBox(width: 40),
                 Column(
                   children: [
-                    extraBleedForm,
-                    generateBleedsForm,
+                    bleedsForm,
                     backArrangementForm,
                     skipsForm,
                   ],
@@ -358,9 +344,7 @@ class LayoutPageForm extends StatelessWidget {
               children: [
                 firstForm,
                 const SizedBox(height: 24),
-                cuttingGuideForm,
-                extraBleedForm,
-                generateBleedsForm,
+                bleedsForm,
                 backArrangementForm,
                 skipsForm,
               ],
