@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:homeprint_o_tool/core/page_preview/render.dart';
+import 'package:homeprint_o_tool/core/page_preview/export_dialog.dart';
 import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
 import 'package:homeprint_o_tool/core/json.dart';
 
