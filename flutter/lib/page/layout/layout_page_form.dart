@@ -201,37 +201,38 @@ class LayoutPageForm extends StatelessWidget {
       help:
           "Each rectangle formed by purple lines in the preview is divided into 9-slice by the red cut lines. Surrounding non-center slices are bleeds of each card to be cut away.\n\n"
           "By default app tries to fit as many cards as possible, and the leftover space are then distributed for bleeds. This might result in very small bleed area if cards are fitted tightly. Removing a row or a column from that optimal calculation is a simple way to get more room for bleeds to cut the card in that axis.\n\n"
-          "Cards may or may not already have bleeds. The 'Extended' option can extend the bleed by continuing with mirrored graphic into the surrounding space. The percentage determines how much of the available margin space is filled with generated bleeds. At 100%, bleeds would completely fill the space and obscure cut lines between cards.",
+          "Cards may or may not already have bleeds. The 'Extended' option can extend the bleed by continuing with mirrored graphic into the surrounding space. The percentage determines how much of the available margin space is filled with generated bleeds. At 100%, bleeds would completely fill the space and obscure cut lines between cards.\n\n"
+          "The 'None' option with 'Collapse Gaps' enabled increases the effective cutting guide area by the total gap space between cards. This results in cards being tightly fitted next to each other with shared edges, allowing you to make fewer cuts.",
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: 250,
-              child: SegmentedButton<GenerateBleeds>(
+              width: 360,
+              child: SegmentedButton<BleedSettings>(
                 segments: const [
-                  ButtonSegment<GenerateBleeds>(
-                    value: GenerateBleeds.none,
+                  ButtonSegment<BleedSettings>(
+                    value: BleedSettings.default_,
                     label: Text('Default'),
                   ),
-                  ButtonSegment<GenerateBleeds>(
-                    value: GenerateBleeds.mirrored,
+                  ButtonSegment<BleedSettings>(
+                    value: BleedSettings.extended,
                     label: Text('Extended'),
                   ),
+                  ButtonSegment<BleedSettings>(
+                    value: BleedSettings.cropped,
+                    label: Text('None'),
+                  ),
                 ],
-                selected: {layoutData.generateBleeds},
-                onSelectionChanged: (Set<GenerateBleeds> newSelection) {
-                  layoutData.generateBleeds = newSelection.first;
+                selected: {layoutData.bleedSettings},
+                onSelectionChanged: (Set<BleedSettings> newSelection) {
+                  layoutData.bleedSettings = newSelection.first;
                   onLayoutDataChanged(layoutData);
                 },
               ),
             ),
-            Visibility(
-              visible: layoutData.generateBleeds == GenerateBleeds.mirrored,
-              maintainSize: true,
-              maintainState: true,
-              maintainAnimation: true,
-              child: Padding(
+            if (layoutData.bleedSettings == BleedSettings.extended)
+              Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 16.0),
                 child: Row(
                   children: [
@@ -261,7 +262,21 @@ class LayoutPageForm extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
+            if (layoutData.bleedSettings == BleedSettings.cropped)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, left: 16.0),
+                child: SizedBox(
+                  width: 400,
+                  child: CheckboxListTile(
+                    title: const Text('Collapse Gaps'),
+                    value: layoutData.collapseGaps,
+                    onChanged: (bool? value) {
+                      layoutData.collapseGaps = value ?? false;
+                      onLayoutDataChanged(layoutData);
+                    },
+                  ),
+                ),
+              ),
             Row(
               children: [
                 SizedBox(

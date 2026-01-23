@@ -19,24 +19,26 @@ class LayoutDebugDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardCount =
         calculateCardCountPerPage(layoutData, projectSettings.cardSize);
+    final effectiveCutGuide =
+        calculateEffectiveCutGuideSize(layoutData, projectSettings.cardSize);
 
     final allBleedVertical = layoutData.paperSize.heightCm -
         (2 * layoutData.marginSize.heightCm) -
-        (2 * layoutData.edgeCutGuideSize.heightCm) -
+        (2 * effectiveCutGuide.heightCm) -
         (cardCount.rows * projectSettings.cardSize.heightCm);
     final allBleedHorizontal = layoutData.paperSize.widthCm -
         (2 * layoutData.marginSize.widthCm) -
-        (2 * layoutData.edgeCutGuideSize.widthCm) -
+        (2 * effectiveCutGuide.widthCm) -
         (cardCount.columns * projectSettings.cardSize.widthCm);
     final bleedPerCardVertical = allBleedVertical / (cardCount.rows);
     final bleedPerCardHorizontal = allBleedHorizontal / (cardCount.columns);
     final bleedPerCardVerticalOneSide = bleedPerCardVertical / 2;
     final bleedPerCardHorizontalOneSide = bleedPerCardHorizontal / 2;
     final edgeDistanceVertical = (layoutData.marginSize.heightCm +
-        layoutData.edgeCutGuideSize.heightCm +
+        effectiveCutGuide.heightCm +
         bleedPerCardVerticalOneSide);
     final edgeDistanceHorizontal = (layoutData.marginSize.widthCm +
-        layoutData.edgeCutGuideSize.widthCm +
+        effectiveCutGuide.widthCm +
         bleedPerCardHorizontalOneSide);
     final gapBetweenCardsVertical = bleedPerCardVertical;
     final gapBetweenCardsHorizontal = bleedPerCardHorizontal;
@@ -62,10 +64,14 @@ class LayoutDebugDisplay extends StatelessWidget {
         DebugWithWarning(
           label: "Gap between cards (horizontal)",
           value: gapBetweenCardsHorizontal,
+          collapsed: layoutData.collapseGaps &&
+              layoutData.bleedSettings == BleedSettings.cropped,
         ),
         DebugWithWarning(
           label: "Gap between cards (vertical)",
           value: gapBetweenCardsVertical,
+          collapsed: layoutData.collapseGaps &&
+              layoutData.bleedSettings == BleedSettings.cropped,
         ),
       ],
     );

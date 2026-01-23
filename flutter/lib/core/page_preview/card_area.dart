@@ -210,10 +210,9 @@ class _CardAreaState extends State<CardArea> {
                     fit: BoxFit.none,
                   );
 
-                  // Implement mirrored bleeds if enabled
                   Widget finalImageWidget;
-                  if (widget.layoutData.generateBleeds ==
-                      GenerateBleeds.mirrored) {
+                  if (widget.layoutData.bleedSettings ==
+                      BleedSettings.extended) {
                     finalImageWidget = buildMirroredBleedWidget(
                       centerImageWidget: imageFileWidget,
                       imageFile: fileObject,
@@ -226,6 +225,17 @@ class _CardAreaState extends State<CardArea> {
                       finalScale: finalScale,
                       generatedBleedLimitPercentage:
                           widget.layoutData.generatedBleedPercentage,
+                    );
+                  } else if (widget.layoutData.bleedSettings ==
+                      BleedSettings.cropped) {
+                    finalImageWidget = Center(
+                      child: ClipRect(
+                        child: SizedBox(
+                          width: contentWidth,
+                          height: contentHeight,
+                          child: imageFileWidget,
+                        ),
+                      ),
                     );
                   } else {
                     finalImageWidget = imageFileWidget;

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class DebugWithWarning extends StatelessWidget {
   final String label;
   final double value;
+  final bool collapsed;
 
   const DebugWithWarning({
     super.key,
     required this.label,
     required this.value,
+    this.collapsed = false,
   });
 
   @override
@@ -16,17 +18,20 @@ class DebugWithWarning extends StatelessWidget {
     const veryLowThresholdCm = 0.5;
 
     Widget? warningIcon;
-    if (value < veryLowThresholdCm) {
-      warningIcon = Tooltip(
-        message: "Might be very difficult to cut.",
-        child: Icon(Icons.warning, color: Theme.of(context).colorScheme.error),
-      );
-    } else if (value < lowThresholdCm) {
-      warningIcon = Tooltip(
-        message: "Might be difficult to cut.",
-        child:
-            Icon(Icons.warning, color: Theme.of(context).colorScheme.primary),
-      );
+    if (!collapsed) {
+      if (value < veryLowThresholdCm) {
+        warningIcon = Tooltip(
+          message: "Might be very difficult to cut.",
+          child:
+              Icon(Icons.warning, color: Theme.of(context).colorScheme.error),
+        );
+      } else if (value < lowThresholdCm) {
+        warningIcon = Tooltip(
+          message: "Might be difficult to cut.",
+          child:
+              Icon(Icons.warning, color: Theme.of(context).colorScheme.primary),
+        );
+      }
     }
 
     return Container(
@@ -37,7 +42,7 @@ class DebugWithWarning extends StatelessWidget {
             CrossAxisAlignment.center, // Ensure vertical alignment
         children: [
           Text("$label: "),
-          Text("${value.toStringAsFixed(2)} cm"),
+          Text(collapsed ? "Collapsed" : "${value.toStringAsFixed(2)} cm"),
           if (warningIcon != null) ...[SizedBox(width: 4), warningIcon],
         ],
       ),

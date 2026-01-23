@@ -76,25 +76,29 @@ class _PagePreviewState extends State<PagePreview> {
     }
     final ld = widget.layoutData;
 
+    // Use effective cutting guide size when collapse gaps is enabled
+    final effectiveCutGuide = calculateEffectiveCutGuideSize(
+        widget.layoutData, widget.projectSettings.cardSize);
+
     const flexMultiplier = 10000000;
     int marginFlex =
         (ld.marginSize.heightCm / ld.paperSize.heightCm * flexMultiplier)
             .round();
     int guideFlex =
-        (ld.edgeCutGuideSize.heightCm / ld.paperSize.heightCm * flexMultiplier)
+        (effectiveCutGuide.heightCm / ld.paperSize.heightCm * flexMultiplier)
             .round();
 
     int guideCornerFlex =
         (ld.marginSize.widthCm / ld.paperSize.widthCm * flexMultiplier).round();
     int guideCornerSecondFlex =
-        (ld.edgeCutGuideSize.widthCm / ld.paperSize.widthCm * flexMultiplier)
+        (effectiveCutGuide.widthCm / ld.paperSize.widthCm * flexMultiplier)
             .round();
 
     double horizontalAllEachCardCm = (ld.paperSize.widthCm -
-            ((ld.marginSize.widthCm + ld.edgeCutGuideSize.widthCm) * 2)) /
+            ((ld.marginSize.widthCm + effectiveCutGuide.widthCm) * 2)) /
         horizontalCards;
     double verticalAllEachCardCm = (ld.paperSize.heightCm -
-            ((ld.marginSize.heightCm + ld.edgeCutGuideSize.heightCm) * 2)) /
+            ((ld.marginSize.heightCm + effectiveCutGuide.heightCm) * 2)) /
         verticalCards;
 
     int cardFlexVertical =
@@ -124,7 +128,7 @@ class _PagePreviewState extends State<PagePreview> {
     List<Widget> allCardRows = [];
     for (var i = 0; i < verticalCards; i++) {
       int cutFlex =
-          (ld.edgeCutGuideSize.widthCm / ld.paperSize.widthCm * flexMultiplier)
+          (effectiveCutGuide.widthCm / ld.paperSize.widthCm * flexMultiplier)
               .round();
 
       double verticalBleedEachCardCm =

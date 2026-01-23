@@ -44,8 +44,9 @@ class LayoutStorage {
       removeOneRow: false,
       frontPostRotation: Rotation.none,
       backPostRotation: Rotation.none,
-      generateBleeds: GenerateBleeds.none,
+      bleedSettings: BleedSettings.default_,
       generatedBleedPercentage: 0.75,
+      collapseGaps: false,
     );
   }
 }

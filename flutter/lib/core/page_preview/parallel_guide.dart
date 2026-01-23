@@ -38,7 +38,12 @@ class ParallelGuide extends StatelessWidget {
     }
     final Widget spacer;
     if (spaceTaken < 1) {
-      spacer = Spacer(flex: (((1 - spaceTaken) / 2) * flexMultiplier).round());
+      final spacerFlex = (((1 - spaceTaken) / 2) * flexMultiplier).round();
+      if (spacerFlex > 0) {
+        spacer = Spacer(flex: spacerFlex);
+      } else {
+        spacer = Container();
+      }
     } else {
       spacer = Container();
     }

@@ -1,9 +1,10 @@
 import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
 
-enum GenerateBleeds {
-  none,
-  mirrored,
+enum BleedSettings {
+  default_,
+  extended,
+  cropped,
 }
 
 class LayoutData {
@@ -30,11 +31,16 @@ class LayoutData {
   bool removeOneColumn;
   Rotation frontPostRotation;
   Rotation backPostRotation;
-  GenerateBleeds generateBleeds;
+  BleedSettings bleedSettings;
 
   /// Percentage (0.0 to 1.0) of remaining space to fill with generated bleeds.
   /// 1.0 means completely fill the space, which would obscure cut lines.
   double generatedBleedPercentage;
+
+  /// When true and bleedSettings is cropped, increases the effective cutting guide
+  /// area by the total gap space between cards, resulting in tightly fitted cards.
+  /// This allows users to make fewer cuts as edges are shared between cards.
+  bool collapseGaps;
 
   LayoutData({
     required this.paperSize,
@@ -46,8 +52,9 @@ class LayoutData {
     required this.removeOneColumn,
     required this.frontPostRotation,
     required this.backPostRotation,
-    required this.generateBleeds,
+    required this.bleedSettings,
     required this.generatedBleedPercentage,
+    required this.collapseGaps,
   });
 
   factory LayoutData.fromJson(Map<String, dynamic> json) {
@@ -66,10 +73,11 @@ class LayoutData {
           Rotation.values.byName(json['frontPostRotation'] ?? 'none'),
       backPostRotation:
           Rotation.values.byName(json['backPostRotation'] ?? 'none'),
-      generateBleeds:
-          GenerateBleeds.values.byName(json['generateBleeds'] ?? 'none'),
+      bleedSettings: BleedSettings.values.byName(
+          json['bleedSettings'] ?? json['generateBleeds'] ?? 'default_'),
       generatedBleedPercentage:
           (json['generatedBleedPercentage'] ?? 0.75).toDouble(),
+      collapseGaps: json['collapseGaps'] ?? false,
     );
   }
 
@@ -84,8 +92,9 @@ class LayoutData {
       'removeOneColumn': removeOneColumn,
       'frontPostRotation': frontPostRotation.name,
       'backPostRotation': backPostRotation.name,
-      'generateBleeds': generateBleeds.name,
+      'bleedSettings': bleedSettings.name,
       'generatedBleedPercentage': generatedBleedPercentage,
+      'collapseGaps': collapseGaps,
     };
   }
 }
