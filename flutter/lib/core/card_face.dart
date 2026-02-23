@@ -151,7 +151,7 @@ class CardFace {
 
   Map<String, dynamic> toJson() {
     return {
-      'relativeFilePath': relativeFilePath,
+      'relativeFilePath': relativeFilePath.replaceAll('\\', '/'),
       'contentCenterOffset': alignmentToJson(contentCenterOffset),
       'useDefaultContentCenterOffset': useDefaultContentCenterOffset,
       'contentExpand': contentExpand,
