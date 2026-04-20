@@ -12,6 +12,8 @@ class AvailableList extends StatelessWidget {
   final Includes includes;
   final Includes skipIncludes;
   final Function(Includes) onIncludesChanged;
+  final void Function(String message) onShowToast;
+  final VoidCallback onPickEachGroupOnce;
 
   const AvailableList({
     super.key,
@@ -22,6 +24,8 @@ class AvailableList extends StatelessWidget {
     required this.includes,
     required this.skipIncludes,
     required this.onIncludesChanged,
+    required this.onShowToast,
+    required this.onPickEachGroupOnce,
   });
 
   @override
@@ -39,19 +43,61 @@ class AvailableList extends StatelessWidget {
         skipIncludes: skipIncludes,
         onAddGroup: (quantity) {
           final newIncludes = includes.toList();
-          newIncludes.add(IncludeItem.cardGroup(cardGroup, quantity));
+          for (var q = 0; q < quantity; q++) {
+            newIncludes.add(IncludeItem.fromCardGroup(cardGroup));
+          }
           onIncludesChanged(newIncludes);
+          final groupDisplayName =
+              cardGroup.name ?? '${cardGroup.cards.length} cards';
+          onShowToast('Picked $groupDisplayName as a group');
         },
         onAddIndividual: (index, quantity) {
+          final card = cardGroup.cards[index];
           final newIncludes = includes.toList();
-          newIncludes
-              .add(IncludeItem.cardEach(cardGroup.cards[index], quantity));
+          String toastMessage;
+
+          // Find last IncludeItem — add to it if unlocked, else create new.
+          if (newIncludes.isNotEmpty && !newIncludes.last.isLocked) {
+            final target = newIncludes.last;
+            for (var q = 0; q < quantity; q++) {
+              target.addCard(card);
+            }
+            toastMessage =
+                'Added ${card.name ?? "card"} to editable picked group "${target.groupName}"';
+          } else {
+            final newItem = IncludeItem.withIndividual(card);
+            if (quantity > 1) {
+              for (var q = 1; q < quantity; q++) {
+                newItem.addCard(card);
+              }
+            }
+            newIncludes.add(newItem);
+            toastMessage =
+                'Created a new Editable Picked Group and added ${card.name ?? "card"} to that group';
+          }
           onIncludesChanged(newIncludes);
+          onShowToast(toastMessage);
         },
       );
       availableListItems.add(gli);
     }
 
-    return ListView(children: availableListItems);
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          child: Row(
+            children: [
+              ElevatedButton.icon(
+                onPressed: onPickEachGroupOnce,
+                icon: const Icon(Icons.playlist_add),
+                label: const Text('Pick Each Group Once'),
+              ),
+            ],
+          ),
+        ),
+        Expanded(child: ListView(children: availableListItems)),
+      ],
+    );
   }
 }

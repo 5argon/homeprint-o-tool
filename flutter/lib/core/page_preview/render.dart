@@ -536,28 +536,8 @@ MissingGraphicsResult checkMissingGraphicsInPickedCards(Includes includeItems,
   int missingGraphicsCount = 0;
 
   for (var includeItem in includeItems) {
-    if (includeItem.cardGroup != null) {
-      // Check all cards in the group that are included
-      for (var card in includeItem.cardGroup!.cards) {
-        // Check front face
-        final frontFace = card.getFront(linkedCardFaces);
-        if (frontFace != null && frontFace.relativeFilePath.isNotEmpty) {
-          if (frontFace.isImageMissing(baseDirectory)) {
-            missingGraphicsCount++;
-          }
-        }
-
-        // Check back face
-        final backFace = card.getBack(linkedCardFaces);
-        if (backFace != null && backFace.relativeFilePath.isNotEmpty) {
-          if (backFace.isImageMissing(baseDirectory)) {
-            missingGraphicsCount++;
-          }
-        }
-      }
-    } else if (includeItem.cardEach != null) {
-      // Check individual card
-      final card = includeItem.cardEach!;
+    for (var picked in includeItem.pickedCards) {
+      final card = picked.duplexCard;
 
       // Check front face
       final frontFace = card.getFront(linkedCardFaces);

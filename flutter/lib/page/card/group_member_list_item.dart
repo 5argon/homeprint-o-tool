@@ -77,28 +77,14 @@ class _GroupMemberListItemState extends State<GroupMemberListItem> {
   bool _isCardInPicks() {
     // Check in includes
     for (var includeItem in widget.includes) {
-      if (includeItem.cardGroup != null) {
-        // Check within each card in the group
-        for (var card in includeItem.cardGroup!.cards) {
-          if (card == widget.card) {
-            return true;
-          }
-        }
-      } else if (includeItem.cardEach == widget.card) {
-        // Direct card reference
+      if (includeItem.containsDuplexCard(widget.card)) {
         return true;
       }
     }
 
     // Check in skipIncludes as well
     for (var includeItem in widget.skipIncludes) {
-      if (includeItem.cardGroup != null) {
-        for (var card in includeItem.cardGroup!.cards) {
-          if (card == widget.card) {
-            return true;
-          }
-        }
-      } else if (includeItem.cardEach == widget.card) {
+      if (includeItem.containsDuplexCard(widget.card)) {
         return true;
       }
     }

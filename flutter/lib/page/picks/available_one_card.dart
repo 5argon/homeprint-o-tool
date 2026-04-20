@@ -51,9 +51,15 @@ class AvailabeOneCard extends StatelessWidget {
       addButton = Container();
     }
     final countNumberInCircle = CountNumberInCircle(value: outerCount);
-    final individualCount = includes
-        .where((element) => element.cardEach == cardEach)
-        .fold(0, (previousValue, element) => previousValue + element.count());
+    final individualCount = includes.fold(0, (previousValue, element) {
+      if (!element.isLocked) {
+        return previousValue +
+            element.pickedCards
+                .where((p) => p.duplexCard == cardEach)
+                .fold(0, (p, e) => p + e.effectiveAmount);
+      }
+      return previousValue;
+    });
     final individualAddInCircle =
         CountNumberInCircle(value: individualCount, plus: true);
     final orderLabel = SizedBox(

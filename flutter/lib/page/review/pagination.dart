@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:homeprint_o_tool/core/card_face.dart';
+import 'package:homeprint_o_tool/core/duplex_card.dart';
 import 'package:homeprint_o_tool/core/save_file.dart';
 import 'package:homeprint_o_tool/page/layout/back_arrangement.dart';
 import 'package:homeprint_o_tool/page/picks/include_data.dart';
@@ -14,7 +13,7 @@ class CardsPagination {
 }
 
 /// Return how many pages it requires to render all included cards,
-/// along with count per page, respecting skips.
+/// along with count per page, respecting skips and page breaks.
 CardsPagination calculatePagination(Includes includes, LayoutData layoutData,
     SizePhysical cardSize, int row, int col) {
   final cardCountRowCol = calculateCardCountPerPage(layoutData, cardSize);
@@ -25,9 +24,49 @@ CardsPagination calculatePagination(Includes includes, LayoutData layoutData,
   final validSkips =
       layoutData.skips.where((e) => e >= 0 && e < cardCountPerPage).toList();
   final cardCountPerPageWithSkips = cardCountPerPage - validSkips.length;
-  final countRequired =
-      includes.fold(0, (prev, includeItem) => prev + includeItem.count());
-  final totalPages = (countRequired / cardCountPerPageWithSkips).ceil();
+  if (cardCountPerPageWithSkips <= 0) {
+    return CardsPagination(0, 0);
+  }
+
+  // Walk through items accounting for page breaks
+  int totalPages = 0;
+  int usedOnCurrentPage = 0;
+  bool hasAnyCards = false;
+
+  for (var includeItem in includes) {
+    if (includeItem.isPageBreak) {
+      // Page break: advance to next page if current page has cards
+      if (usedOnCurrentPage > 0) {
+        totalPages++;
+        usedOnCurrentPage = 0;
+      }
+      continue;
+    }
+    final itemCount = includeItem.count();
+    if (itemCount == 0) continue;
+    hasAnyCards = true;
+
+    var remaining = itemCount;
+    while (remaining > 0) {
+      final spaceLeft = cardCountPerPageWithSkips - usedOnCurrentPage;
+      if (remaining <= spaceLeft) {
+        usedOnCurrentPage += remaining;
+        remaining = 0;
+      } else {
+        remaining -= spaceLeft;
+        totalPages++;
+        usedOnCurrentPage = 0;
+      }
+    }
+  }
+  // Count last page if it has cards
+  if (usedOnCurrentPage > 0) {
+    totalPages++;
+  }
+  if (!hasAnyCards) {
+    totalPages = 0;
+  }
+
   return CardsPagination(totalPages, cardCountPerPageWithSkips);
 }
 
@@ -57,17 +96,41 @@ CardsAtPage cardsAtPage(
   if (page > pagination.totalPages) {
     return CardsAtPage([], [], pagination);
   }
-  final allIncludes = includes.expand((e) => e.linearize()).toList();
-  final allSkips = skipIncludes.expand((e) => e.linearize()).toList();
 
   final validSkips =
       layoutData.skips.where((e) => e <= pagination.perPage).toList();
-  final perPageWithSkips = pagination.perPage - validSkips.length;
 
-  final start = (page - 1) * perPageWithSkips;
-  final end =
-      min((page - 1) * perPageWithSkips + perPageWithSkips, allIncludes.length);
-  final onThisPage = allIncludes.sublist(start, end);
+  // Build per-page card lists accounting for page breaks
+  final List<List<DuplexCard>> pages = [];
+  List<DuplexCard> currentPage = [];
+
+  for (var includeItem in includes) {
+    if (includeItem.isPageBreak) {
+      if (currentPage.isNotEmpty) {
+        pages.add(currentPage);
+        currentPage = [];
+      }
+      continue;
+    }
+    final linearized = includeItem.linearize();
+    for (var card in linearized) {
+      currentPage.add(card);
+      if (currentPage.length >= pagination.perPage) {
+        pages.add(currentPage);
+        currentPage = [];
+      }
+    }
+  }
+  if (currentPage.isNotEmpty) {
+    pages.add(currentPage);
+  }
+
+  if (page > pages.length || page < 1) {
+    return CardsAtPage([], [], pagination);
+  }
+
+  final onThisPage = pages[page - 1];
+  final allSkips = skipIncludes.expand((e) => e.linearize()).toList();
 
   final frontCards =
       onThisPage.map((e) => e.getFront(linkedCardFaces)).toList();

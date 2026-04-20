@@ -48,21 +48,21 @@ class AvailableListItem extends StatelessWidget {
     );
     final groupName = Text(cardGroup.name ?? "");
 
-    final individualAddCount = includes.where((element) {
-      final ce = element.cardEach;
-      // Find if individual card is a part of this group
-      if (cardGroup.cards.any((element) => element == ce)) {
-        return true;
-      } else {
-        return false;
+    final individualAddCount = includes.fold(0, (previousValue, element) {
+      // Count individual cards in unlocked groups that reference cards from this group
+      if (!element.isLocked) {
+        return previousValue +
+            element.pickedCards
+                .where((p) => cardGroup.cards.any((c) => c == p.duplexCard))
+                .fold(0, (p, e) => p + e.effectiveAmount);
       }
-    }).fold(0, (previousValue, element) => previousValue + element.count());
+      return previousValue;
+    });
 
     final totalQuantityDisplay =
         SizedBox(width: 90, child: Text("× ${cardGroup.count()} Cards"));
-    final groupIncludedCount = includes
-        .where((element) => element.cardGroup == cardGroup)
-        .fold(0, (p, e) => p + e.amount);
+    final groupIncludedCount =
+        includes.where((element) => element.isFromCardGroup(cardGroup)).length;
 
     final countNumberInCircle = CountNumberInCircle(value: groupIncludedCount);
     final individualNumberInCircle =

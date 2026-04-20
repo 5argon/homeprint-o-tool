@@ -10,7 +10,7 @@ import 'package:homeprint_o_tool/page/picks/available_list.dart';
 
 import 'package:homeprint_o_tool/core/save_file.dart';
 
-class PicksPage extends StatelessWidget {
+class PicksPage extends StatefulWidget {
   final String basePath;
   final ProjectSettings projectSettings;
   final LayoutData layoutData;
@@ -33,13 +33,70 @@ class PicksPage extends StatelessWidget {
       required this.onSkipIncludesChanged});
 
   @override
+  State<PicksPage> createState() => _PicksPageState();
+}
+
+class _PicksPageState extends State<PicksPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _bounceController;
+  late Animation<double> _bounceAnimation;
+  int _previousCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _previousCount = widget.includes.fold(0, (p, e) => p + e.count());
+    _bounceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _bounceAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.25), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.25, end: 0.95), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 0.95, end: 1.0), weight: 30),
+    ]).animate(CurvedAnimation(
+      parent: _bounceController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void didUpdateWidget(covariant PicksPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final newCount = widget.includes.fold(0, (p, e) => p + e.count());
+    if (newCount != _previousCount && newCount > _previousCount) {
+      _bounceController.forward(from: 0);
+    }
+    _previousCount = newCount;
+  }
+
+  @override
+  void dispose() {
+    _bounceController.dispose();
+    super.dispose();
+  }
+
+  void _showToast(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final cardCountPerPage =
-        calculateCardCountPerPage(layoutData, projectSettings.cardSize);
+    final includes = widget.includes;
+    final cardCountPerPage = calculateCardCountPerPage(
+        widget.layoutData, widget.projectSettings.cardSize);
     final pagination = calculatePagination(
         includes,
-        layoutData,
-        projectSettings.cardSize,
+        widget.layoutData,
+        widget.projectSettings.cardSize,
         cardCountPerPage.rows,
         cardCountPerPage.columns);
     final allCount = countIncludes(includes);
@@ -115,44 +172,39 @@ class PicksPage extends StatelessWidget {
         ),
       ],
     );
-    final addEachGroupOnceButton = ElevatedButton.icon(
-      onPressed: () {
-        final appended = includes.toList();
-        appended.addAll(definedCards.map((e) => IncludeItem.cardGroup(e, 1)));
-        onIncludesChanged(appended);
-      },
-      icon: const Icon(Icons.playlist_add),
-      label: const Text('Pick Each Group Once'),
-    );
-    final clearButton = ElevatedButton.icon(
-      onPressed: () {
-        onIncludesChanged([]);
-        onSkipIncludesChanged([]);
-      },
-      icon: const Icon(Icons.clear_all),
-      label: const Text('Clear Picked Cards'),
-    );
-
-    final count = includes.fold(0, (p, e) => p + e.count());
+    final cardCount = includes.fold(0, (p, e) => p + e.count());
+    final groupCount = includes.where((e) => !e.isPageBreak).length;
 
     final availableList = AvailableList(
-      basePath: basePath,
-      projectSettings: projectSettings,
-      definedCards: definedCards,
-      linkedCardFaces: linkedCardFaces,
+      basePath: widget.basePath,
+      projectSettings: widget.projectSettings,
+      definedCards: widget.definedCards,
+      linkedCardFaces: widget.linkedCardFaces,
       includes: includes,
-      skipIncludes: skipIncludes,
-      onIncludesChanged: onIncludesChanged,
+      skipIncludes: widget.skipIncludes,
+      onIncludesChanged: widget.onIncludesChanged,
+      onShowToast: _showToast,
+      onPickEachGroupOnce: () {
+        final appended = includes.toList();
+        appended.addAll(
+            widget.definedCards.map((e) => IncludeItem.fromCardGroup(e)));
+        widget.onIncludesChanged(appended);
+      },
     );
 
     final pickedList = PickedList(
       includes: includes,
-      onIncludesChanged: onIncludesChanged,
-      basePath: basePath,
-      cardSize: projectSettings.cardSize,
-      linkedCardFaces: linkedCardFaces,
-      projectSettings: projectSettings,
-      layoutData: layoutData,
+      onIncludesChanged: widget.onIncludesChanged,
+      basePath: widget.basePath,
+      cardSize: widget.projectSettings.cardSize,
+      linkedCardFaces: widget.linkedCardFaces,
+      projectSettings: widget.projectSettings,
+      layoutData: widget.layoutData,
+      onClearPicked: () {
+        widget.onIncludesChanged([]);
+        widget.onSkipIncludesChanged([]);
+      },
+      onShowToast: _showToast,
     );
 
     final tabController = Expanded(
@@ -162,8 +214,20 @@ class PicksPage extends StatelessWidget {
         children: [
           TabBar(
             tabs: [
-              Tab(text: "Available"),
-              Tab(text: "Picked ($count Cards)"),
+              Tab(text: "Available Groups"),
+              Tab(
+                child: AnimatedBuilder(
+                  animation: _bounceAnimation,
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: _bounceAnimation.value,
+                      child: child,
+                    );
+                  },
+                  child: Text(
+                      "Picked Groups ($groupCount Groups, $cardCount Cards)"),
+                ),
+              ),
             ],
           ),
           Expanded(
@@ -179,9 +243,8 @@ class PicksPage extends StatelessWidget {
     ));
 
     var topButtonRow = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Row(spacing: 16, children: [addEachGroupOnceButton, clearButton]),
         Row(spacing: 16, children: [
           allCountText,
           pageHelp,

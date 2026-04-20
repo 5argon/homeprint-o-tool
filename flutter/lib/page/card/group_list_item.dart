@@ -43,11 +43,11 @@ class GroupListItem extends StatelessWidget {
   int _countCardsInPicks() {
     int count = 0;
 
-    // Check if the entire group is directly included
+    // Check if the entire group is directly included (locked reference)
     final isGroupDirectlyIncluded =
-        includes.any((includeItem) => includeItem.cardGroup == cardGroup);
-    final isGroupDirectlySkipIncluded =
-        skipIncludes.any((includeItem) => includeItem.cardGroup == cardGroup);
+        includes.any((includeItem) => includeItem.isFromCardGroup(cardGroup));
+    final isGroupDirectlySkipIncluded = skipIncludes
+        .any((includeItem) => includeItem.isFromCardGroup(cardGroup));
 
     if (isGroupDirectlyIncluded || isGroupDirectlySkipIncluded) {
       return cardGroup.cards.length; // All cards are included
@@ -59,16 +59,7 @@ class GroupListItem extends StatelessWidget {
 
       // Check in includes for individual cards
       for (var includeItem in includes) {
-        if (includeItem.cardGroup != null &&
-            includeItem.cardGroup != cardGroup) {
-          // Check within each card in other groups
-          if (includeItem.cardGroup!.cards.any((c) => c == card)) {
-            count++;
-            cardAlreadyCounted = true;
-            break; // Count each card only once
-          }
-        } else if (includeItem.cardEach == card) {
-          // Direct card reference
+        if (includeItem.containsDuplexCard(card)) {
           count++;
           cardAlreadyCounted = true;
           break; // Count each card only once
@@ -77,15 +68,8 @@ class GroupListItem extends StatelessWidget {
 
       // Check in skipIncludes as well
       if (!cardAlreadyCounted) {
-        // Only check skipIncludes if not already counted
         for (var includeItem in skipIncludes) {
-          if (includeItem.cardGroup != null &&
-              includeItem.cardGroup != cardGroup) {
-            if (includeItem.cardGroup!.cards.any((c) => c == card)) {
-              count++;
-              break;
-            }
-          } else if (includeItem.cardEach == card) {
+          if (includeItem.containsDuplexCard(card)) {
             count++;
             break;
           }
