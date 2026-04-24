@@ -42,8 +42,10 @@ class ExportStorage {
       frontRotation: Rotation.none,
       backRotation: Rotation.none,
       frontSideOnly: false,
+      backSideFirst: false,
       pixelPerInch: 300,
       cutGuideStyle: CutGuideStyle.none,
+      cutCornerRadiusMm: 3.0,
     );
   }
 
@@ -56,8 +58,10 @@ class ExportStorage {
       'frontRotation': settings.frontRotation.index,
       'backRotation': settings.backRotation.index,
       'frontSideOnly': settings.frontSideOnly,
+      'backSideFirst': settings.backSideFirst,
       'pixelPerInch': settings.pixelPerInch,
       'cutGuideStyle': settings.cutGuideStyle.index,
+      'cutCornerRadiusMm': settings.cutCornerRadiusMm,
     };
   }
 
@@ -70,8 +74,10 @@ class ExportStorage {
       frontRotation: Rotation.values[json['frontRotation'] as int? ?? 0],
       backRotation: Rotation.values[json['backRotation'] as int? ?? 0],
       frontSideOnly: json['frontSideOnly'] as bool? ?? false,
+      backSideFirst: json['backSideFirst'] as bool? ?? false,
       pixelPerInch: json['pixelPerInch'] as int? ?? 300,
       cutGuideStyle: CutGuideStyle.values[json['cutGuideStyle'] as int? ?? 0],
+      cutCornerRadiusMm: (json['cutCornerRadiusMm'] as num?)?.toDouble() ?? 3.0,
     );
   }
 }

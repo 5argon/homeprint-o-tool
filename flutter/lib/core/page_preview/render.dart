@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
 import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
+import 'package:homeprint_o_tool/core/page_preview/cut_svg_export.dart';
 import 'package:homeprint_o_tool/core/page_preview/export_dialog.dart';
 import 'package:homeprint_o_tool/core/page_preview/png.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
@@ -52,6 +53,15 @@ Future renderRender(
   if (settings == null) {
     return;
   }
+
+  // --- SVG cut-line branch ------------------------------------------------
+  if (settings.action == ExportAction.exportCutSvg) {
+    await _exportCutSvg(
+        context, settings, layoutData, projectSettings, baseDirectory);
+    return;
+  }
+  // ------------------------------------------------------------------------
+
   String? directory = await getDirectoryPath(initialDirectory: baseDirectory);
   if (directory == null) {
     return;
@@ -198,6 +208,9 @@ Future renderRender(
         final cards = cardsAtPage(includeItems, skipIncludeItems, layoutData,
             projectSettings.cardSize, i + 1, linkedCardFaces);
 
+        final frontCards = settings.backSideFirst ? cards.back : cards.front;
+        final backCards = settings.backSideFirst ? cards.front : cards.back;
+
         // Front side
         onFrontBackUpdate(ExportingFrontBack.front);
         if (isCancelled) break;
@@ -205,7 +218,7 @@ Future renderRender(
         // Create a preview for the progress dialog
         final frontPreview = PagePreview(
           layoutData: layoutData,
-          cards: cards.front,
+          cards: frontCards,
           layout: false,
           cutGuideStyle: settings.cutGuideStyle,
           baseDirectory: baseDirectory,
@@ -223,7 +236,7 @@ Future renderRender(
             false,
             layoutData,
             projectSettings,
-            cards.front,
+            frontCards,
             baseDirectory,
             flutterView,
             pixelWidth,
@@ -260,7 +273,7 @@ Future renderRender(
         // Create a preview for the progress dialog
         final backPreview = PagePreview(
           layoutData: layoutData,
-          cards: cards.back,
+          cards: backCards,
           layout: false,
           cutGuideStyle: settings.cutGuideStyle,
           baseDirectory: baseDirectory,
@@ -278,7 +291,7 @@ Future renderRender(
             true,
             layoutData,
             projectSettings,
-            cards.back,
+            backCards,
             baseDirectory,
             flutterView,
             pixelWidth,
@@ -607,4 +620,50 @@ Future<bool> showMissingGraphicsWarningDialog(
         },
       ) ??
       false; // Default to false if dialog is dismissed
+}
+
+/// Resolves the cut SVG filename from the export settings template,
+/// appends `_cut`, then opens a save-file dialog and writes the SVG.
+Future<void> _exportCutSvg(
+  BuildContext context,
+  ExportSettings settings,
+  LayoutData layoutData,
+  ProjectSettings projectSettings,
+  String baseDirectory,
+) async {
+  final svgType = XTypeGroup(label: 'SVG', extensions: ['svg']);
+  final saveLocation = await getSaveLocation(
+    acceptedTypeGroups: [svgType],
+    initialDirectory: baseDirectory,
+    suggestedName: '${settings.prefix}_cut.svg',
+  );
+  if (saveLocation == null) return;
+
+  final cardCount =
+      calculateCardCountPerPage(layoutData, projectSettings.cardSize);
+  if (cardCount.rows <= 0 || cardCount.columns <= 0) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('No cards fit the current layout. SVG not saved.')),
+      );
+    }
+    return;
+  }
+
+  final svgContent = generateCutSvg(
+    layoutData,
+    projectSettings,
+    settings.cutCornerRadiusMm,
+    settings.pixelPerInch,
+    settings.frontRotation,
+  );
+
+  await saveCutSvg(svgContent, saveLocation.path);
+
+  if (context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Cut SVG exported successfully.')),
+    );
+  }
 }

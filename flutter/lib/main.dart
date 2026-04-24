@@ -395,11 +395,6 @@ class _MyHomePageState extends State<MyHomePage> {
       if (baseDirectory != null) {
         final flutterView = View.of(context);
         if (context.mounted) {
-          // Show a loading indicator while preparing the export
-          setState(() {
-            renderingFuture = Future.value(null);
-          });
-
           try {
             // Use the updated renderRender function that shows a fullscreen dialog
             await renderRender(
@@ -444,13 +439,6 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             }
             print('Export error: $e');
-          } finally {
-            // Clear the rendering future
-            if (mounted) {
-              setState(() {
-                renderingFuture = null;
-              });
-            }
           }
         }
       } else {
