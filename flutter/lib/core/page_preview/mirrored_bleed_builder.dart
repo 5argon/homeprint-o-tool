@@ -1,5 +1,19 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+
+/// Signature for lazily building one copy of the card image — either the center
+/// image or a single mirrored bleed piece — at a given [alignment]/[scale] and
+/// optional [width]/[height].
+///
+/// This indirection lets the exact same bleed layout drive two backends:
+///   * an asynchronous `Image.file` for the interactive on-screen preview, and
+///   * a synchronous `RawImage` backed by a pre-decoded `ui.Image` for the
+///     deterministic export renderer.
+typedef BleedImageBuilder = Widget Function({
+  required Alignment alignment,
+  required double scale,
+  double? width,
+  double? height,
+});
 
 /// Builds a widget with mirrored bleeds around the edges.
 ///
@@ -7,7 +21,7 @@ import 'package:flutter/material.dart';
 /// providing a bleed effect for printing.
 Widget buildMirroredBleedWidget({
   required Widget centerImageWidget,
-  required File imageFile,
+  required BleedImageBuilder imageBuilder,
   required double parentWidth,
   required double parentHeight,
   required double contentWidth,
@@ -45,13 +59,11 @@ Widget buildMirroredBleedWidget({
               Transform(
                 transform: Matrix4.identity()..scale(1.0, -1.0),
                 alignment: Alignment.center,
-                child: Image.file(
-                  imageFile,
+                child: imageBuilder(
                   alignment: Alignment.topCenter,
+                  scale: finalScale,
                   width: parentWidth,
                   height: parentHeight,
-                  scale: finalScale,
-                  fit: BoxFit.none,
                 ),
               ),
             ],
@@ -72,13 +84,11 @@ Widget buildMirroredBleedWidget({
               Transform(
                 transform: Matrix4.identity()..scale(1.0, -1.0),
                 alignment: Alignment.center,
-                child: Image.file(
-                  imageFile,
+                child: imageBuilder(
                   alignment: Alignment.bottomCenter,
+                  scale: finalScale,
                   width: parentWidth,
                   height: parentHeight,
-                  scale: finalScale,
-                  fit: BoxFit.none,
                 ),
               ),
             ],
@@ -99,13 +109,11 @@ Widget buildMirroredBleedWidget({
               Transform(
                 transform: Matrix4.identity()..scale(-1.0, 1.0),
                 alignment: Alignment.center,
-                child: Image.file(
-                  imageFile,
+                child: imageBuilder(
                   alignment: Alignment.centerRight,
+                  scale: finalScale,
                   width: parentWidth,
                   height: parentHeight,
-                  scale: finalScale,
-                  fit: BoxFit.none,
                 ),
               ),
             ],
@@ -126,13 +134,11 @@ Widget buildMirroredBleedWidget({
               Transform(
                 transform: Matrix4.identity()..scale(-1.0, 1.0),
                 alignment: Alignment.center,
-                child: Image.file(
-                  imageFile,
+                child: imageBuilder(
                   alignment: Alignment.centerLeft,
+                  scale: finalScale,
                   width: parentWidth,
                   height: parentHeight,
-                  scale: finalScale,
-                  fit: BoxFit.none,
                 ),
               ),
             ],
@@ -155,13 +161,11 @@ Widget buildMirroredBleedWidget({
               Transform(
                 transform: Matrix4.identity()..scale(-1.0, -1.0),
                 alignment: Alignment.center,
-                child: Image.file(
-                  imageFile,
+                child: imageBuilder(
                   alignment: Alignment.topLeft,
+                  scale: finalScale,
                   width: parentWidth,
                   height: parentHeight,
-                  scale: finalScale,
-                  fit: BoxFit.none,
                 ),
               ),
             ],
@@ -184,13 +188,11 @@ Widget buildMirroredBleedWidget({
               Transform(
                 transform: Matrix4.identity()..scale(-1.0, -1.0),
                 alignment: Alignment.center,
-                child: Image.file(
-                  imageFile,
+                child: imageBuilder(
                   alignment: Alignment.topRight,
+                  scale: finalScale,
                   width: parentWidth,
                   height: parentHeight,
-                  scale: finalScale,
-                  fit: BoxFit.none,
                 ),
               ),
             ],
@@ -213,13 +215,11 @@ Widget buildMirroredBleedWidget({
               Transform(
                 transform: Matrix4.identity()..scale(-1.0, -1.0),
                 alignment: Alignment.center,
-                child: Image.file(
-                  imageFile,
+                child: imageBuilder(
                   alignment: Alignment.bottomLeft,
+                  scale: finalScale,
                   width: parentWidth,
                   height: parentHeight,
-                  scale: finalScale,
-                  fit: BoxFit.none,
                 ),
               ),
             ],
@@ -242,13 +242,11 @@ Widget buildMirroredBleedWidget({
               Transform(
                 transform: Matrix4.identity()..scale(-1.0, -1.0),
                 alignment: Alignment.center,
-                child: Image.file(
-                  imageFile,
+                child: imageBuilder(
                   alignment: Alignment.bottomRight,
+                  scale: finalScale,
                   width: parentWidth,
                   height: parentHeight,
-                  scale: finalScale,
-                  fit: BoxFit.none,
                 ),
               ),
             ],

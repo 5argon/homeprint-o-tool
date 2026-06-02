@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:path/path.dart' as p;
 import 'package:homeprint_o_tool/core/json.dart';
 import 'package:homeprint_o_tool/core/page_preview/cut_guide_style.dart';
 import 'package:homeprint_o_tool/core/page_preview/cut_svg_export.dart';
@@ -413,6 +415,11 @@ Future<void> renderOneSide(
     Rotation rotation,
     CutGuideStyle cutGuideStyle,
     int pixelPerInch) async {
+  // Decode every image on this page up front. Awaiting this is what makes the
+  // render deterministic: the widget tree can then draw each image
+  // synchronously (RawImage) with nothing asynchronous left to wait for.
+  final preloadedImages = await preloadPageImages(cardsOnePage, baseDirectory);
+
   PagePreview toRender = PagePreview(
     layoutData: layoutData,
     cards: cardsOnePage,
@@ -422,6 +429,7 @@ Future<void> renderOneSide(
     projectSettings: projectSettings,
     hideInnerCutLine: true,
     back: back,
+    preloadedImages: preloadedImages,
   );
 
   // Replace placeholders in the template
@@ -430,8 +438,16 @@ Future<void> renderOneSide(
       .replaceAll("{page}", (pageNumber + 1).toString())
       .replaceAll("{side}", back ? backSuffix : frontSuffix);
 
-  Uint8List imageUint = await createImageBytesFromWidget(
-      flutterView, toRender, pixelWidth, pixelHeight);
+  Uint8List imageUint;
+  try {
+    imageUint = await createImageBytesFromWidget(
+        flutterView, toRender, pixelWidth, pixelHeight);
+  } finally {
+    // We own the master images; the widget tree painted from clones of them.
+    for (final image in preloadedImages.values) {
+      image.dispose();
+    }
+  }
 
   // Apply rotation if needed
   Uint8List finalImageData;
@@ -509,31 +525,69 @@ Future<Uint8List> createImageBytesFromWidget(ui.FlutterView flutterView,
     ),
   ).attachToRenderTree(buildOwner);
 
-  // I don't know a reliable way to wait for async image to load in the
-  // preview other than waiting for arbitrary time like this.
-  final int renderIterations = 30;
-  final int delayMs = 20;
-
-  for (var i = 0; i < renderIterations; i++) {
+  // Every image in [widget] is pre-decoded and painted synchronously via
+  // RawImage (see [preloadPageImages] / PagePreview.preloadedImages), so the
+  // whole tree settles in a single build/layout/paint pass — there is nothing
+  // asynchronous to wait for. A few delay-free flushes guarantee that nested
+  // LayoutBuilders are fully resolved before we capture, with no arbitrary
+  // sleeping and no race against image loading.
+  for (var i = 0; i < 3; i++) {
     buildOwner.buildScope(rootElement);
     buildOwner.finalizeTree();
     pipelineOwner.flushLayout();
     pipelineOwner.flushCompositingBits();
     pipelineOwner.flushPaint();
+  }
 
-    // Less delay for initial iterations
-    if (i < 5) {
-      await Future.delayed(Duration(milliseconds: 1));
-    } else {
-      await Future.delayed(Duration(milliseconds: delayMs));
+  final image = await repaintBoundary.toImage(pixelRatio: 1);
+  final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+  final uint8List = byteData!.buffer.asUint8List();
+  image.dispose();
+
+  return uint8List;
+}
+
+/// Decodes every distinct image used by [cards] into a ready-to-paint
+/// `ui.Image`, keyed by the card face's relative file path.
+///
+/// Doing (and awaiting) the decode up front is what makes export rendering
+/// deterministic: the widget tree can then draw each image synchronously with
+/// `RawImage` instead of relying on the asynchronous `Image.file` / `ImageStream`
+/// machinery, which the off-screen render pipeline has no reliable way to wait
+/// for. It also sidesteps the global `imageCache` entirely, so behaviour no
+/// longer depends on image size, decode speed, or cache warmth.
+///
+/// Missing or undecodable files are simply omitted; [CardArea] renders a red
+/// placeholder for those. The caller owns the returned images and must dispose
+/// them once the page has been captured.
+Future<Map<String, ui.Image>> preloadPageImages(
+    RowColCards cards, String baseDirectory) async {
+  final Set<String> relativePaths = {};
+  for (final row in cards) {
+    for (final card in row) {
+      if (card != null && card.relativeFilePath.isNotEmpty) {
+        relativePaths.add(card.relativeFilePath);
+      }
     }
   }
 
-  final imgg = await repaintBoundary.toImage(pixelRatio: 1);
-  final bd = await imgg.toByteData(format: ui.ImageByteFormat.png);
-  final uint8List = bd!.buffer.asUint8List();
-
-  return uint8List;
+  final Map<String, ui.Image> images = {};
+  for (final relativePath in relativePaths) {
+    final file = File(p.join(baseDirectory, relativePath));
+    if (!file.existsSync()) {
+      continue;
+    }
+    try {
+      final bytes = await file.readAsBytes();
+      final codec = await ui.instantiateImageCodec(bytes);
+      final frame = await codec.getNextFrame();
+      images[relativePath] = frame.image;
+      codec.dispose();
+    } catch (_) {
+      // Leave it out of the map; CardArea will show a placeholder.
+    }
+  }
+  return images;
 }
 
 /// Result of checking for missing graphics in picked cards

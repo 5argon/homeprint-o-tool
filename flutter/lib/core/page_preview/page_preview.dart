@@ -5,6 +5,7 @@ import 'package:homeprint_o_tool/page/layout/layout_helper.dart';
 import 'package:homeprint_o_tool/page/layout/layout_logic.dart';
 import 'package:homeprint_o_tool/page/review/pagination.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 
 import 'package:homeprint_o_tool/page/layout/layout_data.dart';
 import 'package:homeprint_o_tool/core/project_settings.dart';
@@ -25,6 +26,13 @@ class PagePreview extends StatefulWidget {
   final bool hideInnerCutLine;
   final bool back;
 
+  /// Pre-decoded images keyed by card relative file path. When provided,
+  /// [CardArea] paints synchronously with `RawImage` instead of the async
+  /// `Image.file`. The export renderer passes this so output is deterministic
+  /// (no waiting on asynchronous image loading); the live preview leaves it
+  /// null and keeps the async behaviour.
+  final Map<String, ui.Image>? preloadedImages;
+
   /// Must provide to show any image.
   final String? baseDirectory;
   final ProjectSettings projectSettings;
@@ -38,6 +46,7 @@ class PagePreview extends StatefulWidget {
     required this.projectSettings,
     required this.hideInnerCutLine,
     required this.back,
+    this.preloadedImages,
   });
 
   @override
@@ -177,6 +186,7 @@ class _PagePreviewState extends State<PagePreview> {
           back: widget.back,
           backArrangement: widget.layoutData.backArrangement,
           layoutData: widget.layoutData,
+          preloadedImages: widget.preloadedImages,
         );
         Widget entireCardArea =
             Expanded(flex: cardFlexHorizontal, child: cardArea);
